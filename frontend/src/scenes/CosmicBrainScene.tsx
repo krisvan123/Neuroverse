@@ -88,7 +88,7 @@ function AuthenticBrain({ quality, paused, onModelStatus, anatomySource, anatomy
         if (!parsed.getAttribute('normal')) parsed.computeVertexNormals()
         // Preserve topology, proportions and contours from the original surface.
         parsed.center()
-        const scale = 6.05 / extent
+        const scale = 5.48 / extent
         parsed.scale(scale, scale, scale)
         applySourceDepthColors(parsed)
         if (controller.signal.aborted) return
@@ -123,13 +123,13 @@ function AuthenticBrain({ quality, paused, onModelStatus, anatomySource, anatomy
       <mesh geometry={geometry} castShadow receiveShadow>
         {anatomyStyle === 'shaded' && (
           <meshPhysicalMaterial
-            color="#afcfd7"
-            roughness={0.67}
-            metalness={0.015}
-            clearcoat={0.14}
-            clearcoatRoughness={0.65}
-            emissive="#163044"
-            emissiveIntensity={0.035}
+            color="#90bac5"
+            roughness={0.77}
+            metalness={0.0}
+            clearcoat={0.1}
+            clearcoatRoughness={0.75}
+            emissive="#112b3a"
+            emissiveIntensity={0.02}
             side={THREE.DoubleSide}
           />
         )}
@@ -211,9 +211,9 @@ function DNAHelix({ x, paused, quality }: { x: number; paused: boolean; quality:
   })
 
   return (
-    <group ref={ref} position={[x, -0.08, 0.55]}
+    <group ref={ref} position={[x, -0.08, 0.72]}
       rotation={[0.16, 0.12, x < 0 ? -0.26 : 0.22]}
-      scale={quality === 'saver' ? 0.71 : 0.85}>
+      scale={quality === 'saver' ? 0.64 : 0.73}>
       {strands.map((strand, index) => (
         <primitive key={index} object={strand} />
       ))}
@@ -299,15 +299,15 @@ export default function CosmicBrainScene(props: BrainSceneProps) {
       onCreated={props.onReady}
       fallback={<div className="neuro-webgl-fallback">3D display unavailable. Use the illustrated fallback.</div>}
     >
-      <ambientLight intensity={0.8} />
-      <hemisphereLight args={['#d6f5ff', '#162541', 1.55]} />
-      <directionalLight position={[-4.7, 5, 8]} intensity={3.1} color="#ebfaff" />
-      <directionalLight position={[4.5, 2.2, -4.7]} intensity={2.9} color="#a598ee" />
-      <directionalLight position={[2, -4, 5]} intensity={1.25} color="#65dce9" />
+      <ambientLight intensity={0.38} />
+      <hemisphereLight args={['#d6f5ff', '#162541', 0.85]} />
+      <directionalLight position={[-4.7, 5, 8]} intensity={2.0} color="#eaf9ff" />
+      <directionalLight position={[4.5, 2.2, -4.7]} intensity={1.5} color="#a598ee" />
+      <directionalLight position={[2, -4, 5]} intensity={0.95} color="#65dce9" />
       <SceneFrameProbe />
       <ParticleField quality={props.quality} />
-      {budget.helices > 0 && <DNAHelix x={3.57} paused={props.paused} quality={props.quality} />}
-      {budget.helices > 1 && <DNAHelix x={-3.57} paused={props.paused} quality={props.quality} />}
+      {budget.helices > 0 && <DNAHelix x={3.06} paused={props.paused} quality={props.quality} />}
+      {budget.helices > 1 && <DNAHelix x={-3.06} paused={props.paused} quality={props.quality} />}
       <AuthenticBrain quality={props.quality} paused={props.paused} anatomySource={props.anatomySource} anatomyStyle={props.anatomyStyle} onModelStatus={props.onModelStatus} />
       <CameraRig view={props.view} resetToken={props.resetToken} paused={props.paused} quality={props.quality} />
     </Canvas>
