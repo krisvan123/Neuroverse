@@ -213,3 +213,42 @@ jobs:
                 neuron["vertex_count"], "edges", neuron["edge_count"],
                 "SHA256", neuron["source_sha256"])
           PY
+
+  production-docker:
+    name: Release / Docker build and live HTTP smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the actual production deployment image
+        run: docker build --tag neuroverse:release-ci .
+      - name: Start production service and smoke test UI, API and headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run -d --rm --name neuroverse-release-ci -p 127.0.0.1:18080:10000 neuroverse:release-ci
+          trap 'docker logs neuroverse-release-ci || true; docker stop neuroverse-release-ci || true' EXIT
+          ready=0
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:18080/api/v1/health >/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 2
+          done
+          test "$ready" -eq 1
+          curl --fail --silent --show-error http://127.0.0.1:18080/api/v1/health |
+            python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["status"]=="ok" and d["service"]=="neuroverse-api"'
+          curl --fail --silent --show-error -D /tmp/neuroverse-home-headers.txt http://127.0.0.1:18080/ -o /tmp/neuroverse-home.html
+          grep -qi 'Neuroverse' /tmp/neuroverse-home.html
+          grep -qi 'x-content-type-options: nosniff' /tmp/neuroverse-home-headers.txt
+          grep -qi 'cache-control: no-cache' /tmp/neuroverse-home-headers.txt
+          ASSET="$(grep -oE '/assets/[^"]+\.js' /tmp/neuroverse-home.html | head -n 1)"
+          test -n "$ASSET"
+          curl --fail --silent --show-error -D /tmp/neuroverse-asset-headers.txt "http://127.0.0.1:18080$ASSET" -o /dev/null
+          grep -qi 'cache-control: public, max-age=31536000, immutable' /tmp/neuroverse-asset-headers.txt
+          if curl --fail --silent http://127.0.0.1:18080/.env >/dev/null; then
+            echo 'Unexpected public .env file' >&2
+            exit 1
+          fi
+          echo 'Production image passed same-origin UI/API, immutable asset, and privacy smoke tests.'

@@ -1,0 +1,10 @@
+# Official Render Blueprint schema: one FREE Docker web service.
+# Import this Blueprint explicitly; files alone do not create an account or deploy.
+services:
+  - type: web
+    name: neuroverse-science-demo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/v1/health
