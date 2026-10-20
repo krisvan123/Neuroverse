@@ -14,6 +14,18 @@ describe('Neuroverse foundation', () => {
     expect(screen.getByRole('link', { name: /start your discovery/i })).toHaveAttribute('href', '#learning')
     expect(screen.getByRole('heading', { name: /wonder, with evidence/i })).toBeInTheDocument()
   })
+  it('renders the mission once for readers and a decorative duplicate for seamless movement', () => {
+    const { container } = render(<App />)
+    expect(screen.getByRole('region', { name: 'The Neuroverse mission' })).toBeInTheDocument()
+    expect(container.querySelectorAll('.mission-banner__unit')).toHaveLength(2)
+    expect(container.querySelector('.mission-banner__unit--duplicate')).toHaveAttribute('aria-hidden', 'true')
+    expect(container.querySelector('.mission-banner__text')?.textContent).toContain('Science should be something you experience')
+  })
+  it('labels the selected original scientific surface render mode on the 3D stage', () => {
+    const { container } = render(<App />)
+    expect(container.querySelector('.brain-stage')).toHaveAttribute('data-anatomy-style', 'shaded')
+    expect(screen.getByText('SOLID ANATOMY')).toBeInTheDocument()
+  })
   it('renders global decorative stars independently from the scientific 3D model', () => {
     const { container } = render(<App />)
     expect(container.querySelectorAll('.cosmic-backdrop .starlayer')).toHaveLength(3)
