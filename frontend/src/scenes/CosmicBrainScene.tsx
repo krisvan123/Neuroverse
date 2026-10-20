@@ -39,9 +39,10 @@ function SceneFrameProbe() {
     const ordered = [...samples.current].sort((one, two) => one - two)
     const statistics = {
       sampledSceneFrames: ordered.length,
+      renderedSceneFrames: counter.current,
       medianSceneFrameMs: ordered[Math.floor(ordered.length / 2)] ?? 0,
       rendererDrawCalls: gl.info.render.calls,
-      note: 'Headless/dev scene frames; not a physical-device GPU benchmark',
+      note: 'Headless/dev scene frames for on-screen/off-screen profiling; not a physical GPU benchmark',
     }
     ;(window as typeof window & { __neuroverseSceneDiagnostics?: typeof statistics }).__neuroverseSceneDiagnostics = statistics
   })
