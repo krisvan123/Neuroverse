@@ -14,7 +14,7 @@ describe('Neuroverse foundation', () => {
     expect(screen.getByRole('navigation',{name:'Academy lesson chapters'})).toBeInTheDocument()
     expect(container.querySelectorAll('.academy-chapter')).toHaveLength(5)
     expect(screen.getByRole('progressbar',{name:'Knowledge checks answered correctly'})).toHaveAttribute('aria-valuenow','0')
-    expect(screen.getByRole('link',{name:/S-008/})).toHaveAttribute('href',expect.stringContaining('openstax.org'))
+    expect(screen.getAllByRole('link',{name:/S-008/})[0]).toHaveAttribute('href',expect.stringContaining('openstax.org'))
   })
   it('exposes navigable learning and research content', () => {
     render(<App />)
