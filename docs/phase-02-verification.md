@@ -36,3 +36,8 @@ Do not equate code review, source-level checks, or a green backend test suite wi
 - The initial runner-generated npm lockfile was imported without manually fabricating dependency resolutions; the workflow now uses `npm ci` instead of `npm install`.
 - Verify a second GitHub Actions run passes with the committed lockfile before marking P02-01/P02-10 complete.
 - Manual fresh-clone and multi-viewport browser checks have not been executed in this environment.
+
+### Post-lockfile CI check
+
+- Locked install CI run: https://github.com/krisvan123/Neuroverse/actions/runs/39348759604 — **passed** backend tests and frontend npm ci/lint/typecheck/unit tests/build.
+- A separate integration job now starts Vite and FastAPI to verify the same-origin development proxy. This is a real HTTP smoke test, **not** a browser UI/visual/accessibility audit.
