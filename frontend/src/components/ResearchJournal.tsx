@@ -21,14 +21,16 @@ export function ResearchJournal({onReopen}:{onReopen:(experiment:LabExport)=>voi
   const [progress,setProgress]=useState(()=>readAcademyProgress().value)
   const [status,setStatus]=useState('')
   const [error,setError]=useState('')
+  const [storageError,setStorageError]=useState('')
   const refresh=useCallback(()=>{
     try {
       const saved=readJournal()
       setRecords(saved)
       setProgress(readAcademyProgress().value)
       setError('')
+      setStorageError('')
     } catch(e) {
-      setError('The local journal could not be read. Existing data were not overwritten: '+
+      setStorageError('The local journal could not be read. Existing data were not overwritten: '+
         (e instanceof Error?e.message:'storage unavailable'))
     }
   },[])
@@ -94,22 +96,23 @@ export function ResearchJournal({onReopen}:{onReopen:(experiment:LabExport)=>voi
         <div><h3>Personal research archive</h3>
           <p>Results are recomputed and validated when loaded, not treated as observed brain activity.</p></div>
         <div className="journal-actions">
-          <button type="button" onClick={handleExport} disabled={Boolean(error)}>Export journal JSON ↓</button>
+          <button type="button" onClick={handleExport} disabled={Boolean(storageError)}>Export journal JSON ↓</button>
           <input id="journal-import-file" type="file" accept=".json,application/json"
             onChange={event=>{void importFile(event)}}/>
           <label className="journal-import" htmlFor="journal-import-file">Import JSON ↑</label>
         </div>
       </div>
-      {error&&<p className="journal-notice journal-error" role="alert">{error}
+      {error&&<p className="journal-notice journal-error" role="alert">{error}</p>}
+      {storageError&&<p className="journal-notice journal-error" role="alert">{storageError}
         <button type="button" onClick={refresh}>Retry reading storage</button></p>}
       {status&&<p className="journal-notice" role="status">{status}</p>}
       <div className="journal-records" aria-label="Saved computational experiments">
-        {records.length===0&&!error?(
+        {records.length===0&&!storageError?(
           <div className="journal-empty"><span aria-hidden="true">✧</span>
             <h3>Your research begins with a question.</h3>
             <p>No experiments saved on this browser. Run a synthetic example in the Lab, then select “Save to journal”. You can also import an original Phase 07 JSON export.</p>
             <a href="#lab">Open the experiment lab ↗</a></div>
-        ):!error?records.map(item=>(
+        ):!storageError?records.map(item=>(
           <article className="journal-card" key={item.id}>
             <div><span className="journal-tag">{item.experiment.graph.origin==='synthetic-teaching-example'
               ?'SYNTHETIC TEACHING MODEL':'USER-IMPORTED FAFB V783 · UNVERIFIED FILE ORIGIN'}</span>
