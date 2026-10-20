@@ -18,7 +18,7 @@ test('real-data explorer keeps accuracy disclosures and handles missing imported
   await expect(explorer.getByText(/3D anatomy is ready\. Directed connectivity needs one additional local dataset/i)).toBeVisible()
   await expect(explorer.getByText(/separate display coordinates until alignment/i)).toBeVisible()
   await explorer.getByRole('button', { name: 'Inspect directed connections' }).click()
-  await expect(explorer.getByRole('alert')).toContainText(/Connectome connections need a locally imported/i)
+  await expect(explorer.getByRole('alert').filter({hasText:/Connectome connections need a locally imported/i})).toBeVisible()
   await expect(explorer.getByText(/Set up real FAFB directed connections \(Windows\)/i)).toBeVisible()
   await expect(explorer.getByText(/python -m app.data.pipeline --connections/i)).toBeVisible()
   await explorer.getByText('Scientific sources and limitations').click()
@@ -47,7 +47,7 @@ test('valid root ID loads real-format centerline while invented values are rejec
   await expect(explorer.getByText(/nanometer/i)).toBeVisible()
   await explorer.getByLabel('Neuron root ID').fill('not-a-root-id')
   await explorer.getByRole('button', { name: /load real neuron skeleton/i }).click()
-  await expect(explorer.getByRole('alert')).toContainText(/Enter a valid FAFB root ID/i)
+  await expect(explorer.getByRole('alert').filter({hasText:/Enter a valid FAFB root ID/i})).toBeVisible()
 })
 
 test('bounded directed graph is explicitly algorithmic, never spatial', async ({ page }) => {
