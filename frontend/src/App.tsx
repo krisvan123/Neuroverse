@@ -6,6 +6,8 @@ import MissionBanner from './components/MissionBanner'
 import { ScientificExplorer } from './components/ScientificExplorer'
 import { LearningAcademy } from './components/LearningAcademy'
 import { ExperimentLab } from './components/ExperimentLab'
+import { ResearchJournal } from './components/ResearchJournal'
+import type { LabExport } from './lab/export'
 
 const resources = [
   { label: 'Nature · Adult fruit fly connectome', href: 'https://doi.org/10.1038/s41586-024-07558-y' },
@@ -14,6 +16,11 @@ const resources = [
 ]
 
 export default function App() {
+  const [reopened,setReopened] = useState<LabExport|null>(null)
+  const reopen=(experiment:LabExport)=>{
+    setReopened({...experiment})
+    window.location.hash='lab'
+  }
   const [quietMode, setQuietMode] = useState(() => {
     if (typeof window === 'undefined') return false
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -32,7 +39,7 @@ export default function App() {
         <div className="container navigation">
           <a href="#home" className="brand" aria-label="Neuroverse home"><span className="brand-mark" aria-hidden="true">✺</span>NEUROVERSE<span className="brand-period">.</span></a>
           <nav className="nav-links" aria-label="Primary navigation">
-            <a href="#academy">Learn</a><a href="#explore">Explore</a><a href="#lab">The Lab</a><a href="#sources">Research</a>
+            <a href="#academy">Learn</a><a href="#explore">Explore</a><a href="#lab">The Lab</a><a href="#journal">Journal</a><a href="#sources">Research</a>
           </nav>
           <div className="nav-actions"><ApiStatus /><a className="nav-cta" href="#learning">Enter the universe <span aria-hidden="true">↗</span></a></div>
         </div>
@@ -66,11 +73,13 @@ export default function App() {
 
         <ScientificExplorer />
 
-        <ExperimentLab />
+        <ExperimentLab restoreRecord={reopened} />
+
+        <ResearchJournal onReopen={reopen} />
 
         <section id="sources" className="sources-section container" aria-labelledby="sources-title"><div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-dash" /> GROUNDED IN RESEARCH</div><h2 id="sources-title">Wonder, with <em>evidence.</em></h2></div><p>Our aim is to clearly separate observed scientific data, mathematical models, and visual illustration. Follow the sources behind the ideas.</p></div><ul className="source-list">{resources.map((resource) => <li key={resource.href}><a href={resource.href} target="_blank" rel="noopener noreferrer"><span>{resource.label}</span><span aria-hidden="true">↗</span></a></li>)}</ul></section>
       </main>
-      <footer className="site-footer"><div className="container footer-content"><a className="brand" href="#home"><span className="brand-mark" aria-hidden="true">✺</span>NEUROVERSE<span className="brand-period">.</span></a><div><p>Independent, research-inspired science education. Not affiliated with FlyWire.</p><button className="quiet-toggle" type="button" onClick={() => setQuietMode((value) => !value)} aria-pressed={quietMode}>{quietMode ? 'Enable ambient motion' : 'Reduce ambient motion'}</button></div><span>PHASE 07 / COMPUTATIONAL EXPERIMENT LAB</span></div></footer>
+      <footer className="site-footer"><div className="container footer-content"><a className="brand" href="#home"><span className="brand-mark" aria-hidden="true">✺</span>NEUROVERSE<span className="brand-period">.</span></a><div><p>Independent, research-inspired science education. Not affiliated with FlyWire.</p><button className="quiet-toggle" type="button" onClick={() => setQuietMode((value) => !value)} aria-pressed={quietMode}>{quietMode ? 'Enable ambient motion' : 'Reduce ambient motion'}</button></div><span>PHASE 08 / LOCAL RESEARCH JOURNAL</span></div></footer>
     </div>
   )
 }

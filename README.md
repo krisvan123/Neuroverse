@@ -146,3 +146,10 @@ The directed A–F BFS model is explicitly **synthetic teaching material**, not 
 ## Phase 07 — Computational Experiment Lab
 
 Open the homepage at #lab (The Lab navigation item). Choose a labeled synthetic directed graph that works offline, or choose a user-imported FAFB v783 local subgraph once the original connection CSV was imported via FastAPI. Set traversal, start node, minimum edge weight and an optional model node to remove; inspect reachable nodes, out-degree and loop-excluded directed density in diagrams, bars and a numerical table. Export complete sorted input, parameters, provenance and results as JSON or CSV. The baseline remains untouched. **No actual neural firing, lesions, behavior or functional outcomes are simulated or inferred.** Real data remain limited to the user's selected subset and locally validated checksum; the external source identity of a user-supplied CSV is not independently established. Full documented methodology: [Phase 07 Experiment Lab](docs/phase-07-experiment-lab.md). Permanent storage/re-import is Phase 08.
+
+
+### Phase 08 — Research Journal & Learning Progress
+
+The Academy now retains only completed checks, current chapter and synthetic graph-demo completion in this browser. The Computational Experiment Lab can save a complete reproducible run to a **local Research Journal** at `/#journal`; reopen it, export/import versioned JSON, delete individual records or reset all local progress. No account or server database is used. Files imported from users are validated but not independently authenticated as official FAFB material.
+
+See [Phase 08 persistence, provenance, privacy and tests](docs/phase-08-research-journal.md). Browser storage is device-specific and can be cleared: export a journal JSON backup before resetting or changing browsers.

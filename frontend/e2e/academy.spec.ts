@@ -44,7 +44,7 @@ test('Academy has five evidence-mapped lessons, accessible sources and a complet
   }
   await expect(academy.getByRole('progressbar')).toHaveAttribute('aria-valuenow','10')
   await expect(academy.getByText(/Mission 001 complete — all ten checks passed/i)).toBeVisible()
-  await expect(academy.getByText(/Progress stays in this page session only/i)).toBeVisible()
+  await expect(academy.getByText(/Passed questions, your current chapter and graph-demo completion are saved only in this browser/i)).toBeVisible()
   const sources=academy.getByText('Primary sources & research methods')
   await expect(sources).toBeVisible()
   await expect(academy.getByText('Science glossary — 14 key terms')).toBeVisible()
@@ -77,7 +77,7 @@ test('academy stays readable on narrow viewport, offline science and keyboard na
   await expect(academy.locator('.academy-graph')).toContainText('D removed')
 })
 
-test('Academy progress never pretends to persist between separate sessions',async ({ page })=>{
+test('Academy progress restores correctly after a page reload',async ({ page })=>{
   await page.goto('/#academy')
   const academy=page.locator('#academy')
   const question=academy.locator('.academy-question').first()
@@ -85,5 +85,5 @@ test('Academy progress never pretends to persist between separate sessions',asyn
   await question.getByRole('button',{name:'Check answer'}).click()
   await expect(academy.getByRole('progressbar')).toHaveAttribute('aria-valuenow','1')
   await page.reload()
-  await expect(academy.getByRole('progressbar')).toHaveAttribute('aria-valuenow','0')
+  await expect(academy.getByRole('progressbar')).toHaveAttribute('aria-valuenow','1')
 })

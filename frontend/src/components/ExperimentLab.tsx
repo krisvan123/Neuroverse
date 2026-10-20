@@ -1,4 +1,4 @@
-import { useMemo,useState } from 'react'
+import { useEffect,useMemo,useState } from 'react'
 import { apiGet,rootIdIsValid,type DatasetState,type Subgraph } from '../science/api'
 import {
   analyzeGraph,compareNodeIds,SYNTHETIC_LAB_GRAPH,
@@ -6,7 +6,8 @@ import {
   type Traversal,type TraversalFrame,
 } from '../lab/engine'
 import { graphFromImportedFAFB } from '../lab/fromFAFB'
-import { createExport,toLabCSV,toLabJSON } from '../lab/export'
+import { createExport,toLabCSV,toLabJSON, type LabExport } from '../lab/export'
+import { saveExperiment,verifyExperiment } from '../journal/storage'
 
 const EXPERIMENT_GUIDE='https://github.com/krisvan123/Neuroverse/blob/main/docs/phase-07-experiment-lab.md'
 const SETUP_GUIDE='https://github.com/krisvan123/Neuroverse/blob/main/docs/scientific-data-pipeline.md'
@@ -146,7 +147,7 @@ function MetricTable({ baseline,modified,removed,origin }:{
   )
 }
 
-export function ExperimentLab() {
+export function ExperimentLab({restoreRecord}:{restoreRecord?:LabExport|null}) {
   const [origin,setOrigin]=useState<'synthetic'|'real'>('synthetic')
   const [graph,setGraph]=useState<LabGraph|null>(SYNTHETIC_LAB_GRAPH)
   const [loading,setLoading]=useState(false)
@@ -158,6 +159,23 @@ export function ExperimentLab() {
   const [panel,setPanel]=useState<'baseline'|'modified'>('baseline')
   const [frameIndex,setFrameIndex]=useState(0)
   const [lastExport,setLastExport]=useState('')
+
+  useEffect(()=>{
+    if(!restoreRecord)return
+    try {
+      const imported=verifyExperiment(restoreRecord)
+      setGraph(imported.graph)
+      setOrigin(imported.graph.origin==='synthetic-teaching-example'?'synthetic':'real')
+      setTraversal(imported.parameters.traversal)
+      setStart(imported.parameters.start)
+      setRemoved(imported.parameters.removeNode??'')
+      setMinimum(imported.parameters.minimumWeight)
+      setLoadError('');setFrameIndex(0);setPanel('baseline')
+      setLastExport('Verified journal experiment restored. Recomputed outputs match the saved record.')
+    } catch(error) {
+      setLastExport('Record could not be reopened: '+(error instanceof Error?error.message:'invalid experiment'))
+    }
+  },[restoreRecord])
 
   const options:LabOptions={
     traversal,start,minimumWeight:minimum,removeNode:removed||null,
@@ -218,6 +236,18 @@ export function ExperimentLab() {
     downloadText(name,kind==='json'?toLabJSON(data):toLabCSV(data),
       kind==='json'?'application/json;charset=utf-8':'text/csv;charset=utf-8')
     setLastExport(name+' saved from this session. The original graph is unchanged.')
+  }
+
+  const saveToJournal=()=>{
+    const data=record()
+    if(!data)return
+    try {
+      const saved=saveExperiment(data)
+      setLastExport(saved.duplicate?'This exact experiment is already in your journal.':
+        'Experiment saved in this browser. Open the Research Journal to review it.')
+    } catch(error) {
+      setLastExport('Experiment was NOT saved: '+(error instanceof Error?error.message:'storage unavailable'))
+    }
   }
 
   const maxForBar=Math.max(1,result?.baseline.metrics.nodes??1)
@@ -378,11 +408,13 @@ export function ExperimentLab() {
               <div className="lab-export">
                 <div><span className="lab-overline">05 / REPRODUCE YOUR RESULT</span>
                   <h4>Export the actual input and output</h4>
-                  <p>Download the source-selected nodes and edges, weights, threshold, start, algorithm, before/after metrics, traversals, provenance and limitations. The browser does not save your experiments.</p>
+                  <p>Download the source-selected nodes and edges, weights, threshold, start, algorithm, before/after metrics, traversals, provenance and limitations. Save locally to your Research Journal, or export the exact research inputs and results. Browser storage is device-specific and not backed up.</p>
                 </div>
                 <div className="lab-export-buttons">
                   <button type="button" onClick={()=>exportAs('json')}>Export JSON ↓</button>
                   <button type="button" onClick={()=>exportAs('csv')}>Export CSV ↓</button>
+                  <button type="button" onClick={saveToJournal}>Save to journal ☆</button>
+                  <a className="lab-journal-link" href="#journal">Open journal ↗</a>
                 </div>
                 {lastExport&&<p role="status" className="lab-export-status">{lastExport}</p>}
                 <a href={EXPERIMENT_GUIDE} target="_blank" rel="noopener noreferrer">Methods, mathematical definitions and reproducibility guide ↗</a>
