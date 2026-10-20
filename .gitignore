@@ -20,7 +20,15 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Scientific data will be versioned via manifests, not raw archives
+# Scientific files are manually downloaded locally. Never commit raw archives,
+# processed biological datasets, or generated manifest files to public GitHub.
+data/raw/
+data/processed/
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.manifest.json
+*.csv.gz
 *.parquet
 *.feather
 *.h5

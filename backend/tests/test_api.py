@@ -8,7 +8,8 @@ from app.main import create_app
 
 
 @pytest.fixture
-def client():
+def client(monkeypatch):
+    monkeypatch.delenv("NEUROVERSE_DATASET_DB", raising=False)
     with TestClient(create_app()) as test_client:
         yield test_client
 
@@ -19,8 +20,8 @@ def test_health_contract(client):
     assert response.json() == {
         "status": "ok",
         "service": "neuroverse-api",
-        "phase": 2,
-        "version": "0.1.0",
+        "phase": 3,
+        "version": "0.2.0",
     }
 
 
@@ -28,20 +29,23 @@ def test_capabilities_do_not_claim_unimplemented_science(client):
     response = client.get("/api/v1/capabilities")
     assert response.status_code == 200
     capability = response.json()
-    assert capability["stage"] == "engineering-foundation"
+    assert capability["stage"] == "scientific-data-pipeline"
+    assert not capability["dataset_configured"]
     assert not capability["real_dataset_loaded"]
     assert not capability["three_d_explorer_available"]
     assert not capability["experiments_available"]
 
 
-def test_missing_route_returns_404(client):
-    assert client.get("/api/v1/neurons/123").status_code == 404
+def test_missing_neuron_dataset_does_not_fabricate_data(client):
+    response = client.get("/api/v1/neurons/123")
+    assert response.status_code == 503
 
 
-def test_openapi_includes_documented_health_endpoint(client):
+def test_openapi_includes_documented_endpoints(client):
     document = client.get("/openapi.json").json()
     assert "/api/v1/health" in document["paths"]
-    assert document["paths"]["/api/v1/health"]["get"]["responses"]["200"]
+    assert "/api/v1/datasets/current" in document["paths"]
+    assert "/api/v1/neurons/search" in document["paths"]
 
 
 def test_cors_allows_only_known_browser_origins(client):

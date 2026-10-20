@@ -4,7 +4,7 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 02 — Engineering Foundation.** The React landing interface and FastAPI system endpoints are implemented as a foundation. **A functional 3D fly-brain explorer, FlyWire data pipeline, lessons, and experiments do not exist yet.** The animated network diagram is a clearly labeled conceptual graphic, not a scientific scan.
+> **Current development status: Phase 03 — Scientific Data Pipeline (completed).** The React frontend, FastAPI API, versioned local CSV/Feather data pipeline, checksum checks, read-only graph endpoints, and automated tests exist. Official FlyWire v783 archives were independently downloaded and checksum-verified in GitHub Actions; **20,000 authentic connectivity records were sampled for integration testing**, yielding a test subgraph of **14 neurons / 15 directed edges**. **No full scientific dataset is bundled or automatically served.** 3D anatomical exploration, lessons, and computational experiments are future phases; the current landing network illustration is conceptual, not a scientific scan.
 
 ## Product direction
 
@@ -21,8 +21,8 @@ Neuroverse is an independent, research-inspired science learning platform that w
 | API | Python, FastAPI, Pydantic | Running endpoints / tests |
 | 3D scenes | Three.js, React Three Fiber | Planned |
 | Graph analysis | NetworkX | Planned |
-| Scientific data | FlyWire FAFB v783 subset | Planned |
-| Persistence | SQLite if justified | Deferred |
+| Scientific data | FlyWire FAFB v783 local CSV import, SQLite subset | Implemented pipeline; no authenticated source imported by default |
+| Persistence | SQLite (selected neuron graph) | Local-only generated dataset, opt-in |
 
 ## Quick start — Windows PowerShell
 
@@ -51,7 +51,21 @@ npm run dev
 
 Open http://localhost:5173. The UI also renders when the API is offline, and reports its actual connection state. For production builds, set `VITE_API_BASE_URL` (see `frontend/.env.example`); the development Vite proxy forwards `/api` to `http://127.0.0.1:8000`.
 
-> If cloning before this PR is merged, check out `phase/02-engineering-foundation` to access the code.
+> During Phase 03 PR review, check out `phase/03-scientific-data` to access the latest data pipeline code.
+
+## Phase 03 — import real data locally
+
+Download a FAFB **v783** CSV or CSV.gz from the [official Codex portal](https://codex.flywire.ai/api/download?dataset=fafb). It may require a personal Codex login. **Do not share your API token**, and do not commit raw data files.
+
+From `backend/`, with your Python environment activated:
+
+```powershell
+python -m app.data.pipeline --connections ../data/raw/connections_princeton.csv.gz --out ../data/processed/fafb_sample.sqlite3 --max-neurons 120 --max-edges 750
+$env:NEUROVERSE_DATASET_DB = (Resolve-Path ../data/processed/fafb_sample.sqlite3).Path
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+Read [the full scientific data guide](docs/scientific-data-pipeline.md) before importing. The generated manifest records local source hashes, version, and limitations; it does **not** independently authenticate file origin. Without a configured dataset, neuron endpoints return HTTP 503 instead of invented neuroscience data.
 
 ## Quality checks
 
@@ -66,7 +80,7 @@ npm run build
 python -m pytest -q
 ```
 
-GitHub Actions runs both test jobs for pull requests. Read [Phase 02 Verification](docs/phase-02-verification.md) for actual evidence and incomplete acceptance checks.
+GitHub Actions runs frontend/backend/integration tests and a lightweight verified neuron ID archive check. A large-connectivity checksum/sample audit is available as a manual workflow.  Read [Phase 02 Verification](docs/phase-02-verification.md) for actual evidence and incomplete acceptance checks.
 
 ## Documentation
 
@@ -74,7 +88,13 @@ GitHub Actions runs both test jobs for pull requests. Read [Phase 02 Verificatio
 - [Scientific Standards](docs/scientific-standards.md): papers, claim register, version/unit distinctions, dataset ethics and license.
 - [Cosmic Design Blueprint](docs/design-blueprint.md): visual language, camera and responsive/reduced-motion rules.
 - [Roadmap & Quality Gates](docs/roadmap.md): nine phases and exit criteria.
-- [Phase 02 Verification](docs/phase-02-verification.md): runnable checks and verification limits.
+- [Phase 02 Verification](docs/phase-02-verification.md): completed foundational CI.
+- [Scientific Data Pipeline Guide](docs/scientific-data-pipeline.md): source acquisition, schema, importer, API, caveats.
+- [Phase 03 Quality Gate](docs/phase-03-verification.md): tests and real-data verification status.
+
+## Authentic FlyWire verification
+
+A GitHub Actions run verified the original Zenodo ~852 MB FAFB v783 connectivity archive against its published MD5, extracted a **non-representative** 20,000-row prefix, and ran the CSV/SQLite API pipeline. The verification evidence is [documented here](docs/phase-03-verification.md). To repeat the large download only when needed, use the GitHub Actions workflow **Audit official FAFB connections (manual)**. Do not commit scientific archives, tokens, or user files.
 
 ## Scientific references
 
