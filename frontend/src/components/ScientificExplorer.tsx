@@ -211,13 +211,13 @@ export function ScientificExplorer() {
             ))}
             <button type="button" disabled={!webglAvailable} onClick={() => { setView('front'); setResetKey((v) => v + 1) }}>Reset camera</button>
           </div>
-          {mode === 'tissue' && tissueDisplay === 'depth' && (
+          {mode !== 'skeleton' && tissueDisplay === 'depth' && (
             <div className="atlas-depth-legend" role="note" aria-label="Depth colors legend">
               <span className="atlas-depth-ramp" aria-hidden="true" />
               <span>Relative mesh Z: back → front. <strong>Colors represent position, NOT anatomical regions.</strong></span>
             </div>
           )}
-          {mode === 'tissue' && tissueDisplay === 'mesh' && (
+          {mode !== 'skeleton' && tissueDisplay === 'mesh' && (
             <p className="atlas-topology-note" role="note">Triangle edges come from the original FAFB-derived mesh; these lines are not neurons or synapses.</p>
           )}
           <p className="atlas-figure-foot">The two independent FAFB-derived surfaces represent different segmentation/preparation methods and must not be assumed geometrically identical. The 3D scene is a scientific visualization, not a measurement of live neuronal signals. The surface and skeleton use separate display coordinates until alignment has been independently verified.</p>
