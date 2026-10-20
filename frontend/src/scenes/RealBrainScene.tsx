@@ -32,7 +32,6 @@ function fitGeometry(source: THREE.BufferGeometry): THREE.BufferGeometry {
 
 function TrueTissue({ onStatus }: { onStatus: ScientificSceneProps['onStatus'] }) {
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null)
-  const [epoch, setEpoch] = useState(0)
   useEffect(() => {
     const controller = new AbortController()
     onStatus('loading')
@@ -58,7 +57,7 @@ function TrueTissue({ onStatus }: { onStatus: ScientificSceneProps['onStatus'] }
       if (!controller.signal.aborted) onStatus('error', error instanceof Error ? error.message : 'Mesh unavailable')
     })
     return () => controller.abort()
-  }, [onStatus, epoch])
+  }, [onStatus])
 
   useEffect(() => () => { geometry?.dispose() }, [geometry])
   return (
@@ -69,7 +68,6 @@ function TrueTissue({ onStatus }: { onStatus: ScientificSceneProps['onStatus'] }
         </mesh>
       )}
       {/* No invented biological surface when the official source fails. */}
-      {!geometry && <group userData={{ sourceOnly: true, epoch }} />}
     </group>
   )
 }
