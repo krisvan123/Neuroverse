@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ApiStatus } from './components/ApiStatus'
 import { FeatureCard } from './components/FeatureCard'
-import { NetworkIllustration } from './components/NetworkIllustration'
+import { BrainExperience } from './components/BrainExperience'
 
 const resources = [
   { label: 'Nature · Adult fruit fly connectome', href: 'https://doi.org/10.1038/s41586-024-07558-y' },
@@ -43,7 +43,7 @@ export default function App() {
             <div className="hero-actions"><a className="button-primary" href="#learning">Start your discovery <span aria-hidden="true">↗</span></a><a className="button-text" href="#explore">Explore the concept <span aria-hidden="true">→</span></a></div>
             <div className="hero-meta"><span>01 / 03 — DISCOVER</span><span className="meta-line" /><span>AN INTERACTIVE SCIENCE EXPERIENCE</span></div>
           </div>
-          <div className="hero-art"><NetworkIllustration /></div>
+          <div className="hero-art"><BrainExperience paused={quietMode} onToggleMotion={() => setQuietMode((value) => !value)} /></div>
           <div className="hero-side-caption" aria-hidden="true">CONNECTING KNOWLEDGE · INSPIRED BY NATURE</div>
         </section>
 
@@ -59,14 +59,14 @@ export default function App() {
         </section>
 
         <section id="explore" className="explore-section container" aria-labelledby="explore-title">
-          <div className="explore-panel"><div className="explore-orbit" aria-hidden="true"><div className="orbit-core">✳</div></div><div className="explore-description"><div className="eyebrow"><span className="eyebrow-dash" /> BENEATH THE SURFACE</div><h2 id="explore-title">A real network.<br /><em>A universe of questions.</em></h2><p>Neuroverse will use an attributed subset of the adult fruit fly connectome. The interactive viewer and dataset pipeline are scheduled for later phases; the current network image is conceptual.</p><div className="tag-row"><span>REAL DATA · PLANNED</span><span>FLYWIRE FAFB V783</span></div></div></div>
+          <div className="explore-panel"><div className="explore-orbit" aria-hidden="true"><div className="orbit-core">✳</div></div><div className="explore-description"><div className="eyebrow"><span className="eyebrow-dash" /> BENEATH THE SURFACE</div><h2 id="explore-title">A real network.<br /><em>A universe of questions.</em></h2><p>Neuroverse will use an attributed subset of the adult fruit fly connectome. The source-validated connectome data pipeline is available. Data-linked anatomical exploration arrives in a later phase. The 3D fly-brain hero is original procedural concept art, not a biological reconstruction.</p><div className="tag-row"><span>FAFB V783 PIPELINE · AVAILABLE</span><span>FLYWIRE FAFB V783</span></div></div></div>
         </section>
 
         <section id="lab" className="lab-section container" aria-labelledby="lab-title"><div><div className="eyebrow"><span className="eyebrow-dash" /> THE EXPERIMENTAL MINDSET</div><h2 id="lab-title">Don't just observe.<br /><em>Ask what happens next.</em></h2></div><div><p>Future labs will combine graph theory, computational experiments, and clear distinctions between model results and biological evidence. We are building the foundation first.</p><a href="https://github.com/krisvan123/Neuroverse" target="_blank" rel="noopener noreferrer" className="button-outline">View development on GitHub <span aria-hidden="true">↗</span></a></div></section>
 
         <section id="sources" className="sources-section container" aria-labelledby="sources-title"><div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-dash" /> GROUNDED IN RESEARCH</div><h2 id="sources-title">Wonder, with <em>evidence.</em></h2></div><p>Our aim is to clearly separate observed scientific data, mathematical models, and visual illustration. Follow the sources behind the ideas.</p></div><ul className="source-list">{resources.map((resource) => <li key={resource.href}><a href={resource.href} target="_blank" rel="noopener noreferrer"><span>{resource.label}</span><span aria-hidden="true">↗</span></a></li>)}</ul></section>
       </main>
-      <footer className="site-footer"><div className="container footer-content"><a className="brand" href="#home"><span className="brand-mark" aria-hidden="true">✺</span>NEUROVERSE<span className="brand-period">.</span></a><div><p>Independent, research-inspired science education. Not affiliated with FlyWire.</p><button className="quiet-toggle" type="button" onClick={() => setQuietMode((value) => !value)} aria-pressed={quietMode}>{quietMode ? 'Enable ambient motion' : 'Reduce ambient motion'}</button></div><span>PHASE 02 / FOUNDATION</span></div></footer>
+      <footer className="site-footer"><div className="container footer-content"><a className="brand" href="#home"><span className="brand-mark" aria-hidden="true">✺</span>NEUROVERSE<span className="brand-period">.</span></a><div><p>Independent, research-inspired science education. Not affiliated with FlyWire.</p><button className="quiet-toggle" type="button" onClick={() => setQuietMode((value) => !value)} aria-pressed={quietMode}>{quietMode ? 'Enable ambient motion' : 'Reduce ambient motion'}</button></div><span>PHASE 04 / COSMIC EXPERIENCE</span></div></footer>
     </div>
   )
 }

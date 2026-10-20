@@ -118,3 +118,35 @@ jobs:
           test "$(stat -c%s /tmp/proofread_root_ids_783.npy)" -lt 3000000
       - name: Verify publisher checksum and neuron ID count
         run: PYTHONPATH=backend python -m app.data.official_root_ids /tmp/proofread_root_ids_783.npy
+
+  browser:
+    name: Chromium / desktop & mobile UX
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Exercise real-browser homepage, controls and fallbacks
+        run: npm run test:e2e
+        env:
+          CI: true
+      - name: Save browser screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: neuroverse-phase04-browser-results
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            frontend/test-results/
+            frontend/playwright-report/

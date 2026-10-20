@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import App from './App'
 
 vi.mock('./components/ApiStatus', () => ({ ApiStatus: () => <span>API test placeholder</span> }))
+vi.mock('./scenes/browserSupport', () => ({ supportsWebGL: () => false }))
 
 afterEach(cleanup)
 
@@ -24,9 +25,18 @@ describe('Neuroverse foundation', () => {
     fireEvent.click(enableButton)
     expect(document.documentElement.dataset.motion).toBe('ambient')
   })
+  it('makes 3D controls available but correctly disables them without WebGL', () => {
+    render(<App />)
+    expect(screen.getByRole('button', { name: 'Top view' })).toBeDisabled()
+    expect(screen.getByLabelText('Quality')).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Pause motion' })).toBeEnabled()
+    fireEvent.click(screen.getByRole('button', { name: 'Pause motion' }))
+    expect(screen.getByRole('button', { name: 'Resume motion' })).toBeInTheDocument()
+  })
   it('does not present the conceptual graphic as real research data', () => {
     render(<App />)
-    expect(screen.getByRole('img', { name: /conceptual network illustration/i })).toBeInTheDocument()
-    expect(screen.getByText(/illustrative model · not scientific data/i)).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /conceptual illustrated bilateral fruit fly brain/i })).toBeInTheDocument()
+    expect(screen.getByText(/procedural concept art · not flywire morphology/i)).toBeInTheDocument()
+    expect(screen.getByText(/static visualization — webgl unavailable/i)).toBeInTheDocument()
   })
 })

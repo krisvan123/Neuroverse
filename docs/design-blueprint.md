@@ -2,7 +2,7 @@
 
 **Document ID:** NV-UX-001  
 **Version:** 1.0 · **Date:** 2026-10-20  
-**Status:** Design specification; visuals and interactions have not yet been implemented or usability-tested
+**Status:** Phase 04 conceptual Cosmic homepage built and browser-tested (2026-10-20); data-linked 3D morphology, lessons and experimental workspace remain future phases.
 
 ## 1. Experience vision
 

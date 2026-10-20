@@ -4,22 +4,22 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 03 — Scientific Data Pipeline (completed).** The React frontend, FastAPI API, versioned local CSV/Feather data pipeline, checksum checks, read-only graph endpoints, and automated tests exist. Official FlyWire v783 archives were independently downloaded and checksum-verified in GitHub Actions; **20,000 authentic connectivity records were sampled for integration testing**, yielding a test subgraph of **14 neurons / 15 directed edges**. **No full scientific dataset is bundled or automatically served.** 3D anatomical exploration, lessons, and computational experiments are future phases; the current landing network illustration is conceptual, not a scientific scan.
+> **Current development status: Phase 04 — Cosmic UI/UX (completed).** Neuroverse now has a live original WebGL **conceptual** fruit-fly-brain sculpture, drag-to-orbit/zoom, camera presets, animated background DNA and stars, quality settings, reduced-motion controls, and accessible static WebGL fallback. Desktop/mobile browser tests, unit tests and CI passed. **This is not a verified FlyWire anatomical reconstruction.** FAFB v783 data pipeline remains separate; data-linked morphology, real lessons and experiments belong to later phases.
 
 ## Product direction
 
 - **Learn:** evidence-based neuroscience and computer science lessons.
 - **Explore:** investigate a clearly attributed subset of the FlyWire adult fruit fly connectome (planned).
 - **Experiment:** run graph algorithms and compare reproducible computational results (planned).
-- **Experience:** an accessible Cosmic Neuroscience interface with optional 3D visuals, DNA helices, and subtle star particles (planned Phase 04).
+- **Experience:** an accessible Cosmic Neuroscience interface with a lightweight procedural 3D concept brain, controllable camera, optional animated DNA/helices, and star particles (Phase 04).
 
 ## Technology
 
 | Layer | Choice | Phase 02 status |
 | --- | --- | --- |
-| Frontend | React, TypeScript, Vite, Tailwind CSS | Scaffolded |
+| Frontend | React, TypeScript, Vite, Tailwind CSS | Responsive homepage and tests implemented |
 | API | Python, FastAPI, Pydantic | Running endpoints / tests |
-| 3D scenes | Three.js, React Three Fiber | Planned |
+| 3D scenes | Three.js, React Three Fiber 9 | Concept 3D hero with camera/quality/motion controls; scientific morphology deferred to Phase 05 |
 | Graph analysis | NetworkX | Planned |
 | Scientific data | FlyWire FAFB v783 local CSV import, SQLite subset | Implemented pipeline; no authenticated source imported by default |
 | Persistence | SQLite (selected neuron graph) | Local-only generated dataset, opt-in |
@@ -51,7 +51,13 @@ npm run dev
 
 Open http://localhost:5173. The UI also renders when the API is offline, and reports its actual connection state. For production builds, set `VITE_API_BASE_URL` (see `frontend/.env.example`); the development Vite proxy forwards `/api` to `http://127.0.0.1:8000`.
 
-> During Phase 03 PR review, check out `phase/03-scientific-data` to access the latest data pipeline code.
+> If Phase 04 has not been merged yet, use `git switch phase/04-cosmic-ui` to preview its code.
+
+## Phase 04 — Cosmic Neuroscience controls
+
+The homepage 3D model is a **scientifically labeled conceptual illustration**, not the published fruit fly connectome. Drag to orbit, use the wheel to zoom within the canvas, or use **Front / Left / Right / Top / Reset** buttons for accessible camera presets. **High / Balanced / Saver** changes the particle, fiber, DNA, and pixel-ratio budget; **Pause motion** disables ambient animation while preserving manual camera controls. WebGL-disabled browsers show original SVG artwork instead.
+
+Phase 04 validation: [quality report](docs/phase-04-verification.md) and [browser test screenshots](https://github.com/krisvan123/Neuroverse/actions/runs/39357768257).
 
 ## Phase 03 — import real data locally
 
@@ -90,7 +96,9 @@ GitHub Actions runs frontend/backend/integration tests and a lightweight verifie
 - [Roadmap & Quality Gates](docs/roadmap.md): nine phases and exit criteria.
 - [Phase 02 Verification](docs/phase-02-verification.md): completed foundational CI.
 - [Scientific Data Pipeline Guide](docs/scientific-data-pipeline.md): source acquisition, schema, importer, API, caveats.
-- [Phase 03 Quality Gate](docs/phase-03-verification.md): tests and real-data verification status.
+- [Phase 03 Quality Gate](docs/phase-03-verification.md): authentic archive sample audit.
+- [Phase 04 Visual Experience](docs/phase-04-implementation.md): 3D design, controls, performance limits, accessible fallbacks.
+- [Phase 04 Quality Gate](docs/phase-04-verification.md): actual CI/E2E results and remaining checks.
 
 ## Authentic FlyWire verification
 
