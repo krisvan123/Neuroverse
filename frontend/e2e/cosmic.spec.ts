@@ -37,9 +37,18 @@ test('immersive homepage is informative, interactive, and accessible', async ({ 
   }))
   expect(overflow.pageWidth).toBeLessThanOrEqual(overflow.viewportWidth + 2)
 
+  // Restore Balanced to capture the intended DNA/particle ambience rather than Saver.
+  if (await quality.isEnabled()) await quality.selectOption('balanced')
+  await method.locator('summary').click()
+  await page.locator('.brain-stage').screenshot({
+    path: testInfo.outputPath('brain-detail-phase04.png'),
+    animations: 'disabled',
+  })
+  // Full-page mobile screenshots can stitch repeated GPU tiles in headless Chromium.
+  // Keep an actual mobile viewport capture and a separate canvas close-up instead.
   await page.screenshot({
     path: testInfo.outputPath('homepage-phase04.png'),
-    fullPage: true,
+    fullPage: testInfo.project.name === 'desktop-chromium',
     animations: 'disabled',
   })
   expect(errors).toEqual([])
