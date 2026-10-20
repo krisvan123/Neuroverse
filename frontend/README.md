@@ -32,3 +32,7 @@ On the homepage, drag the sculpture to orbit, use the mouse wheel to zoom while 
 ### Validated Phase 04 UI
 
 [Phase 04 test report](../docs/phase-04-verification.md) documents real Chromium desktop/emulated-mobile tests and R3F scene-frame measurement. Browser screenshots are preserved as artifacts on the cited GitHub Actions run. Physical-device GPU FPS is not asserted.
+
+## Phase 05 scientific explorer
+
+Below the cinematic homepage, open the scientific workspace. It renders unchanged source-derived anatomy (apart from uniform view normalization), supports camera controls, and displays citations and limitations. Tissue-envelope, individual skeleton, and connectivity graph positions are never falsely conflated. It has a clear unavailable state when WebGL or the scientific service fails.

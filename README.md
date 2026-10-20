@@ -4,7 +4,7 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 04 — Cosmic UI/UX (completed).** Neuroverse now has a live original WebGL **conceptual** fruit-fly-brain sculpture, drag-to-orbit/zoom, camera presets, animated background DNA and stars, quality settings, reduced-motion controls, and accessible static WebGL fallback. Desktop/mobile browser tests, unit tests and CI passed. **This is not a verified FlyWire anatomical reconstruction.** FAFB v783 data pipeline remains separate; data-linked morphology, real lessons and experiments belong to later phases.
+> **Current development status: Phase 05 — Scientific Brain Explorer (under review).** The Cosmic 3D homepage remains conceptual artwork. The new scientific explorer fetches a source-pinned FAFB whole-brain tissue envelope and real FAFB v783 precomputed neuron centerlines; it does not fabricate anatomy. The tissue and skeleton are viewed separately until coordinate frames are independently aligned. Local graph connectivity still needs an imported source dataset. Scientific source and browser testing are in progress.
 
 ## Product direction
 
@@ -103,6 +103,10 @@ GitHub Actions runs frontend/backend/integration tests and a lightweight verifie
 ## Authentic FlyWire verification
 
 A GitHub Actions run verified the original Zenodo ~852 MB FAFB v783 connectivity archive against its published MD5, extracted a **non-representative** 20,000-row prefix, and ran the CSV/SQLite API pipeline. The verification evidence is [documented here](docs/phase-03-verification.md). To repeat the large download only when needed, use the GitHub Actions workflow **Audit official FAFB connections (manual)**. Do not commit scientific archives, tokens, or user files.
+
+## Phase 05: source-derived anatomy
+
+Scroll to the scientific explorer below the homepage hero and start FastAPI before requesting anatomy. The tissue mesh is fetched unchanged from a pinned navis-flybrains Git blob, while skeletons are fetched per neuron ID from the public FAFB v783 precomputed archive in Cambridge. Choose a known proofread root ID such as 720575940625431866, then click Load real neuron skeleton. Connection search requires a local imported FAFB subset. If scientific source services are unavailable, no fake mesh is substituted. See [Phase 05 sources and methods](docs/phase-05-implementation.md) and [verification gate](docs/phase-05-verification.md).
 
 ## Scientific references
 

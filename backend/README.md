@@ -41,3 +41,11 @@ python -m compileall -q app tests
 ```
 
 No signup, paid API, or data-provider token is needed to run the app on an already downloaded local CSV. Production CORS requires explicit trusted frontend origins via `NEUROVERSE_CORS_ORIGINS`.
+
+## Phase 05 scientific anatomy endpoints
+
+- GET /api/v1/brain/tissue-source: source, scope, transformation limitations.
+- GET /api/v1/brain/tissue-mesh: pinned authentic FAFB tissue-mask-derived PLY, checked against source Git blob checksum.
+- GET /api/v1/neurons/{root_id}/skeleton: real published FAFB v783 neuron centerline in original nanometer coordinates, edges and radii.
+
+These fixed-source endpoints report 404 or 503 rather than substitute an illustration for missing scientific data. See ../docs/phase-05-implementation.md.
