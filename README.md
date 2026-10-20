@@ -4,7 +4,7 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 08 — Research Journal & Learning Progress (merged, automated engineering PASS).** The local-first Academy now restores completed checks, current chapter and synthetic graph-demo progress across browser sessions. The Lab saves bounded reproducible experiments to a browser-only Research Journal with validated JSON import/export, reopening, deletion and confirmed reset. The authentic FAFB Explorer and earlier computational features remain intact; source-derived meshes are not raw EM volumes, and user-imported connectivity is not independently authenticated. [Final Phase 08 CI](https://github.com/krisvan123/Neuroverse/actions/runs/39426530551) passed all six jobs, 49 unit tests and 66 desktop/mobile browser tests. Manual-device reviews and the five-person Academy pilot remain open. **Phase 09 has not started.**
+> **Current development status: Phase 08 merged and engineering-accepted; Phase 09 release hardening under review.** The Academy and Research Journal persist local progress and versioned saved experiments in the browser. The Lab supports deterministic structural BFS/DFS and reproducible exports. Authentic FAFB-aligned surfaces use pinned source checksums; connectivity requires a separately imported genuine dataset. Production deployment, human learning pilot, physical-device accessibility/performance, and public hosting are not yet verified.
 
 ## Product direction
 
@@ -94,6 +94,8 @@ GitHub Actions runs frontend/backend/integration tests and a lightweight verifie
 - [Scientific Standards](docs/scientific-standards.md): papers, claim register, version/unit distinctions, dataset ethics and license.
 - [Cosmic Design Blueprint](docs/design-blueprint.md): visual language, camera and responsive/reduced-motion rules.
 - [Roadmap & Quality Gates](docs/roadmap.md): nine phases and exit criteria.
+- [Phase 09 Release Audit](docs/phase-09-release-audit.md): production hosting, verification and remaining manual gates.
+- [Data & Third-Party Notices](docs/licenses-and-attribution.md): scientific source licensing and noncommercial constraints.
 - [Phase 02 Verification](docs/phase-02-verification.md): completed foundational CI.
 - [Scientific Data Pipeline Guide](docs/scientific-data-pipeline.md): source acquisition, schema, importer, API, caveats.
 - [Phase 03 Quality Gate](docs/phase-03-verification.md): authentic archive sample audit.
@@ -153,3 +155,11 @@ Open the homepage at #lab (The Lab navigation item). Choose a labeled synthetic 
 The Academy now retains only completed checks, current chapter and synthetic graph-demo completion in this browser. The Computational Experiment Lab can save a complete reproducible run to a **local Research Journal** at `/#journal`; reopen it, export/import versioned JSON, delete individual records or reset all local progress. No account or server database is used. Files imported from users are validated but not independently authenticated as official FAFB material.
 
 Phase 08 passed the automated engineering gate in [PR #14](https://github.com/krisvan123/Neuroverse/pull/14) ([6/6 CI jobs, 66/66 Chromium checks](https://github.com/krisvan123/Neuroverse/actions/runs/39426530551)). See [Phase 08 persistence, provenance, privacy and tests](docs/phase-08-research-journal.md). Browser storage is device-specific and can be cleared: export a journal JSON backup before resetting or changing browsers. Real-device and accessibility checks remain open.
+
+## Phase 09 — Release candidate and zero-cost demonstration
+
+A single-container deployment now builds the React app and serves it from the same FastAPI origin. The **Dockerfile** includes a non-root runtime, versioned immutable UI assets, isolated /api endpoints and basic security headers. Render's published `free` Docker Web Service plan is encoded in [render.yaml](render.yaml); no account, paid API, dataset archive, token or uploaded user journal is bundled.
+
+Read [Phase 09 deployment instructions, limits and manual acceptance gates](docs/phase-09-release-audit.md) before creating a host. Render's free service spins down after idle time and may take around a minute to reactivate; ephemeral SQLite databases do not persist across restarts. The actual live URL and manual device/Lighthouse results must be recorded after human deployment, not fabricated.
+
+Source and license restrictions remain important: [Data & Third-Party Notices](docs/licenses-and-attribution.md). Source-derived meshes are fetched with checksum verification, not committed to this repository.
