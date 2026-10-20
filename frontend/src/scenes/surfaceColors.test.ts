@@ -15,7 +15,7 @@ describe('Phase 05.2 FAFB display encoding', () => {
     expect(Array.from(geometry.getAttribute('position').array)).toEqual(originalPositions)
     expect(Array.from(geometry.getIndex()!.array)).toEqual(originalIndices)
     expect(geometry.getAttribute('color').count).toBe(4)
-    expect(geometry.getAttribute('color').getR(0)).not.toBe(geometry.getAttribute('color').getR(2))
+    expect(geometry.getAttribute('color').getX(0)).not.toBe(geometry.getAttribute('color').getX(2))
     geometry.dispose()
   })
   it('rejects invalid constant-depth or missing source geometry', () => {
