@@ -157,3 +157,54 @@ h2 { margin-top:25px;font-size:clamp(42px,4.4vw,67px);line-height:1.1 }
 @media(prefers-reduced-motion:reduce) { html:not([data-motion='ambient']) {scroll-behavior:auto} html:not([data-motion='ambient']) *,html:not([data-motion='ambient']) *::before,html:not([data-motion='ambient']) *::after { animation:none!important;transition-duration:.01ms!important } }
 html[data-motion='quiet'] { scroll-behavior:auto }
 html[data-motion='quiet'] *,html[data-motion='quiet'] *::before,html[data-motion='quiet'] *::after { animation:none!important;transition-duration:.01ms!important }
+
+
+/* -------------------------------------------------------------
+   Phase 04 — Interactive 3D Cosmic Neuroscience artwork.
+   Canvas is decorative; all camera/quality controls live in DOM.
+   ------------------------------------------------------------- */
+.brain-experience{position:relative;width:100%;max-width:650px;margin-inline:auto}
+.brain-stage{height:clamp(380px,40vw,540px);position:relative;isolation:isolate;border-radius:50%;background:radial-gradient(ellipse at 50% 50%,rgba(62,129,177,.15),transparent 65%)}
+.brain-stage:before{content:"";position:absolute;inset:8%;border:1px solid rgba(116,189,225,.14);border-radius:50%;transform:rotate(-18deg) scaleY(.79);pointer-events:none;z-index:2}
+.brain-stage-outline{position:absolute;inset:16% 9%;border:1px solid rgba(118,202,248,.1);border-radius:50%;transform:rotate(30deg) scaleY(.65);pointer-events:none;z-index:2}
+.brain-stage canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;outline-offset:2px}
+.poster-underlay,.scene-crash-fallback{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.poster-underlay{z-index:0}
+.brain-poster-svg{width:100%;max-height:100%;filter:drop-shadow(0 0 24px rgba(115,216,250,.15))}
+.scene-crash-fallback{z-index:5;background:radial-gradient(ellipse,rgba(26,42,72,.9),rgba(9,17,31,.95));}
+.scene-crash-fallback span{position:absolute;bottom:10%;width:85%;text-align:center;color:#d0e1ef;font-size:12px}
+.neuro-webgl-fallback{height:100%;display:grid;place-items:center;background:#122037;color:#d9eaf2;font-size:12px;padding:25px;text-align:center}
+.poster-fallback{position:absolute;bottom:11%;left:0;right:0;display:flex;justify-content:center;z-index:4}
+.poster-fallback span{border:1px solid rgba(145,191,223,.18);background:rgba(11,22,39,.76);padding:8px 12px;font-size:11px;color:#d6e1ec}
+.scene-loading{position:absolute;top:45%;width:100%;text-align:center;font-size:11px;color:#bbd7e7;z-index:2;pointer-events:none}
+.brain-stage-kicker,.brain-stage-index,.brain-stage-caption{position:absolute;z-index:3;pointer-events:none;font-size:9px;font-weight:750;letter-spacing:.14em}
+.brain-stage-kicker{display:flex;gap:8px;align-items:center;top:6%;left:3%;color:#a6dbeb}
+.brain-stage-index{top:7%;right:2%;color:#8aa3ba}
+.brain-stage-caption{bottom:6%;right:4%;color:#a8c4d5;text-align:right}
+.brain-controls{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px;background:rgba(15,27,47,.76);border:1px solid rgba(126,184,217,.19);border-radius:12px;backdrop-filter:blur(8px);position:relative;z-index:4}
+.brain-view-controls,.brain-prefs{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.brain-control{border:1px solid transparent;border-radius:7px;background:transparent;color:#b0c6da;cursor:pointer;font-size:11px;min-height:34px;padding:7px 10px;transition:background .15s,color .15s}
+.brain-control:hover:enabled{background:rgba(115,216,250,.1);color:#eaf9fe}
+.brain-control.active{border-color:rgba(119,212,238,.39);background:rgba(74,145,191,.2);color:#edfbff}
+.brain-control:disabled,.brain-prefs select:disabled{opacity:.48;cursor:not-allowed}
+.brain-control-reset{color:#8fcae0}
+.quality-label{color:#a9bdcf;font-size:10px;font-weight:700}
+.brain-prefs select{max-width:97px;background:#122942;border:1px solid #38526b;border-radius:6px;color:#e0f2fb;font-size:11px;padding:8px 5px;cursor:pointer}
+.motion-control{background:none;border:1px solid rgba(156,200,224,.28);border-radius:7px;color:#cbdfeb;font-size:11px;padding:8px 10px;min-height:34px;cursor:pointer}
+.motion-control:hover{background:rgba(115,216,250,.08)}
+.brain-instructions{margin:13px 6px 0;font-size:11px;line-height:1.5;color:#9db1c5;text-align:center}
+.visualization-disclosure{margin:11px 5px 0;padding:10px 12px;border:1px solid rgba(131,183,214,.15);border-radius:7px;background:rgba(13,26,47,.64);color:#a6c5d8;font-size:11px;line-height:1.8}
+.visualization-disclosure summary{cursor:pointer;color:#c7e6f1;font-weight:700}
+.visualization-disclosure p{margin-top:10px}
+.visualization-disclosure strong{color:#e9f3fa;font-weight:650}
+@media (max-width:1200px){.brain-controls{flex-wrap:wrap;justify-content:center}.brain-stage{height:clamp(370px,44vw,540px)}}
+@media (max-width:900px){.brain-experience{max-width:660px}.brain-stage{height:500px}.brain-stage-kicker{left:6%}}
+@media (max-width:670px){
+  .brain-stage{height:clamp(320px,85vw,450px)}
+  .brain-stage-kicker,.brain-stage-index,.brain-stage-caption{font-size:8px}
+  .brain-stage-index{top:12%;right:4%}
+  .brain-controls{padding:10px;gap:8px}
+  .brain-view-controls,.brain-prefs{width:100%;justify-content:center}
+  .brain-control{font-size:11px;padding:6px 8px}
+  .brain-instructions{font-size:11px}
+}
