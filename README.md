@@ -4,7 +4,7 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 05.3 — Mission Motion & Scientific Anatomy Clarity (merged; CI-verified).** This phase adds a seamlessly scrolling (and globally pausable) mission statement, original-FAFB solid anatomical surface shading without wire overlays, explicit render-mode labels and distinct depth/triangle inspection styles. The homepage now defaults to the **published FlyWire/FAFB14 neuropil mesh** (a registered neuropil template). Users can switch to the independently published **whole-brain FAFB tissue-mask-derived surface**, or inspect original mesh triangles and non-biological depth colors. Both assets are pinned to source Git blob checksums. Two visible animated DNA helices and more obvious parallax-style drifting stars are artistic overlays, not neuron observations. Neither surface is the original raw EM voxel volume or a named-neuropil segmentation atlas.
+> **Current development status: Phase 05.3 — Motion, Authentic Anatomy & Connectome Onboarding (final UX audit underway).** This phase adds a seamlessly scrolling (and globally pausable) mission statement, original-FAFB solid anatomical surface shading without wire overlays, explicit render-mode labels and distinct depth/triangle inspection styles. The homepage now defaults to the **published FlyWire/FAFB14 neuropil mesh** (a registered neuropil template). Users can switch to the independently published **whole-brain FAFB tissue-mask-derived surface**, or inspect original mesh triangles and non-biological depth colors. Both assets are pinned to source Git blob checksums. Two visible animated DNA helices and more obvious parallax-style drifting stars are artistic overlays, not neuron observations. Neither surface is the original raw EM voxel volume or a named-neuropil segmentation atlas.
 
 ## Product direction
 
@@ -132,3 +132,7 @@ Neuroverse is not a medical service and is not affiliated with or endorsed by th
 ## Contributions
 
 This is a phased educational engineering project. See the roadmap before proposing major features. Do not commit secret credentials, unlicensed assets, large raw datasets, or uncited scientific claims.
+
+### Phase 05.3 usability extension
+
+When the real directed-connectivity graph is unavailable locally, the Scientific Explorer now provides the original FlyWire import steps instead of a dead-end error. After importing the official connections CSV, use **Recheck dataset availability** and, when available, **Use this dataset's seed neuron**. No fictional synapses are generated. The 3D hero stops continuous rendering offscreen or in a hidden tab, retaining selected camera views on return. See [Phase 05.3 methodology and limitations](docs/phase-05-3-visual-polish.md).

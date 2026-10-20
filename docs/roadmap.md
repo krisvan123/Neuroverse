@@ -2,7 +2,7 @@
 
 **Document ID:** NV-ROADMAP-001  
 **Version:** 1.0 · **Baseline:** 2026-10-20  
-**Project state:** Phases 01–05 completed to their limited engineering scopes. Phase 05.2 adds original FAFB-derived neuropil and whole-tissue mesh comparison, measurable drifting global CSS stars, and two animated DNA helices (expanded CI acceptance passed; 30/30 desktop/mobile Chromium tests, physical-device visual acceptance pending). **Full 3D EM segmentation alignment and anatomical region labels remain unverified and are not claimed.** Phase 05.3 shipped a seamless reduced-motion-safe mission marquee and visibly distinct solid/depth/wireframe authenticated anatomy, PR #10 merged with 6/6 CI jobs and 36/36 desktop/mobile browser tests. Phase 06 has NOT started; Phases 06–09 remain planned.
+**Project state:** Phases 01–05 completed to their limited engineering scopes. Phase 05.2 adds original FAFB-derived neuropil and whole-tissue mesh comparison, measurable drifting global CSS stars, and two animated DNA helices (expanded CI acceptance passed; 30/30 desktop/mobile Chromium tests, physical-device visual acceptance pending). **Full 3D EM segmentation alignment and anatomical region labels remain unverified and are not claimed.** Phase 05.3 shipped a seamless reduced-motion-safe mission marquee and visibly distinct solid/depth/wireframe authenticated anatomy, PR #10 merged with 6/6 CI jobs and 36/36 desktop/mobile browser tests. Final Phase 05.3 UX pass adds real-connectome onboarding, selected-neuron seed defaults and offscreen WebGL suspension; Phase 06 has NOT started; Phases 06–09 remain planned.
 
 ## 1. Delivery philosophy
 

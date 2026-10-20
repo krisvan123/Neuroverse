@@ -52,3 +52,7 @@ Run frontend and FastAPI in two different terminals. From repo root in PowerShel
 ## Phase 05.3 — mission marquee and solid original morphology
 
 The mission band scrolls an equal-width repeated statement seamlessly; OS reduced-motion and global Pause Motion show it as readable static text. The published FAFB neuropil remains the default source, now matte and visibly solid in Anatomy mode (including High Quality), with Depth and Wireframe intentionally different. No original scientific geometry or connectivity source is changed. See the [Phase 05.3 note](../docs/phase-05-3-visual-polish.md).
+
+### Final Phase 05.3 UX refinements
+
+If `datasets/current` reports missing connectivity, **Inspect directed connections** opens a source-specific FlyWire import guide with correct Windows commands and **Recheck dataset availability**. Imported bounded subgraphs expose their actual selected seed ID to avoid searching an excluded example neuron. The Three.js hero stops continuous frames when scrolled away/tab hidden, resuming when visible, without resetting the current user-selected view. These runtime optimizations do not alter the original FAFB anatomical polygons.

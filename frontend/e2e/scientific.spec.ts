@@ -15,10 +15,12 @@ test('real-data explorer keeps accuracy disclosures and handles missing imported
   await page.goto('/')
   const explorer = page.locator('#explore')
   await expect(explorer.getByRole('heading', { name: /the real anatomy/i })).toBeVisible()
-  await expect(explorer.getByText(/No selected connectivity dataset configured/i)).toBeVisible()
+  await expect(explorer.getByText(/3D anatomy is ready\. Directed connectivity needs one additional local dataset/i)).toBeVisible()
   await expect(explorer.getByText(/separate display coordinates until alignment/i)).toBeVisible()
   await explorer.getByRole('button', { name: 'Inspect directed connections' }).click()
-  await expect(explorer.getByRole('alert')).toContainText(/has not been imported locally/i)
+  await expect(explorer.getByRole('alert')).toContainText(/Connectome connections need a locally imported/i)
+  await expect(explorer.getByText(/Set up real FAFB directed connections \(Windows\)/i)).toBeVisible()
+  await expect(explorer.getByText(/python -m app.data.pipeline --connections/i)).toBeVisible()
   await explorer.getByText('Scientific sources and limitations').click()
   await expect(explorer.getByRole('link', { name: /whole-brain mask-derived surface/i })).toHaveAttribute('href', /FLYWIRE_whole_brain\.md/)
 })
@@ -151,4 +153,57 @@ test('scientific explorer compares two source-derived brain envelopes without fa
   await neuropil.click()
   await expect(neuropil).toHaveAttribute('aria-pressed', 'true')
   await expect(explorer.getByText(/two independent FAFB-derived surfaces/i)).toBeVisible()
+})
+
+
+test('empty FAFB connections provide a real source-only import path and refresh without page reload', async ({ page }) => {
+  let ready = false
+  const actualSeed = '720575940625448968'
+  await page.route('**/api/v1/datasets/current', async route => {
+    await route.fulfill({ json: ready
+      ? { available: true, dataset: 'FlyWire FAFB', snapshot: '783',
+        nodes_selected: 2, edges_selected: 1, seed_root_id: actualSeed,
+        source_identity_verified: false }
+      : { available: false, dataset: 'FlyWire FAFB', snapshot: '783',
+        source_identity_verified: false } })
+  })
+  await page.goto('/')
+  const explorer = page.locator('#explore')
+  await expect(explorer.getByRole('button', { name: 'Recheck dataset availability' })).toBeVisible()
+  await explorer.getByRole('button', { name: 'Inspect directed connections' }).click()
+  const setup = explorer.locator('.atlas-import-steps')
+  await expect(setup).toHaveAttribute('open', '')
+  await expect(setup.getByRole('link', { name: /FlyWire Codex download portal/i }))
+    .toHaveAttribute('href', /codex\.flywire\.ai/)
+  await expect(setup.getByText(/NEUROVERSE_DATASET_DB/)).toBeVisible()
+  await expect(explorer.getByRole('heading', { name: 'Directed structural network' })).toHaveCount(0)
+  ready = true
+  await explorer.getByRole('button', { name: 'Recheck dataset availability' }).click()
+  await expect(explorer.getByText('2 selected neurons')).toBeVisible()
+  await expect(explorer.getByText('1 directed connections')).toBeVisible()
+  await expect(explorer.getByLabel('Neuron root ID')).toHaveValue(actualSeed)
+  await explorer.getByLabel('Neuron root ID').fill('720575940625431866')
+  await explorer.getByRole('button', { name: 'Use this dataset\\'s seed neuron' }).click()
+  await expect(explorer.getByLabel('Neuron root ID')).toHaveValue(actualSeed)
+})
+
+test('connectivity status refresh never overrides a visitor-edited neuron ID', async ({ page }) => {
+  let seed = '720575940625448968'
+  await page.route('**/api/v1/datasets/current', async route => {
+    await route.fulfill({ json: {
+      available: true, dataset: 'FlyWire FAFB', snapshot: '783',
+      nodes_selected: 2, edges_selected: 1, seed_root_id: seed,
+      source_identity_verified: false,
+    } })
+  })
+  await page.goto('/')
+  const explorer = page.locator('#explore')
+  await expect(explorer.getByLabel('Neuron root ID')).toHaveValue(seed)
+  const userChoice = '720575940625431866'
+  await explorer.getByLabel('Neuron root ID').fill(userChoice)
+  seed = '720575940625444444'
+  await explorer.getByRole('button', { name: 'Recheck dataset availability' }).click()
+  await expect(explorer.getByLabel('Neuron root ID')).toHaveValue(userChoice)
+  await explorer.getByRole('button', { name: 'Use this dataset\\'s seed neuron' }).click()
+  await expect(explorer.getByLabel('Neuron root ID')).toHaveValue(seed)
 })

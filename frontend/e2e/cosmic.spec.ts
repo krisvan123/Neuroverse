@@ -326,3 +326,36 @@ test('Phase 05.3 original FAFB anatomy is solid and three canvas renderings visi
   await page.getByRole('button', { name: 'Anatomy', exact: true }).click()
   await expect(stage.getByText('SOLID ANATOMY')).toBeVisible()
 })
+
+
+test('offscreen 3D hero suspends continuous WebGL frames and resumes without changing selected view', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  if (!(await page.getByLabel('Quality').isEnabled())) {
+    test.skip(true, 'WebGL unavailable; existing static fallback is covered')
+  }
+  const stage = page.locator('.brain-stage')
+  await expect(stage).toHaveAttribute('data-render-state', 'animating')
+  await expect.poll(() => page.evaluate(() => (window as Window & {
+    __neuroverseSceneDiagnostics?: { renderedSceneFrames: number }
+  }).__neuroverseSceneDiagnostics?.renderedSceneFrames ?? 0), { timeout: 20000 }).toBeGreaterThan(15)
+  await page.getByRole('button', { name: 'Left view' }).click()
+  await expect(page.getByRole('button', { name: 'Left view' })).toHaveAttribute('aria-pressed', 'true')
+  await page.locator('#sources').scrollIntoViewIfNeeded()
+  await expect(stage).toHaveAttribute('data-render-state', 'paused', { timeout: 10000 })
+  await page.waitForTimeout(300)
+  const stoppedAt = await page.evaluate(() => (window as Window & {
+    __neuroverseSceneDiagnostics?: { renderedSceneFrames: number }
+  }).__neuroverseSceneDiagnostics?.renderedSceneFrames ?? 0)
+  await page.waitForTimeout(650)
+  const after = await page.evaluate(() => (window as Window & {
+    __neuroverseSceneDiagnostics?: { renderedSceneFrames: number }
+  }).__neuroverseSceneDiagnostics?.renderedSceneFrames ?? 0)
+  expect(after - stoppedAt).toBeLessThanOrEqual(15)
+  await stage.scrollIntoViewIfNeeded()
+  await expect(stage).toHaveAttribute('data-render-state', 'animating', { timeout: 10000 })
+  await expect(page.getByRole('button', { name: 'Left view' })).toHaveAttribute('aria-pressed', 'true')
+  await expect.poll(() => page.evaluate(() => (window as Window & {
+    __neuroverseSceneDiagnostics?: { renderedSceneFrames: number }
+  }).__neuroverseSceneDiagnostics?.renderedSceneFrames ?? 0), { timeout: 20000 }).toBeGreaterThan(after + 10)
+})
