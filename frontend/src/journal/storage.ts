@@ -151,7 +151,7 @@ export function clearJournal(): void {
   notify()
 }
 export function exportJournalJSON(): string {
-  return JSON.stringify({schema:'neuroverse-journal/v1',records:readJournal()},null,2)+'\n'
+  return JSON.stringify({schema:'neuroverse-journal/v1',records:readJournal()})+'\n'
 }
 
 /** Import is all-or-nothing: validate every entry and storage size before a write.

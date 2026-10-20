@@ -95,21 +95,21 @@ export function ResearchJournal({onReopen}:{onReopen:(experiment:LabExport)=>voi
           <p>Results are recomputed and validated when loaded, not treated as observed brain activity.</p></div>
         <div className="journal-actions">
           <button type="button" onClick={handleExport} disabled={Boolean(error)}>Export journal JSON ↓</button>
-          <label className="journal-import" htmlFor="journal-import-file">Import JSON ↑</label>
           <input id="journal-import-file" type="file" accept=".json,application/json"
             onChange={event=>{void importFile(event)}}/>
+          <label className="journal-import" htmlFor="journal-import-file">Import JSON ↑</label>
         </div>
       </div>
       {error&&<p className="journal-notice journal-error" role="alert">{error}
         <button type="button" onClick={refresh}>Retry reading storage</button></p>}
       {status&&<p className="journal-notice" role="status">{status}</p>}
       <div className="journal-records" aria-label="Saved computational experiments">
-        {records.length===0?(
+        {records.length===0&&!error?(
           <div className="journal-empty"><span aria-hidden="true">✧</span>
             <h3>Your research begins with a question.</h3>
             <p>No experiments saved on this browser. Run a synthetic example in the Lab, then select “Save to journal”. You can also import an original Phase 07 JSON export.</p>
             <a href="#lab">Open the experiment lab ↗</a></div>
-        ):records.map(item=>(
+        ):!error?records.map(item=>(
           <article className="journal-card" key={item.id}>
             <div><span className="journal-tag">{item.experiment.graph.origin==='synthetic-teaching-example'
               ?'SYNTHETIC TEACHING MODEL':'USER-IMPORTED FAFB V783 · UNVERIFIED FILE ORIGIN'}</span>
@@ -122,7 +122,7 @@ export function ResearchJournal({onReopen}:{onReopen:(experiment:LabExport)=>voi
               <button type="button" className="journal-delete" onClick={()=>erase(item.id)}>Delete record</button>
             </div>
           </article>
-        ))}
+        )):<p className="journal-notice journal-error" role="status">Journal contents are hidden until storage can be read safely. Existing records are left unchanged.</p>}
       </div>
       <div className="journal-privacy">
         <div><h3>Privacy & data ownership</h3>

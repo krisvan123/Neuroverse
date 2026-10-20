@@ -12,12 +12,13 @@ test('Phase 08 restores Academy progress across reload without retaining wrong a
   await page.reload()
   await expect(academy.getByRole('progressbar')).toHaveAttribute('aria-valuenow','1')
   await expect(academy.getByRole('heading',{name:'Read a connectome',exact:true})).toBeVisible()
-  await academy.getByRole('navigation',{name:'Academy lesson chapters'}).getByRole('button').first().click()
-  await expect(academy.locator('.academy-question').first().getByRole('radio').first()).not.toBeChecked()
-  await expect(academy.locator('.academy-chapter').first()).toContainText('1/2 checked')
   await page.goto('/#journal')
   await expect(page.locator('#journal')).toContainText('Academy checks passed')
   await expect(page.locator('#journal .journal-summary')).toContainText('03')
+  await page.goto('/#academy')
+  await academy.getByRole('navigation',{name:'Academy lesson chapters'}).getByRole('button').first().click()
+  await expect(academy.locator('.academy-question').first().getByRole('radio').first()).not.toBeChecked()
+  await expect(academy.locator('.academy-chapter').first()).toContainText('1/2 checked')
 })
 
 test('Phase 08 saves and reopens a graph experiment with identical numerical outputs',async({page})=>{
