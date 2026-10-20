@@ -5,7 +5,7 @@ Prerequisites: Node.js >=22.12 (Vite 7 also supports Node >=20.19).
 Run from `frontend/`:
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 

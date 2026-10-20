@@ -20,14 +20,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Bootstrap dependencies
-        run: npm install --no-audit --no-fund
-      - name: Report generated lockfile for reproducibility bootstrap
-        run: |
-          echo "NEUROVERSE_LOCKFILE_BEGIN"
-          base64 -w 0 package-lock.json
-          echo
-          echo "NEUROVERSE_LOCKFILE_END"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
       - name: Lint
         run: npm run lint
       - name: Typecheck

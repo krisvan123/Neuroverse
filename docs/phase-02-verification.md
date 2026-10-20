@@ -29,3 +29,10 @@
 ## Verification honesty
 
 Do not equate code review, source-level checks, or a green backend test suite with a passing full-stack integration test.
+
+## GitHub Actions evidence
+
+- Initial full-stack CI run on 2026-10-20: https://github.com/krisvan123/Neuroverse/actions/runs/39348488931 — both jobs **passed**, including frontend installation, lint, typecheck, tests, build, and backend tests.
+- The initial runner-generated npm lockfile was imported without manually fabricating dependency resolutions; the workflow now uses `npm ci` instead of `npm install`.
+- Verify a second GitHub Actions run passes with the committed lockfile before marking P02-01/P02-10 complete.
+- Manual fresh-clone and multi-viewport browser checks have not been executed in this environment.
