@@ -2,6 +2,10 @@
 
 **Status:** engineering release candidate. A green automated workflow is required before merge; **a public deploy, five-person educational pilot, human accessibility audit, physical mobile/desktop GPU measurements, and measured Lighthouse scores remain unverified** until evidence is recorded. Do not substitute CI for these gates.
 
+## Hosting update — Vercel Hobby (current preferred path)
+
+After the Render setup requested a card on this account, the deployment target was switched to **Vercel Hobby**. `vercel.json` defines same-origin Vercel Services (`frontend/` Vite, `backend/` FastAPI) with `/api/*` routing to Python before the frontend catch-all. See [Vercel deployment and account-specific fallback instructions](deploy-vercel.md). The tested Docker/Render plan below remains optional and should not be presented as a verified Vercel deployment. Actual production URL and host-side deploy tests are still **NOT VERIFIED**.
+
 ## Deployment target and rationale
 
 A single, same-origin container hosts a static Vite React production build on `/` and the FastAPI scientific service on `/api/v1/*`. This avoids needing separate paid hosting or exposing a broad production CORS wildcard.

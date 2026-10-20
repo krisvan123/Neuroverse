@@ -40,3 +40,6 @@ data/processed/
 frontend/test-results/
 frontend/playwright-report/
 frontend/blob-report/
+
+# Vercel local project metadata (never commit account details)
+.vercel/
