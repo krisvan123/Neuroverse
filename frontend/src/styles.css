@@ -304,3 +304,42 @@ html[data-motion='quiet'] *,html[data-motion='quiet'] *::before,html[data-motion
 }
 .hero-model-alert{border-color:rgba(238,182,150,.47);color:#ffe4d6}
 .visualization-disclosure a{color:#a5e7fa;text-decoration:underline}
+
+
+/* Phase 05.2: scientific visual inspection controls / non-biological depth legend. */
+.atlas-render-modes{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  padding:11px 20px;background:rgba(11,26,46,.92);border-bottom:1px solid #2b4b63;
+}
+.atlas-render-label{
+  font-size:10px;color:#97bdd4;letter-spacing:.13em;font-weight:800;margin-right:6px;
+}
+.atlas-render-modes button{
+  border:1px solid rgba(138,185,212,.36);color:#d1eaf5;background:#162f48;
+  font-size:11px;padding:9px 11px;border-radius:5px;cursor:pointer;
+}
+.atlas-render-modes button.selected{
+  background:#285d78;color:#f3fcff;border-color:#81d8ef;
+}
+.atlas-render-modes button:hover:enabled{border-color:#a6eeff}
+.atlas-render-modes button:disabled{opacity:.48;cursor:not-allowed}
+.atlas-depth-legend{
+  display:flex;gap:12px;align-items:center;padding:13px 20px;
+  background:rgba(9,24,41,.92);border-top:1px solid #2b4b63;
+  font-size:11px;line-height:1.6;color:#c2dce9;
+}
+.atlas-depth-legend strong{color:#ffdfbc}
+.atlas-depth-ramp{
+  width:112px;max-width:26%;height:12px;flex-shrink:0;border-radius:3px;
+  background:linear-gradient(90deg,#7764ca,#49c2d8,#f1d6a7);
+  border:1px solid rgba(255,255,255,.25);
+}
+.atlas-topology-note{
+  padding:13px 20px;color:#e0cedd;background:rgba(25,22,43,.76);
+  border-top:1px solid #3b4269;font-size:11px;line-height:1.6;
+}
+@media(max-width:650px){
+ .atlas-render-modes{padding-inline:12px}
+ .atlas-render-modes button{font-size:10px;padding:8px}
+ .atlas-render-label{flex-basis:100%}
+}

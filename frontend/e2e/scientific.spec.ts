@@ -116,3 +116,24 @@ test('scientific 3D viewer renders a controlled PLY fixture and provides camera 
   await explorer.getByRole('button', { name: 'Reset camera' }).click()
   await expect(explorer.getByRole('button', { name: 'Front', exact: true })).toHaveAttribute('aria-pressed', 'true')
 })
+
+
+test('FAFB scan-derived mesh display modes label depth honestly and preserve camera UX', async ({ page }) => {
+  await page.goto('/')
+  const explorer = page.locator('#explore')
+  const shading = explorer.getByRole('button', { name: 'Tissue shading' })
+  if (!(await shading.isEnabled())) {
+    await expect(shading).toBeDisabled()
+    return
+  }
+  await expect(shading).toHaveAttribute('aria-pressed', 'true')
+  const depth = explorer.getByRole('button', { name: 'Depth colors' })
+  await depth.click()
+  await expect(depth).toHaveAttribute('aria-pressed', 'true')
+  await expect(explorer.getByRole('note', { name: 'Depth colors legend' }))
+    .toContainText('NOT anatomical regions')
+  await explorer.getByRole('button', { name: 'Triangle mesh' }).click()
+  await expect(explorer.getByText(/Triangle edges come from the original FAFB-derived mesh/i)).toBeVisible()
+  await shading.click()
+  await expect(shading).toHaveAttribute('aria-pressed', 'true')
+})
