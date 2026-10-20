@@ -21,13 +21,13 @@ npm run build
 npm run test:e2e   # install Chromium first: npx playwright install chromium
 ```
 
-The homepage loads a **source-derived FAFB whole-brain tissue surface** from the local FastAPI API. The original, pinned PLY source is checksum-verified in the backend; geometry is only uniformly normalized for display. A static **conceptual SVG illustration** appears if WebGL is unavailable. The surface is NOT a raw microscopy voxel scan or an atlas of every neuron.
+The homepage defaults to a **published FAFB14-aligned FlyWire neuropil template mesh** and offers the **FAFB tissue-mask-derived whole-brain surface** as a source-verified alternative from the local FastAPI API. The original, pinned PLY source is checksum-verified in the backend; geometry is only uniformly normalized for display. A static **conceptual SVG illustration** appears if WebGL is unavailable. The surface is NOT a raw microscopy voxel scan or an atlas of every neuron.
 
 For production, use `VITE_API_BASE_URL` to point to the HTTPS backend origin. Vite env values are publicly embedded in the frontend; never put secrets in this file.
 
 ## Cosmic 3D behavior
 
-On the homepage, drag the FAFB tissue surface to orbit, use the mouse wheel to zoom while over its canvas, or use the **Front / Left / Right / Top / Reset** buttons. Motion and display quality are independent controls. **Saver** cuts geometry and disables background DNA; **Pause motion** disables ambient movement without disabling manual camera exploration. WebGL absence yields original SVG concept artwork and the rest of the website remains accessible. No user account or GPU-heavy imported scientific mesh is required.
+On the homepage, drag the original FAFB-aligned neuropil surface to orbit, use the mouse wheel to zoom while over its canvas, or use the **Front / Left / Right / Top / Reset** buttons. Motion and display quality are independent controls. **Saver** cuts particles, retains one static DNA accent, and disables continuous 3D rendering; **Pause motion** disables ambient movement without disabling manual camera exploration. WebGL absence yields original SVG concept artwork and the rest of the website remains accessible. No account is required, but the authentic scientific mesh requires the FastAPI backend and its upstream source.
 
 ### Validated Phase 04 UI
 
@@ -42,3 +42,9 @@ Below the cinematic homepage, open the scientific workspace. It renders unchange
 The Scientific Explorer has tissue-shaded, normalized-Z false-color, and original-triangle wireframe modes. The depth gradient is a **coordinate visualization**, not verified anatomical region labeling. Source geometry and connectivity remain separate.
 
 Across **every** page section, three subtly drifting decorative background star layers and an occasional meteor provide cosmic ambience. A footer/hero global motion control stops their CSS animation, and system reduced-motion settings initialize them paused. Test with `npm run test` and `npm run test:e2e`. See [Phase 05.2 implementation](../docs/phase-05-2-visualization.md).
+
+### Phase 05.2 final anatomy upgrade
+
+The source switch **Neuropil / Whole tissue** loads *two different published research meshes*, each validated with a pinned Git blob SHA-1 by FastAPI. The default is the FlyWire-space neuropil mesh transformed from the FAFB14 neuropil template; whole tissue is a processed FAFB tissue mask surface. The **Anatomy / Depth / Wireframe** buttons change presentation only. Real tissue polygon geometry is not hand-sculpted. Their coordinate registration to each other is not assumed to be exact. Two rotating DNA helix decorations and a moving tracer remain separate from biological sources. Site-wide CSS star layers now move >9px in approximately 1.3s in a browser test, except under reduced motion.
+
+Run frontend and FastAPI in two different terminals. From repo root in PowerShell: `cd frontend; npm run dev` for UI, and in a separate terminal `cd backend; .\\.venv\\Scripts\\Activate.ps1; python -m uvicorn app.main:app --reload` for original PLY API. Windows may need to create a `backend/.venv` first.

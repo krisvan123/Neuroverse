@@ -4,14 +4,14 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 05.2 — Source-derived 3D & Cosmic Motion (merged and CI-verified).** The homepage and the Scientific Explorer both render a **real FAFB tissue-mask-derived surface mesh** fetched from a pinned, checksum-validated research source. The updated explorer has Tissue Shading, Depth Colors (mesh-local coordinate only), and Triangle Mesh modes. **None of those colors identify brain regions.** Site-wide decorative stars now drift and twinkle with a global Reduce Motion toggle. This PLY is *processed tissue-mask geometry*, not a raw electron-microscopy voxel scan or a segmentation of every neuron.
+> **Current development status: Phase 05.2 — Authentic FAFB Anatomy & Animated Cosmic Interface (final verification).** The homepage now defaults to the **published FlyWire/FAFB14 neuropil mesh** (a registered neuropil template). Users can switch to the independently published **whole-brain FAFB tissue-mask-derived surface**, or inspect original mesh triangles and non-biological depth colors. Both assets are pinned to source Git blob checksums. Two visible animated DNA helices and more obvious parallax-style drifting stars are artistic overlays, not neuron observations. Neither surface is the original raw EM voxel volume or a named-neuropil segmentation atlas.
 
 ## Product direction
 
 - **Learn:** evidence-based neuroscience and computer science lessons.
 - **Explore:** investigate a clearly attributed subset of the FlyWire adult fruit fly connectome (planned).
 - **Experiment:** run graph algorithms and compare reproducible computational results (planned).
-- **Experience:** an accessible Cosmic Neuroscience interface with a source-validated FAFB tissue-surface 3D brain, controllable camera, optional decorative DNA and site-wide gently drifting stars (Phase 05.2).
+- **Experience:** an accessible Cosmic Neuroscience interface with a source-validated FAFB-aligned neuropil and tissue-surfaces in 3D, controllable camera, optional decorative DNA and site-wide gently drifting stars (Phase 05.2).
 
 ## Technology
 
@@ -19,7 +19,7 @@ Neuroverse is an independent, research-inspired science learning platform that w
 | --- | --- | --- |
 | Frontend | React, TypeScript, Vite, Tailwind CSS | Responsive homepage and tests implemented |
 | API | Python, FastAPI, Pydantic | Running endpoints / tests |
-| 3D scenes | Three.js, React Three Fiber 9 | Authentic specimen-derived tissue-surface hero + scientific mesh inspection; neuron skeletons in separate mode |
+| 3D scenes | Three.js, React Three Fiber 9 | Authenticated FAFB neuropil + processed whole-brain tissue, scientific mesh inspector, independently sourced neuron skeletons |
 | Graph analysis | NetworkX | Planned |
 | Scientific data | FlyWire FAFB v783 local CSV import, SQLite subset | Implemented pipeline; no authenticated source imported by default |
 | Persistence | SQLite (selected neuron graph) | Local-only generated dataset, opt-in |
@@ -105,6 +105,9 @@ GitHub Actions runs frontend/backend/integration tests and a lightweight verifie
 A GitHub Actions run verified the original Zenodo ~852 MB FAFB v783 connectivity archive against its published MD5, extracted a **non-representative** 20,000-row prefix, and ran the CSV/SQLite API pipeline. The verification evidence is [documented here](docs/phase-03-verification.md). To repeat the large download only when needed, use the GitHub Actions workflow **Audit official FAFB connections (manual)**. Do not commit scientific archives, tokens, or user files.
 
 ## Phase 05.2 — Scientific 3D display and site-wide cosmic stars
+
+**Latest Phase 05.2 geometry upgrade:** the hero defaults to the independent [FLYWIRE.ply](https://github.com/navis-org/navis-flybrains/blob/273333c8d8bf5adeebebd274e554621462e388bd/flybrains/meshes/FLYWIRE.ply) *FAFB14-aligned neuropil template* with verified upstream Git object `468c217c41602a8d34df2af6afd00a2aa1c11077`. Choose **Whole tissue** for [FLYWIRE_whole_brain.ply](https://github.com/navis-org/navis-flybrains/blob/273333c8d8bf5adeebebd274e554621462e388bd/flybrains/meshes/FLYWIRE_whole_brain.md) (separately pinned `3cf14cdd1399f212057f40c918493452abf056da`). The scientific explorer supports both independent surfaces without assuming perfect co-registration. **Both are original published polygons, not invented anatomy; neither is a raw voxel-exact full segmentation atlas.**
+
 
 The **whole-brain tissue geometry** is a FAFB-derived PLY from the original `navis-flybrains` project, checked against a fixed upstream Git blob by the FastAPI backend. You can inspect it in the Scientific Explorer using **Tissue shading**, **Depth colors** or **Triangle mesh**. Depth colors encode only **relative Z position of the same vertices** (violet → cyan → gold). **They do not represent anatomical regions, cell types, neural activity, or segmentation labels.** Source vertices, triangle indices, and proportions are never altered for the color display.
 

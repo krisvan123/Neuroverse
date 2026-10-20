@@ -1,6 +1,6 @@
 # Phase 05.2 — Acceptance Checks
 
-**Status:** PASS for the defined Phase 05.2 scoped engineering and science-display gates. Original FAFB source integrity and reproducible visual controls verified by GitHub CI.
+**Status:** Expanded Phase 05.2 gate in progress for the additional original neuropil, DNA and perceptible star movement. Previous version passed a smaller, documented scope. Original FAFB source integrity and reproducible visual controls verified by GitHub CI.
 
 | ID | Acceptance target | Verification |
 | --- | --- | --- |
@@ -25,3 +25,14 @@
 - Source-derived tissue, source-mesh coordinate colors and triangle topology were tested without inventing anatomical brain-region labels.
 
 **Scope limitation:** A successful software WebGL test does not certify every physical laptop/mobile GPU or prove a one-to-one voxel-exact electron-microscope reconstruction. The published surface was generated from a FAFB tissue mask and manually processed. A complete atlas registered to voxel segmentation needs further scientific validation.
+
+## Expanded final user-request gate — PR #9 (pending)
+
+- [ ] **Actual additional fly-brain anatomy, not cosmetic recolor:** authenticate published transformed FAFB14 neuropil `FLYWIRE.ply` SHA-1 `468c217c41602a8d34df2af6afd00a2aa1c11077`, integrate default hero and separate scientific explorer source, ensure original tissue mesh remains selectable.
+- [ ] **Visibly drifting global stars:** desktop and mobile Chromium measure at least 9 CSS pixels of star drift during a 1.3-second interval, and reduced-motion toggles disable it.
+- [ ] **Animated DNA:** verify two lightweight 3D helices with moving molecular tracer, one static helix for Saver, stop on Pause/reduced-motion; decorative only.
+- [ ] New upstream source checksum verification and real original mesh screenshots in GitHub Actions.
+- [ ] Full integration/browser/source CI jobs green on final PR SHA.
+- [ ] Explicitly retain scientific scope: registered template and manually derived tissue mask do not equal the original raw EM scan or atlas regions.
+
+**Important:** Phase 06 has not begun.
