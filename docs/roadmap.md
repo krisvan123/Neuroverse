@@ -2,7 +2,7 @@
 
 **Document ID:** NV-ROADMAP-001  
 **Version:** 1.0 · **Baseline:** 2026-10-20  
-**Project state:** Phases 01–05 completed to their limited engineering scopes. Phase 05.2 introduces source-derived surface inspection modes plus globally animated CSS star layers; final CI/browser checks are in progress as of 2026-10-20. **Full 3D EM segmentation alignment and anatomical region labels remain unverified and are not claimed.** Phases 06–09 remain planned.
+**Project state:** Phases 01–05 completed to their limited engineering scopes. Phase 05.2 introduces source-derived surface inspection modes plus globally animated CSS star layers; source audit and automated desktop/mobile acceptance checks passed (2026-10-20). **Full 3D EM segmentation alignment and anatomical region labels remain unverified and are not claimed.** Phases 06–09 remain planned.
 
 ## 1. Delivery philosophy
 

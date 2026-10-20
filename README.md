@@ -4,7 +4,7 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 05.2 — Source-derived 3D & Cosmic Motion (in verification).** The homepage and the Scientific Explorer both render a **real FAFB tissue-mask-derived surface mesh** fetched from a pinned, checksum-validated research source. The updated explorer has Tissue Shading, Depth Colors (mesh-local coordinate only), and Triangle Mesh modes. **None of those colors identify brain regions.** Site-wide decorative stars now drift and twinkle with a global Reduce Motion toggle. This PLY is *processed tissue-mask geometry*, not a raw electron-microscopy voxel scan or a segmentation of every neuron.
+> **Current development status: Phase 05.2 — Source-derived 3D & Cosmic Motion (merged and CI-verified).** The homepage and the Scientific Explorer both render a **real FAFB tissue-mask-derived surface mesh** fetched from a pinned, checksum-validated research source. The updated explorer has Tissue Shading, Depth Colors (mesh-local coordinate only), and Triangle Mesh modes. **None of those colors identify brain regions.** Site-wide decorative stars now drift and twinkle with a global Reduce Motion toggle. This PLY is *processed tissue-mask geometry*, not a raw electron-microscopy voxel scan or a segmentation of every neuron.
 
 ## Product direction
 
