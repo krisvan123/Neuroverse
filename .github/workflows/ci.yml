@@ -152,6 +152,21 @@ jobs:
           print('Authentic FAFB 3D tissue mesh authenticated:',len(blob),'bytes')
           PY
           echo "NEUROVERSE_REAL_PLY_FILE=/tmp/neuroverse_verified_fafb.ply" >> "$GITHUB_ENV"
+      - name: Verify registered FAFB-aligned original neuropil and stage browser fixture
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 --max-time 90 \
+            "https://raw.githubusercontent.com/navis-org/navis-flybrains/273333c8d8bf5adeebebd274e554621462e388bd/flybrains/meshes/FLYWIRE.ply" \
+            --output /tmp/neuroverse_verified_fafb_neuropil.ply
+          python - <<'PY'
+          from pathlib import Path
+          from hashlib import sha1
+          raw=Path('/tmp/neuroverse_verified_fafb_neuropil.ply').read_bytes()
+          assert 100000 < len(raw) < 20000000
+          assert sha1(f'blob {len(raw)}\0'.encode()+raw, usedforsecurity=False).hexdigest() == '468c217c41602a8d34df2af6afd00a2aa1c11077'
+          print('FAFB-aligned published neuropil source authenticated:',len(raw),'bytes')
+          PY
+          echo "NEUROVERSE_REAL_NEUROPIL_PLY_FILE=/tmp/neuroverse_verified_fafb_neuropil.ply" >> "$GITHUB_ENV"
       - name: Exercise real-browser homepage, controls and fallbacks
         run: npm run test:e2e
         env:
@@ -185,6 +200,10 @@ jobs:
           from app.data.tissue import load_official_tissue_mesh
           from app.data.morphology import get_skeleton
           mesh, sha = load_official_tissue_mesh()
+          from app.data.neuropil import load_official_neuropil_mesh
+          neuropil, neuropil_sha = load_official_neuropil_mesh()
+          assert neuropil.startswith(b"ply") and len(neuropil_sha) == 64
+          print("REAL FAFB NEUROPIL MESH", len(neuropil), "bytes, SHA256", neuropil_sha)
           assert mesh.startswith(b"ply") and len(sha) == 64
           print("REAL TISSUE MESH", len(mesh), "bytes, SHA256", sha)
           neuron = get_skeleton("720575940625431866")

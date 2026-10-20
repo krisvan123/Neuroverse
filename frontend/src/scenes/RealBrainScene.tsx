@@ -7,7 +7,7 @@ import { getApiBaseUrl } from '../api/client'
 import { applySourceDepthColors } from './surfaceColors'
 import type { Skeleton } from '../science/api'
 
-export type ScientificMode = 'tissue' | 'skeleton'
+export type ScientificMode = 'tissue' | 'neuropil' | 'skeleton'
 export type ScientificView = 'front' | 'side' | 'top'
 export type TissueDisplayMode = 'surface' | 'depth' | 'mesh'
 export interface ScientificSceneProps {
@@ -33,13 +33,14 @@ function fitGeometry(source: THREE.BufferGeometry): THREE.BufferGeometry {
   return geometry
 }
 
-function TrueTissue({ onStatus, tissueDisplay }: { onStatus: ScientificSceneProps['onStatus']; tissueDisplay: TissueDisplayMode }) {
+function TrueTissue({ onStatus, tissueDisplay, source }: { onStatus: ScientificSceneProps['onStatus']; tissueDisplay: TissueDisplayMode; source: 'tissue' | 'neuropil' }) {
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null)
   useEffect(() => {
     const controller = new AbortController()
     onStatus('loading')
     const work = async () => {
-      const response = await fetch(getApiBaseUrl() + '/api/v1/brain/tissue-mesh', { signal: controller.signal })
+      const path = source === 'neuropil' ? '/api/v1/brain/neuropil-mesh' : '/api/v1/brain/tissue-mesh'
+      const response = await fetch(getApiBaseUrl() + path, { signal: controller.signal })
       if (!response.ok) throw new Error(
         'Verified FAFB tissue surface unavailable (HTTP ' + response.status + '). Check your backend connection.'
       )
@@ -62,7 +63,7 @@ function TrueTissue({ onStatus, tissueDisplay }: { onStatus: ScientificSceneProp
       if (!controller.signal.aborted) onStatus('error', error instanceof Error ? error.message : 'Mesh unavailable')
     })
     return () => controller.abort()
-  }, [onStatus])
+  }, [onStatus, source])
 
   useEffect(() => () => { geometry?.dispose() }, [geometry])
   return (
@@ -162,9 +163,9 @@ export default function RealBrainScene({ mode, skeleton, view, resetKey, tissueD
       <hemisphereLight args={["#c9f0ff", "#17243b", 1.25]} />
       <directionalLight position={[4, 7, 8]} intensity={3.1} color="#d0f2ff" />
       <directionalLight position={[-4, -3, -6]} intensity={1.5} color="#a49aff" />
-      {mode === 'tissue'
-        ? <TrueTissue onStatus={onStatus} tissueDisplay={tissueDisplay} />
-        : <RealSkeleton skeleton={skeleton} onStatus={onStatus} />}
+      {mode === 'skeleton'
+        ? <RealSkeleton skeleton={skeleton} onStatus={onStatus} />
+        : <TrueTissue key={mode} source={mode} onStatus={onStatus} tissueDisplay={tissueDisplay} />}
       <NavigationCamera view={view} resetKey={resetKey} />
     </Canvas>
   )

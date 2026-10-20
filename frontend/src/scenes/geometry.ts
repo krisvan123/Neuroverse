@@ -2,18 +2,20 @@
 import * as THREE from 'three'
 
 export type VisualQuality = 'high' | 'balanced' | 'saver'
+export type AnatomySource = 'neuropil' | 'tissue'
+export type AnatomyStyle = 'shaded' | 'depth' | 'mesh'
 export type CameraView = 'front' | 'left' | 'right' | 'top'
 
 export const SCENE_BUDGETS: Record<VisualQuality, { fibers: number; stars: number; helices: number; pixelRatio: number }> = {
   high: { fibers: 110, stars: 1600, helices: 2, pixelRatio: 1.7 },
-  balanced: { fibers: 70, stars: 950, helices: 1, pixelRatio: 1.4 },
-  saver: { fibers: 30, stars: 300, helices: 0, pixelRatio: 1 },
+  balanced: { fibers: 70, stars: 950, helices: 2, pixelRatio: 1.4 },
+  saver: { fibers: 30, stars: 300, helices: 1, pixelRatio: 1 },
 }
 
 export const CAMERA_PRESETS: Record<CameraView, [number, number, number]> = {
-  front: [2.1, 0.95, 8.6],
-  left: [-7.9, 0.55, 2.2],
-  right: [7.9, 0.55, 2.2],
+  front: [1.45, 0.92, 8.6],
+  left: [-8.3, 0.75, 1.2],
+  right: [8.3, 0.75, 1.2],
   top: [0, 8.6, 0.8],
 }
 

@@ -1,7 +1,7 @@
 import { Component, Suspense, lazy, useCallback, useState, type ReactNode } from 'react'
 import { BrainPoster } from './BrainPoster'
 import { supportsWebGL } from '../scenes/browserSupport'
-import { CAMERA_PRESETS, type CameraView, type VisualQuality } from '../scenes/geometry'
+import { CAMERA_PRESETS, type CameraView, type VisualQuality, type AnatomySource, type AnatomyStyle } from '../scenes/geometry'
 
 const BrainScene = lazy(() => import('../scenes/CosmicBrainScene'))
 
@@ -40,6 +40,8 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
   const [webglSupported] = useState(supportsWebGL)
   const [sceneReady, setSceneReady] = useState(false)
   const [quality, setQuality] = useState<VisualQuality>('balanced')
+  const [anatomySource, setAnatomySource] = useState<AnatomySource>('neuropil')
+  const [anatomyStyle, setAnatomyStyle] = useState<AnatomyStyle>('shaded')
   const [view, setView] = useState<CameraView>('front')
   const [resetToken, setResetToken] = useState(0)
   const onReady = useCallback(() => setSceneReady(true), [])
@@ -67,6 +69,8 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
               <BrainScene
                 quality={quality}
                 paused={paused}
+                anatomySource={anatomySource}
+                anatomyStyle={anatomyStyle}
                 view={view}
                 resetToken={resetToken}
                 onReady={onReady}
@@ -77,7 +81,7 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
         )}
         {sceneEnabled && sceneReady && modelState !== 'ready' && (
           <div className={modelState === 'error' ? 'hero-model-alert' : 'hero-model-loading'} role="status">
-            {modelState === 'error' ? modelMessage : 'Loading authentic 3D FAFB tissue surface…'}
+            {modelState === 'error' ? modelMessage : 'Loading source-verified 3D fly-brain anatomy…'}
           </div>
         )}
         {!sceneEnabled && (
@@ -89,9 +93,32 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
           <span className="live-dot" aria-hidden="true" />
           {modelState === 'ready' ? 'INTERACTIVE / VERIFIED FAFB 3D' : 'INTERACTIVE / 3D VIEWER'}
         </div>
-        <span className="brain-stage-index" aria-hidden="true">NV—005 / FAFB ANATOMY</span>
-        <div className="brain-stage-caption">FAFB TISSUE SURFACE · NOT INDIVIDUAL NEURON MORPHOLOGY</div>
+        <span className="brain-stage-index" aria-hidden="true">NV—005.2 / FAFB NEUROANATOMY</span>
+        <div className="brain-stage-caption">{anatomySource === 'neuropil' ? 'FAFB-ALIGNED NEUROPIL SURFACE' : 'FAFB WHOLE-BRAIN TISSUE SURFACE'} · ORIGINAL PUBLISHED MESH</div>
       </div>
+
+      <div className="brain-anatomy-controls">
+        <div className="brain-source-choices" role="group" aria-label="Original fly-brain anatomical source">
+          <span className="brain-source-heading">PUBLISHED FAFB SHAPE</span>
+          <button type="button" aria-pressed={anatomySource === 'neuropil'} disabled={!sceneEnabled}
+            onClick={() => setAnatomySource('neuropil')}>Neuropil</button>
+          <button type="button" aria-pressed={anatomySource === 'tissue'} disabled={!sceneEnabled}
+            onClick={() => setAnatomySource('tissue')}>Whole tissue</button>
+        </div>
+        <div className="brain-surface-choices" role="group" aria-label="Hero anatomical material">
+          <span className="brain-source-heading">INSPECT AS</span>
+          {([
+            ['shaded', 'Anatomy'],
+            ['depth', 'Depth'],
+            ['mesh', 'Wireframe'],
+          ] as const).map(([mode, name]) => (
+            <button type="button" key={mode} aria-pressed={anatomyStyle === mode}
+              disabled={!sceneEnabled} onClick={() => setAnatomyStyle(mode)}>{name}</button>
+          ))}
+        </div>
+      </div>
+      {anatomyStyle === 'depth' && <p className="brain-source-disclaimer" role="note">Depth colors encode source-mesh coordinates, not biological brain regions.</p>}
+      {anatomyStyle === 'mesh' && <p className="brain-source-disclaimer" role="note">Wireframe edges are published mesh triangles, not neurons.</p>}
 
       <div className="brain-controls" aria-label="Three-dimensional visualization controls">
         <div className="brain-view-controls" role="group" aria-label="Camera angle">
@@ -143,14 +170,19 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
       <details className="visualization-disclosure">
         <summary>About this 3D visualization</summary>
         <p>
-          The brain surface is loaded from a published FAFB tissue-mask-derived mesh, pinned to
-          its upstream repository version and verified by the Neuroverse backend.
-          The sculpture preserves the source shape and topology, using only a uniform
-          scale and rotation for display. <strong>This is not a live brain scan or
-          a complete reconstruction of individual neuron membranes.</strong>
-          Lighting, animated DNA, orbit rings, and stars are artistic additions and
-          have no biological meaning. <a href="https://github.com/navis-org/navis-flybrains/blob/273333c8d8bf5adeebebd274e554621462e388bd/flybrains/meshes/FLYWIRE_whole_brain.md"
-          target="_blank" rel="noopener noreferrer">Read the tissue mesh provenance</a>.
+          Choose between two independently published, pinned FlyWire-space meshes:
+          a FAFB14-aligned <strong>neuropil template</strong> and a manually processed
+          <strong> whole-brain tissue-mask surface</strong>. The Neuroverse API authenticates
+          both with an exact upstream Git blob checksum; centering and uniform scaling
+          are display-only. Shading, local-Z depth colors and wireframe are visual
+          inspection styles, not segmentation labels or reconstructed individual neurons.
+          <strong> Neither mesh is the original unprocessed EM volume, and they are
+          not claimed to be perfectly registered to each other.</strong> Orbiting DNA,
+          stars and lighting are decorative rather than anatomical. Read the
+          <a href="https://github.com/navis-org/navis-flybrains/blob/273333c8d8bf5adeebebd274e554621462e388bd/flybrains/templates.py"
+          target="_blank" rel="noopener noreferrer">FlyWire neuropil template provenance</a> and
+          <a href="https://github.com/navis-org/navis-flybrains/blob/273333c8d8bf5adeebebd274e554621462e388bd/flybrains/meshes/FLYWIRE_whole_brain.md"
+          target="_blank" rel="noopener noreferrer"> whole-brain tissue preparation</a>.
         </p>
       </details>
       <span className="sr-only">Available camera presets: {Object.keys(CAMERA_PRESETS).join(', ')}.</span>

@@ -1,12 +1,14 @@
 # Phase 05.2 — Source-Derived 3D Inspection and Global Cosmic Animation
 
-**Project:** Neuroverse · **Snapshot:** FlyWire FAFB v783 context · **Status:** Under final automated review.
+**Project:** Neuroverse · **Snapshot:** FlyWire FAFB v783 context · **Status:** Final scientific-source and browser QA for the expanded geometry options.
 
 ## What is anatomically authentic?
 
-The 3D **tissue envelope** shown on the homepage and in the Scientific Explorer originates in a tissue mask of the FAFB adult fruit-fly specimen. The source PLY was created through research preprocessing, meshing, cleanup and spatial transformation and is **not** an unmodified raw microscopy voxel volume. Our backend retrieves the exact pinned Git blob, checks the Git object checksum and records a SHA-256 fingerprint. Only geometric centering/uniform scale is applied for viewport presentation. Tissue triangle vertices and face connectivity are not invented or sculpted by Neuroverse.
+Neuroverse now offers **two distinct published shapes**. The default homepage **neuropil template** originates from the FAFB14 neuropil and was transformed to FlyWire space, as confirmed by the upstream `flybrains/templates.py` `_FLYWIRE` description. The optional **whole-brain tissue envelope** originates in a tissue mask of the FAFB adult fruit-fly specimen. The source PLY was created through research preprocessing, meshing, cleanup and spatial transformation and is **not** an unmodified raw microscopy voxel volume. Our backend retrieves the exact pinned Git blob, checks the Git object checksum and records a SHA-256 fingerprint. Only geometric centering/uniform scale is applied for viewport presentation. Tissue triangle vertices and face connectivity are not invented or sculpted by Neuroverse.
 
 The underlying publication is Dorkenwald et al. (2024), *Neuronal wiring diagram of an adult brain*, Nature, https://doi.org/10.1038/s41586-024-07558-y .
+
+Neuropil source and registration: https://github.com/navis-org/navis-flybrains/blob/273333c8d8bf5adeebebd274e554621462e388bd/flybrains/templates.py . The `FLYWIRE.ply` Git object SHA-1 is `468c217c41602a8d34df2af6afd00a2aa1c11077`, downloaded without modifying the original payload by `backend/app/data/neuropil.py`. It represents a *FAFB14 neuropil surface transformed into FlyWire space*; **not** a segmentation of named neuropil subregions.
 
 Mesh and preparation notes: https://github.com/navis-org/navis-flybrains/blob/273333c8d8bf5adeebebd274e554621462e388bd/flybrains/meshes/FLYWIRE_whole_brain.md . Source object Git SHA-1 is `3cf14cdd1399f212057f40c918493452abf056da`, as pinned in `backend/app/data/tissue.py`.
 
@@ -33,10 +35,17 @@ The background is a three-layer star field fixed to the browser viewport, extend
 
 ## Accuracy and release limits
 
-- The PLY is **tissue-mask-derived and manually processed**; do not call it a one-to-one raw 3D electron-microscope scan.
+- The whole-brain tissue PLY is **tissue-mask-derived and manually processed**; the FAFB neuropil PLY is a registered template surface. Neither is a one-to-one raw 3D electron-microscope voxel scan.
 - Z depth is relative to the displayed mesh's local coordinate axis; it is **not** a registered anatomical layer, brain-region label or cell class.
-- Whole-brain tissue and individual skeletons are not spatially co-registered in this release. True neuropil-region coloring would require a separate trusted segmentation atlas and verified transform.
+- Neuropil template vs tissue mask, and either surface vs individual skeletons, are not proven perfectly co-registered in this release. True neuropil-region coloring would require a separate trusted segmentation atlas and verified transform.
 - Any future overlay of original voxel segmentation/morphology needs source version, coordinate registration, legal status and performance review.
 - Preview/browser tests do not certify GPU performance on every user's device.
 
 Scientific data and licensing: https://home.flywire.ai/guidelines . Neuroverse is independent and is not endorsed by FlyWire or the source institutions.
+
+## Final Phase 05.2 visual changes pending acceptance
+
+- Default hero changes to the original FAFB neuropil polygons. Learners compare **Neuropil** vs **Whole tissue** rather than perceiving material changes on an unchanged mesh. Both source SHA-1 objects are checked by the backend, and independently downloaded/validated in CI and actual Chromium.
+- Two decorative animated DNA helices at balanced/high quality with brighter double strands, rung geometry, and a travelling luminous tracer; one static helix at saver quality; global pause/reduced-motion honored.
+- Three separate fixed browser background layers travel by over 200 CSS pixels across 19/31/41-second animations with multi-layer twinkle. In browser CI we measure >9 CSS px displacement in 1.3s, not merely existence of animation CSS rules.
+- No animated material is presented as neural impulses, electrical brain activity, an individual neuron, or a source record.

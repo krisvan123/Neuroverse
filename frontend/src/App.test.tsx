@@ -31,6 +31,13 @@ describe('Neuroverse foundation', () => {
     fireEvent.click(enableButton)
     expect(document.documentElement.dataset.motion).toBe('ambient')
   })
+  it('shows a faithful original neuropil source with explicit controls even when unavailable', () => {
+    render(<App />)
+    const choices = screen.getByRole('group', { name: 'Original fly-brain anatomical source' })
+    expect(choices).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Neuropil' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Whole tissue' })).toBeDisabled()
+  })
   it('makes 3D controls available but correctly disables them without WebGL', () => {
     render(<App />)
     expect(screen.getByRole('button', { name: 'Top view' })).toBeDisabled()
@@ -42,7 +49,7 @@ describe('Neuroverse foundation', () => {
   it('labels the verified source viewer separately from its static conceptual fallback', () => {
     render(<App />)
     expect(screen.getByRole('img', { name: /conceptual illustrated bilateral fruit fly brain/i })).toBeInTheDocument()
-    expect(screen.getByText(/fafb tissue surface · not individual neuron morphology/i)).toBeInTheDocument()
+    expect(screen.getByText(/fafb-aligned neuropil surface · original published mesh/i)).toBeInTheDocument()
     expect(screen.getByText(/static visualization — webgl unavailable/i)).toBeInTheDocument()
   })
 })

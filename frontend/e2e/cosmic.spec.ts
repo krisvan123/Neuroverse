@@ -9,16 +9,17 @@ test('immersive homepage is informative, interactive, and accessible', async ({ 
 
   await expect(page.getByRole('heading', { name: /the universe inside every connection/i })).toBeVisible()
   await expect(page.getByRole('link', { name: /start your discovery/i })).toBeVisible()
-  await expect(page.getByText(/fafb tissue surface · not individual neuron morphology/i)).toBeVisible()
+  await expect(page.getByText(/fafb-aligned neuropil surface · original published mesh/i)).toBeVisible()
 
   const method = page.locator('details.visualization-disclosure')
   await method.locator('summary').click()
-  await expect(method.getByText(/not a live brain scan/i)).toBeVisible()
+  await expect(method.getByText(/neither mesh is the original unprocessed EM volume/i)).toBeVisible()
 
   const quality = page.getByLabel('Quality')
   if (await quality.isEnabled()) {
     await quality.selectOption('saver')
     await expect(quality).toHaveValue('saver')
+    await expect(page.getByRole('button', { name: 'Neuropil', exact: true })).toHaveAttribute('aria-pressed', 'true')
     await page.getByRole('button', { name: 'Left view' }).click()
     await expect(page.getByRole('button', { name: 'Left view' })).toHaveAttribute('aria-pressed', 'true')
     await page.getByRole('button', { name: 'Reset', exact: true }).click()
@@ -156,11 +157,12 @@ test('published original FAFB tissue surface renders in the actual 3D homepage',
   })
   await page.goto('/')
   const hero = page.locator('.brain-stage')
+  await page.getByRole('button', { name: 'Whole tissue', exact: true }).click()
   if (!(await page.getByLabel('Quality').isEnabled())) {
     test.skip(true, 'No WebGL in Chromium; original source mesh test requires WebGL')
   }
   await expect(hero.getByText('INTERACTIVE / VERIFIED FAFB 3D')).toBeVisible({ timeout: 30000 })
-  await expect(hero.getByText(/fafb tissue surface · not individual neuron morphology/i)).toBeVisible()
+  await expect(hero.getByText(/fafb whole-brain tissue surface · original published mesh/i)).toBeVisible()
   const canvas = hero.locator('canvas')
   await expect(canvas).toBeVisible()
   await page.getByRole('button', { name: 'Left view' }).click()
@@ -183,10 +185,67 @@ test('site-wide stars animate at every scroll position and honor reduced motion 
   }))
   expect(motion.name).toContain('nv-stars-near')
   expect(motion.position).toBe('fixed')
+  // Mere presence of CSS animations was not visually noticeable: assert
+  // computed motion actually shifts stars by >= 9px in under 1.4 seconds.
+  const initial = await stars.evaluate(el => new DOMMatrixReadOnly(getComputedStyle(el).transform).m41)
+  await page.waitForTimeout(1300)
+  const later = await stars.evaluate(el => new DOMMatrixReadOnly(getComputedStyle(el).transform).m41)
+  expect(Math.abs(later - initial)).toBeGreaterThan(9)
   await page.locator('#sources').scrollIntoViewIfNeeded()
   await expect(background).toBeVisible()
   await page.getByRole('button', { name: 'Reduce ambient motion' }).click()
   await expect.poll(() => stars.evaluate(element => getComputedStyle(element).animationName)).toBe('none')
   await page.getByRole('button', { name: 'Enable ambient motion' }).click()
   await expect.poll(() => stars.evaluate(element => getComputedStyle(element).animationName)).toContain('nv-stars-near')
+})
+
+
+test('published original FAFB-aligned neuropil is the anatomical hero default', async ({ page }, testInfo) => {
+  const sourceFile = process.env.NEUROVERSE_REAL_NEUROPIL_PLY_FILE
+  test.skip(!sourceFile, 'Real published neuropil is staged in GitHub Actions')
+  const raw = await readFile(sourceFile!)
+  const sha256 = createHash('sha256').update(raw).digest('hex')
+  await page.route('**/api/v1/brain/neuropil-mesh', async route => {
+    await route.fulfill({
+      status: 200,
+      body: raw,
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'X-Neuroverse-Source-SHA256': sha256,
+      },
+    })
+  })
+  await page.goto('/')
+  const hero = page.locator('.brain-stage')
+  if (!(await page.getByLabel('Quality').isEnabled())) {
+    test.skip(true, 'No WebGL; genuine neuropil requires a GPU/software WebGL')
+  }
+  await expect(page.getByRole('button', { name: 'Neuropil', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await expect(hero.getByText('INTERACTIVE / VERIFIED FAFB 3D')).toBeVisible({ timeout: 30000 })
+  await expect(hero.getByText(/fafb-aligned neuropil surface · original published mesh/i)).toBeVisible()
+  await page.getByRole('button', { name: 'Depth', exact: true }).click()
+  await expect(page.getByText(/depth colors encode source-mesh coordinates/i)).toBeVisible()
+  await page.getByRole('button', { name: 'Wireframe', exact: true }).click()
+  await expect(page.getByText(/published mesh triangles, not neurons/i)).toBeVisible()
+  await page.getByRole('button', { name: 'Anatomy', exact: true }).click()
+  await hero.screenshot({
+    path: testInfo.outputPath('phase05-2-authentic-FAFB-neuropil-homepage.png'),
+    animations: 'disabled',
+  })
+})
+
+test('DNA helix and source controls remain usable with motion paused and no WebGL', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  const source = page.getByRole('group', { name: 'Original fly-brain anatomical source' })
+  await expect(source.getByRole('button', { name: 'Neuropil' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('button', { name: 'Resume motion' })).toBeVisible()
+  const styles = await page.locator('.cosmic-backdrop .layer-one').evaluate(el => getComputedStyle(el).animationName)
+  expect(styles).toBe('none')
+  if (await page.getByLabel('Quality').isEnabled()) {
+    await source.getByRole('button', { name: 'Whole tissue' }).click()
+    await expect(source.getByRole('button', { name: 'Whole tissue' })).toHaveAttribute('aria-pressed', 'true')
+  } else {
+    await expect(source.getByRole('button', { name: 'Neuropil' })).toBeDisabled()
+  }
 })

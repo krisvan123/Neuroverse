@@ -425,3 +425,83 @@ html[data-motion="quiet"] .cosmic-shooting-star{opacity:0}
     animation:none!important;will-change:auto;
   }
 }
+
+
+/* Phase 05.2 completion — stars must visibly travel, not move <1px/sec.
+   3 global composited layers + a single meteor: no per-star JS loops. */
+.cosmic-backdrop .layer-one{
+  opacity:.81;
+  animation:nv-stars-near 19s linear infinite alternate,
+            nv-stars-luminescence 5.2s ease-in-out infinite alternate;
+}
+.cosmic-backdrop .layer-two{
+  opacity:.51;
+  animation:nv-stars-far 31s linear infinite alternate,
+            nv-stars-luminescence 8.1s ease-in-out infinite alternate-reverse;
+}
+.cosmic-backdrop .layer-three{
+  opacity:.45;
+  animation:nv-stars-slow 41s linear infinite alternate,
+            nv-stars-twinkle 5.4s ease-in-out infinite alternate;
+}
+@keyframes nv-stars-near{
+  0%{transform:translate3d(-116px,72px,0)}
+  100%{transform:translate3d(150px,-100px,0)}
+}
+@keyframes nv-stars-far{
+  0%{transform:translate3d(108px,-74px,0)}
+  100%{transform:translate3d(-142px,114px,0)}
+}
+@keyframes nv-stars-slow{
+  0%{transform:translate3d(-95px,-90px,0)}
+  100%{transform:translate3d(125px,87px,0)}
+}
+@keyframes nv-stars-luminescence{
+  0%,100%{opacity:.46}
+  50%{opacity:.87}
+}
+@keyframes nv-stars-twinkle{
+  0%,100%{opacity:.29}
+  50%{opacity:.68}
+}
+
+/* Clear but compact interactive scientific surface selectors in the hero. */
+.brain-anatomy-controls{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:9px;padding:12px 14px 0;
+  border:1px solid rgba(125,190,222,.26);border-bottom:0;
+  border-radius:10px 10px 0 0;background:rgba(9,25,43,.91);
+}
+.brain-source-choices,.brain-surface-choices{
+  display:flex;align-items:center;flex-wrap:wrap;gap:6px;
+  padding-bottom:11px;
+}
+.brain-source-heading{
+  font-size:9px;font-weight:800;letter-spacing:.12em;color:#92bcd4;
+  margin-right:4px;
+}
+.brain-anatomy-controls button{
+  background:rgba(58,97,124,.15);border:1px solid rgba(112,172,204,.26);
+  color:#c8dfec;border-radius:4px;padding:7px 9px;font-size:10px;
+  font-weight:650;cursor:pointer;
+}
+.brain-anatomy-controls button[aria-pressed="true"]{
+  border-color:#8cdef5;color:#061723;background:#a0e8f8;
+}
+.brain-anatomy-controls button:focus-visible{outline:2px solid #b8f2ff;outline-offset:2px}
+.brain-anatomy-controls button:disabled{opacity:.42;cursor:not-allowed}
+.brain-source-disclaimer{
+  background:rgba(9,23,41,.94);border-inline:1px solid rgba(125,190,222,.25);
+  color:#ebd3ab;font-size:10px;line-height:1.5;padding:7px 15px;
+}
+.brain-stage{
+  background:
+    radial-gradient(ellipse at 49% 46%,rgba(83,133,170,.24),transparent 52%),
+    radial-gradient(ellipse at 55% 54%,rgba(60,55,128,.15),transparent 75%);
+}
+@media(max-width:680px){
+  .brain-anatomy-controls{justify-content:start;padding-inline:10px;gap:0}
+  .brain-source-choices,.brain-surface-choices{gap:5px}
+  .brain-source-heading{flex-basis:100%;margin-block:1px 5px}
+  .brain-anatomy-controls button{padding:7px 8px}
+}

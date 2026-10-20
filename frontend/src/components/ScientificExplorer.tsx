@@ -80,7 +80,7 @@ function NetworkGraph({ graph, onChoose }: { graph: Subgraph; onChoose: (value: 
 /** The scientific workspace is intentionally calmer than the artistic homepage. */
 export function ScientificExplorer() {
   const [webglAvailable] = useState(supportsWebGL)
-  const [mode, setMode] = useState<ScientificMode>('tissue')
+  const [mode, setMode] = useState<ScientificMode>('neuropil')
   const [tissueDisplay, setTissueDisplay] = useState<TissueDisplayMode>('surface')
   const [view, setView] = useState<ScientificView>('front')
   const [resetKey, setResetKey] = useState(0)
@@ -158,18 +158,20 @@ export function ScientificExplorer() {
         <div><div className="eyebrow"><span className="eyebrow-dash" /> 05.2 / SCAN-DERIVED ANATOMY</div>
           <h2 id="explore-title">The real anatomy.<br /><em>The real evidence.</em></h2>
         </div>
-        <p>Explore a specimen-derived brain surface, inspect published neuron centerlines, and examine structural connectivity with traceable sources. No simulated anatomy masquerading as research.</p>
+        <p>Compare published FlyWire-space neuropil and processed FAFB tissue surfaces, inspect original neuron centerlines, and examine source-based structural connectivity. No simulated anatomy masquerading as research.</p>
       </div>
 
       <div className="atlas-main">
         <div className="atlas-observatory">
           <div className="atlas-tab-row" role="group" aria-label="Scientific anatomy mode">
+            <button type="button" className={mode === 'neuropil' ? 'atlas-tab selected' : 'atlas-tab'}
+              aria-pressed={mode === 'neuropil'} onClick={() => setMode('neuropil')}>FAFB neuropil</button>
             <button type="button" className={mode === 'tissue' ? 'atlas-tab selected' : 'atlas-tab'}
               aria-pressed={mode === 'tissue'} onClick={() => setMode('tissue')}>Whole-brain surface</button>
             <button type="button" className={mode === 'skeleton' ? 'atlas-tab selected' : 'atlas-tab'}
               aria-pressed={mode === 'skeleton'} onClick={() => setMode('skeleton')}>Neuron skeleton</button>
           </div>
-          {mode === 'tissue' && (
+          {mode !== 'skeleton' && (
             <div className="atlas-render-modes" role="group" aria-label="FAFB scientific surface display mode">
               <span className="atlas-render-label">SHOW THE SOURCE MESH AS</span>
               {([
@@ -209,16 +211,16 @@ export function ScientificExplorer() {
             ))}
             <button type="button" disabled={!webglAvailable} onClick={() => { setView('front'); setResetKey((v) => v + 1) }}>Reset camera</button>
           </div>
-          {mode === 'tissue' && tissueDisplay === 'depth' && (
+          {mode !== 'skeleton' && tissueDisplay === 'depth' && (
             <div className="atlas-depth-legend" role="note" aria-label="Depth colors legend">
               <span className="atlas-depth-ramp" aria-hidden="true" />
               <span>Relative mesh Z: back → front. <strong>Colors represent position, NOT anatomical regions.</strong></span>
             </div>
           )}
-          {mode === 'tissue' && tissueDisplay === 'mesh' && (
+          {mode !== 'skeleton' && tissueDisplay === 'mesh' && (
             <p className="atlas-topology-note" role="note">Triangle edges come from the original FAFB-derived mesh; these lines are not neurons or synapses.</p>
           )}
-          <p className="atlas-figure-foot">The 3D scene is a scientific visualization, not a measurement of live neuronal signals. The surface and skeleton use separate display coordinates until alignment has been independently verified.</p>
+          <p className="atlas-figure-foot">The two independent FAFB-derived surfaces represent different segmentation/preparation methods and must not be assumed geometrically identical. The 3D scene is a scientific visualization, not a measurement of live neuronal signals. The surface and skeleton use separate display coordinates until alignment has been independently verified.</p>
         </div>
 
         <aside className="atlas-inspector" aria-label="Scientific data inspector">

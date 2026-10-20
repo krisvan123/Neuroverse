@@ -103,6 +103,7 @@ test('scientific 3D viewer renders a controlled PLY fixture and provides camera 
   }))
   await page.goto('/')
   const explorer = page.locator('#explore')
+  await explorer.getByRole('button', { name: 'Whole-brain surface' }).click()
   const side = explorer.getByRole('button', { name: 'Side', exact: true })
   if (!(await side.isEnabled())) {
     await expect(explorer.getByText(/WebGL is unavailable/i)).toBeVisible()
@@ -136,4 +137,18 @@ test('FAFB scan-derived mesh display modes label depth honestly and preserve cam
   await expect(explorer.getByText(/Triangle edges come from the original FAFB-derived mesh/i)).toBeVisible()
   await shading.click()
   await expect(shading).toHaveAttribute('aria-pressed', 'true')
+})
+
+
+test('scientific explorer compares two source-derived brain envelopes without fabricated labels', async ({ page }) => {
+  await page.goto('/')
+  const explorer = page.locator('#explore')
+  const neuropil = explorer.getByRole('button', { name: 'FAFB neuropil' })
+  await expect(neuropil).toHaveAttribute('aria-pressed', 'true')
+  const tissue = explorer.getByRole('button', { name: 'Whole-brain surface' })
+  await tissue.click()
+  await expect(tissue).toHaveAttribute('aria-pressed', 'true')
+  await neuropil.click()
+  await expect(neuropil).toHaveAttribute('aria-pressed', 'true')
+  await expect(explorer.getByText(/two independent FAFB-derived surfaces/i)).toBeVisible()
 })
