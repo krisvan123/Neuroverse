@@ -1,13 +1,13 @@
-/** Deterministic conceptual fly-brain geometry, NOT FlyWire morphology. */
+/** Decorative cosmic geometry only. Authentic FAFB tissue geometry loads separately. */
 import * as THREE from 'three'
 
 export type VisualQuality = 'high' | 'balanced' | 'saver'
 export type CameraView = 'front' | 'left' | 'right' | 'top'
 
 export const SCENE_BUDGETS: Record<VisualQuality, { fibers: number; stars: number; helices: number; pixelRatio: number }> = {
-  high: { fibers: 110, stars: 430, helices: 2, pixelRatio: 1.7 },
-  balanced: { fibers: 70, stars: 210, helices: 1, pixelRatio: 1.4 },
-  saver: { fibers: 30, stars: 55, helices: 0, pixelRatio: 1 },
+  high: { fibers: 110, stars: 1600, helices: 2, pixelRatio: 1.7 },
+  balanced: { fibers: 70, stars: 950, helices: 1, pixelRatio: 1.4 },
+  saver: { fibers: 30, stars: 300, helices: 0, pixelRatio: 1 },
 }
 
 export const CAMERA_PRESETS: Record<CameraView, [number, number, number]> = {
@@ -73,18 +73,42 @@ export function makeFilaments(fiberCount: number): THREE.BufferGeometry {
   return geometry
 }
 
+/**
+ * Spread decorative stars over a complete spherical sky, not a rear Z-plane.
+ *
+ * A Fibonacci sphere yields consistent coverage in every direction as a visitor
+ * rotates the 3D camera around the brain. Each star receives a deterministic
+ * radial offset for depth without causing one-sided clusters. The inner radius
+ * sits beyond OrbitControls.maxDistance (13.5), keeping the camera inside the
+ * star field even when zoomed out. Stars are NOT brain or synapse coordinates.
+ */
 export function makeStars(starCount: number): THREE.BufferGeometry {
   const random = createRandom(6174)
   const positions: number[] = []
   const colors: number[] = []
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5))
+  const innerRadius = 15.5
+  const outerRadius = 20.0
+
   for (let i = 0; i < starCount; i++) {
-    const x = (random() - 0.5) * 15
-    const y = (random() - 0.5) * 10
-    const z = -3 - random() * 6
-    positions.push(x, y, z)
-    const brightness = 0.35 + random() * 0.65
-    colors.push(0.45 * brightness, 0.74 * brightness, brightness)
+    const y = 1 - 2 * (i + 0.5) / starCount
+    const radial = Math.sqrt(Math.max(0, 1 - y * y))
+    const theta = i * goldenAngle
+    const distance = innerRadius + (outerRadius - innerRadius) * random()
+    positions.push(
+      distance * Math.cos(theta) * radial,
+      distance * y,
+      distance * Math.sin(theta) * radial,
+    )
+    const brightness = 0.28 + random() * 0.6
+    const tint = random()
+    colors.push(
+      (tint > 0.84 ? 0.84 : 0.52) * brightness,
+      (tint > 0.84 ? 0.65 : 0.78) * brightness,
+      brightness,
+    )
   }
+
   const geometry = new THREE.BufferGeometry()
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3))
