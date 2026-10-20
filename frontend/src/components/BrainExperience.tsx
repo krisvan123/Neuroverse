@@ -80,7 +80,7 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
 
   return (
     <div className="brain-experience" data-quality={quality}>
-      <div className="brain-stage" ref={stageRef} data-anatomy-style={anatomyStyle}>
+      <div className="brain-stage" ref={stageRef} data-anatomy-style={anatomyStyle} data-render-state={renderingPaused ? 'paused' : 'animating'}>
         <div className="brain-stage-outline" aria-hidden="true" />
         {!sceneReady && <div className="poster-underlay"><BrainPoster /></div>}
         {sceneEnabled && (

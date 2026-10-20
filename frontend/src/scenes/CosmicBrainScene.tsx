@@ -252,22 +252,17 @@ function CameraRig({ view, resetToken, paused, quality }: Pick<BrainSceneProps, 
   }, [camera, gl, invalidate])
 
   useEffect(() => {
+    // A temporary pause (offscreen, hidden tab, global reduced motion) must
+    // NOT reset visitors' manually dragged viewing angles. Camera presets
+    // should change only from an explicit view/reset control.
     target.current.set(...CAMERA_PRESETS[view])
-    if (paused || quality === 'saver') {
-      camera.position.copy(target.current)
-      camera.lookAt(0, 0, 0)
-      controls.current?.update()
-      moving.current = false
-      invalidate()
-    } else {
-      moving.current = true
-      invalidate()
-    }
-  }, [view, resetToken, paused, quality, camera, invalidate])
+    moving.current = true
+    invalidate()
+  }, [view, resetToken, invalidate])
 
   useFrame((_, delta) => {
     if (moving.current) {
-      camera.position.lerp(target.current, Math.min(1, delta * 4.5))
+      camera.position.lerp(target.current, paused || quality === 'saver' ? 1 : Math.min(1, delta * 4.5))
       camera.lookAt(0, 0, 0)
       if (camera.position.distanceTo(target.current) < 0.015) {
         camera.position.copy(target.current)
