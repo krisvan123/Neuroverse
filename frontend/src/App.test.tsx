@@ -35,8 +35,8 @@ describe('Neuroverse foundation', () => {
     render(<App />)
     const choices = screen.getByRole('group', { name: 'Original fly-brain anatomical source' })
     expect(choices).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Neuropil', exact: true })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByRole('button', { name: 'Whole tissue', exact: true })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Neuropil' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Whole tissue' })).toBeDisabled()
   })
   it('makes 3D controls available but correctly disables them without WebGL', () => {
     render(<App />)
