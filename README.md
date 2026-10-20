@@ -55,7 +55,7 @@ Open http://localhost:5173. The UI also renders when the API is offline, and rep
 
 ## Phase 04 — Cosmic Neuroscience controls
 
-The homepage 3D model is a **scientifically labeled conceptual illustration**, not the published fruit fly connectome. Drag to orbit, use the wheel to zoom within the canvas, or use **Front / Left / Right / Top / Reset** buttons for accessible camera presets. **High / Balanced / Saver** changes the particle, fiber, DNA, and pixel-ratio budget; **Pause motion** disables ambient animation while preserving manual camera controls. WebGL-disabled browsers show original SVG artwork instead.
+The homepage now loads a **source-derived FAFB tissue surface PLY** from the authenticated FastAPI endpoint. Its lighting/DNA/stars are decorative; the tissue envelope does not depict individually traced neuron membranes. Drag to orbit, use the wheel to zoom within the canvas, or use **Front / Left / Right / Top / Reset** buttons for accessible camera presets. **High / Balanced / Saver** changes the particle, fiber, DNA, and pixel-ratio budget; **Pause motion** disables ambient animation while preserving manual camera controls. WebGL-disabled browsers show original SVG artwork instead.
 
 Phase 04 validation: [quality report](docs/phase-04-verification.md) and [browser test screenshots](https://github.com/krisvan123/Neuroverse/actions/runs/39357768257).
 

@@ -285,3 +285,22 @@ html[data-motion='quiet'] *,html[data-motion='quiet'] *::before,html[data-motion
   .atlas-connectivity{padding:14px}
   .atlas-network-svg{min-height:190px}
 }
+
+/* Phase 05 hero upgrade — real FAFB tissue mesh, not transparent blob geometry */
+.brain-stage {
+  background:
+    radial-gradient(ellipse at 50% 43%,rgba(80,142,189,.19),transparent 55%),
+    radial-gradient(ellipse at 51% 53%,rgba(86,70,152,.12),transparent 74%);
+}
+.brain-stage::after{
+  content:"";position:absolute;inset:14% 20%;z-index:-1;
+  background:radial-gradient(circle,rgba(79,149,219,.20),transparent 70%);
+  filter:blur(39px);pointer-events:none
+}
+.hero-model-loading,.hero-model-alert{
+  position:absolute;z-index:4;left:12%;right:12%;bottom:16%;text-align:center;
+  padding:13px 15px;border:1px solid rgba(135,205,230,.31);border-radius:10px;
+  color:#d3edf8;background:rgba(7,20,38,.91);font-size:12px;line-height:1.65
+}
+.hero-model-alert{border-color:rgba(238,182,150,.47);color:#ffe4d6}
+.visualization-disclosure a{color:#a5e7fa;text-decoration:underline}

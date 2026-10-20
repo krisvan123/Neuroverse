@@ -7,11 +7,11 @@ test('immersive homepage is informative, interactive, and accessible', async ({ 
 
   await expect(page.getByRole('heading', { name: /the universe inside every connection/i })).toBeVisible()
   await expect(page.getByRole('link', { name: /start your discovery/i })).toBeVisible()
-  await expect(page.getByText(/procedural concept art · not flywire morphology/i)).toBeVisible()
+  await expect(page.getByText(/fafb tissue surface · not individual neuron morphology/i)).toBeVisible()
 
   const method = page.locator('details.visualization-disclosure')
   await method.locator('summary').click()
-  await expect(method.getByText(/not reconstructed FlyWire neurons/i)).toBeVisible()
+  await expect(method.getByText(/not a live brain scan/i)).toBeVisible()
 
   const quality = page.getByLabel('Quality')
   if (await quality.isEnabled()) {
@@ -92,7 +92,7 @@ test('3D drawing performance records a software-rendered baseline', async ({ pag
   if (!(await page.getByLabel('Quality').isEnabled())) {
     test.skip(true, 'No WebGL exposed by Chromium fixture — visual fallback was tested separately')
   }
-  await expect(page.getByText('INTERACTIVE / 3D CONCEPT')).toBeVisible({ timeout: 20_000 })
+  await expect(page.getByText('INTERACTIVE / 3D VIEWER')).toBeVisible({ timeout: 20_000 })
 
   const measurement = await page.evaluate(async () => {
     const samples: number[] = []

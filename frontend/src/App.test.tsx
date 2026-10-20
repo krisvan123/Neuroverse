@@ -33,10 +33,10 @@ describe('Neuroverse foundation', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Pause motion' }))
     expect(screen.getByRole('button', { name: 'Resume motion' })).toBeInTheDocument()
   })
-  it('does not present the conceptual graphic as real research data', () => {
+  it('labels the verified source viewer separately from its static conceptual fallback', () => {
     render(<App />)
     expect(screen.getByRole('img', { name: /conceptual illustrated bilateral fruit fly brain/i })).toBeInTheDocument()
-    expect(screen.getByText(/procedural concept art · not flywire morphology/i)).toBeInTheDocument()
+    expect(screen.getByText(/fafb tissue surface · not individual neuron morphology/i)).toBeInTheDocument()
     expect(screen.getByText(/static visualization — webgl unavailable/i)).toBeInTheDocument()
   })
 })

@@ -34,7 +34,7 @@ interface BrainExperienceProps {
 
 /**
  * UI controls stay in the DOM, not inside WebGL. They remain keyboard reachable
- * and clearly disclose that the object is a mathematical illustration.
+ * and clearly distinguish published tissue anatomy from decorative cosmic details.
  */
 export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps) {
   const [webglSupported] = useState(supportsWebGL)
@@ -43,6 +43,12 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
   const [view, setView] = useState<CameraView>('front')
   const [resetToken, setResetToken] = useState(0)
   const onReady = useCallback(() => setSceneReady(true), [])
+  const [modelState, setModelState] = useState<'loading' | 'ready' | 'error'>('loading')
+  const [modelMessage, setModelMessage] = useState('')
+  const onModelStatus = useCallback((state: 'loading' | 'ready' | 'error', message?: string) => {
+    setModelState(state)
+    setModelMessage(message ?? '')
+  }, [])
 
   const sceneEnabled = webglSupported
   const handleReset = () => {
@@ -64,9 +70,15 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
                 view={view}
                 resetToken={resetToken}
                 onReady={onReady}
+                onModelStatus={onModelStatus}
               />
             </Suspense>
           </SceneErrorBoundary>
+        )}
+        {sceneEnabled && sceneReady && modelState !== 'ready' && (
+          <div className={modelState === 'error' ? 'hero-model-alert' : 'hero-model-loading'} role="status">
+            {modelState === 'error' ? modelMessage : 'Loading authentic 3D FAFB tissue surface…'}
+          </div>
         )}
         {!sceneEnabled && (
           <div className="poster-fallback" role="status">
@@ -75,10 +87,10 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
         )}
         <div className="brain-stage-kicker">
           <span className="live-dot" aria-hidden="true" />
-          {sceneReady ? 'INTERACTIVE / 3D CONCEPT' : 'ILLUSTRATIVE FLY-BRAIN CONCEPT'}
+          {modelState === 'ready' ? 'INTERACTIVE / VERIFIED FAFB 3D' : 'INTERACTIVE / 3D VIEWER'}
         </div>
-        <span className="brain-stage-index" aria-hidden="true">NV—004 / COSMIC STUDIO</span>
-        <div className="brain-stage-caption">PROCEDURAL CONCEPT ART · NOT FLYWIRE MORPHOLOGY</div>
+        <span className="brain-stage-index" aria-hidden="true">NV—005 / FAFB ANATOMY</span>
+        <div className="brain-stage-caption">FAFB TISSUE SURFACE · NOT INDIVIDUAL NEURON MORPHOLOGY</div>
       </div>
 
       <div className="brain-controls" aria-label="Three-dimensional visualization controls">
@@ -131,12 +143,15 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
       <details className="visualization-disclosure">
         <summary>About this 3D visualization</summary>
         <p>
-          This procedural sculpture is an artistic representation inspired by the bilateral organization
-          of an adult fruit fly brain. Its shape, glowing fibers, stars, and animated DNA are decorative:
-          <strong> they are not reconstructed FlyWire neurons, measured neural activity, or scientific evidence.</strong>
-          The real FAFB v783 structural connectome and its citations are handled separately by Neuroverse's
-          data pipeline. Data-linked 3D morphology is reserved for the scientific explorer phase.
-        </p>
+          The brain surface is loaded from a published FAFB tissue-mask-derived mesh, pinned to
+          its upstream repository version and verified by the Neuroverse backend.
+          The sculpture preserves the source shape and topology, using only a uniform
+          scale and rotation for display. <strong>This is not a live brain scan or
+          a complete reconstruction of individual neuron membranes.</strong>
+          Lighting, animated DNA, orbit rings, and stars are artistic additions and
+          have no biological meaning. <a href="https://github.com/navis-org/navis-flybrains/blob/273333c8d8bf5adeebebd274e554621462e388bd/flybrains/meshes/FLYWIRE_whole_brain.md"
+          target="_blank" rel="noopener noreferrer">Read the tissue mesh provenance</a>.
+        </p>    </p>
       </details>
       <span className="sr-only">Available camera presets: {Object.keys(CAMERA_PRESETS).join(', ')}.</span>
     </div>

@@ -153,7 +153,6 @@ jobs:
 
   real-anatomy-source-audit:
     name: Verify original FAFB tissue mesh and neuron skeleton
-    if: github.event_name == 'pull_request' && github.event.pull_request.number == 5
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
