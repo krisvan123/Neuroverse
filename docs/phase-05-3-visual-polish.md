@@ -21,3 +21,15 @@ Scope: visual polish and defensible original mesh presentation only. Phase 06 ha
 Status: Engineering acceptance **PASS** on 2026-10-20. [PR #10](https://github.com/krisvan123/Neuroverse/pull/10) merged to `main` as commit `732b989c0e43ee807741f9ae66c5a1c614b7c3e2`.
 
 [GitHub Actions run 39391681428](https://github.com/krisvan123/Neuroverse/actions/runs/39391681428): **6/6 jobs passed**; **36/36 real Chromium tests on desktop/mobile emulation passed**. The browser tests measured marquee movement and checked reduced motion and real original FAFB Canvas screenshot differences across all three modes. Physical-device GPU visual acceptance is separate and awaiting user review. Phase 06 has not started.
+
+## Final Phase 05.3 usability and efficiency gate (extension)
+
+- When a real local connectivity CSV has not been imported, *Inspect directed connections* reveals step-by-step authentic FAFB dataset setup, an official Codex source link, copyable PowerShell commands and a **Recheck dataset availability** button. No generated/fake neuronal edges ever substitute for missing data.
+- When a selected dataset exists, its real `seed_root_id` becomes the initial exploration ID if the learner has not entered a different ID. A **Use this dataset's seed neuron** button is also available. This prevents the default published example neuron from spuriously failing when absent from a small selected subgraph. User-entered IDs remain untouched on subsequent refreshes.
+- The hero's Three.js animation is suspended automatically when the canvas is offscreen or when the browser tab is hidden. This reduces unnecessary activity while reading the rest of the page. The current manually chosen camera angle is not reset on temporary suspension; only explicit view buttons or Reset do so.
+- Original mesh surface materials in the Scientific Explorer use balanced illumination for clearer contours, without editing source coordinates. Site-wide motion reduction, marquee accessibility, star/DNA decorations and honest depth legend remain in effect.
+- Dev-only WebGL diagnostics now include the total rendered frame count so desktop/mobile Chromium can verify the continuous loop stops outside the viewport and resumes on return. These are headless/software WebGL measurements, **not** a physical GPU FPS benchmark.
+
+No Phase 06 features, no fabricated connectome and no claims of raw-vxel-complete anatomy.
+
+**Extension verification:** pending GitHub Actions on the new branch.

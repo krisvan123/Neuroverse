@@ -71,7 +71,7 @@ function TrueTissue({ onStatus, tissueDisplay, source }: { onStatus: ScientificS
       {geometry && (
         <mesh geometry={geometry}>
           {tissueDisplay === 'surface' && (
-            <meshStandardMaterial color="#96beca" roughness={0.83} metalness={0}
+            <meshStandardMaterial color="#9bbdc8" roughness={0.86} metalness={0}
               flatShading={false} side={THREE.DoubleSide} />
           )}
           {tissueDisplay === 'depth' && (
@@ -159,10 +159,10 @@ export default function RealBrainScene({ mode, skeleton, view, resetKey, tissueD
       aria-label="Source-derived scientific anatomy canvas; controls available below"
     >
       <color attach="background" args={['#081422']} />
-      <ambientLight intensity={1.35} />
-      <hemisphereLight args={["#c9f0ff", "#17243b", 1.25]} />
-      <directionalLight position={[4, 7, 8]} intensity={3.1} color="#d0f2ff" />
-      <directionalLight position={[-4, -3, -6]} intensity={1.5} color="#a49aff" />
+      <ambientLight intensity={0.48} />
+      <hemisphereLight args={["#c9f0ff", "#17243b", 0.9]} />
+      <directionalLight position={[4, 7, 8]} intensity={1.85} color="#d0f2ff" />
+      <directionalLight position={[-4, -3, -6]} intensity={1.0} color="#a49aff" />
       {mode === 'skeleton'
         ? <RealSkeleton skeleton={skeleton} onStatus={onStatus} />
         : <TrueTissue key={mode} source={mode} onStatus={onStatus} tissueDisplay={tissueDisplay} />}
