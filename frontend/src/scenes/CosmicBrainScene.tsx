@@ -15,6 +15,33 @@ export interface BrainSceneProps {
   onReady: () => void
 }
 
+/** Developer-only renderer telemetry for honest browser-based frame-rate audits. */
+function SceneFrameProbe() {
+  const samples = useRef<number[]>([])
+  const previous = useRef(0)
+  const counter = useRef(0)
+  useFrame(({ gl }) => {
+    if (!import.meta.env.DEV) return
+    const current = performance.now()
+    if (previous.current > 0) {
+      samples.current.push(current - previous.current)
+      if (samples.current.length > 90) samples.current.shift()
+    }
+    previous.current = current
+    counter.current += 1
+    if (counter.current % 15 !== 0 || samples.current.length === 0) return
+    const ordered = [...samples.current].sort((one, two) => one - two)
+    const statistics = {
+      sampledSceneFrames: ordered.length,
+      medianSceneFrameMs: ordered[Math.floor(ordered.length / 2)] ?? 0,
+      rendererDrawCalls: gl.info.render.calls,
+      note: 'Headless/dev scene frames; not a physical-device GPU benchmark',
+    }
+    ;(window as typeof window & { __neuroverseSceneDiagnostics?: typeof statistics }).__neuroverseSceneDiagnostics = statistics
+  })
+  return null
+}
+
 /** The shell is intentionally anatomical *concept art*, not verified FlyWire mesh. */
 function BrainSculpture({ quality, paused }: Pick<BrainSceneProps, 'quality' | 'paused'>) {
   const group = useRef<THREE.Group>(null)
@@ -197,6 +224,7 @@ export default function CosmicBrainScene(props: BrainSceneProps) {
       <ambientLight intensity={0.85} />
       <pointLight position={[-2.5, 3.5, 4]} intensity={34} color="#62bfee" decay={2} distance={10} />
       <pointLight position={[2.7, -1.2, 3]} intensity={24} color="#a481ec" decay={2} distance={9} />
+      <SceneFrameProbe />
       <ParticleField quality={props.quality} />
       {budget.helices > 0 && <DNAHelix x={3.1} paused={props.paused} quality={props.quality} />}
       {budget.helices > 1 && <DNAHelix x={-3.2} paused={props.paused} quality={props.quality} />}
