@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import App from './App'
 
 vi.mock('./components/ApiStatus', () => ({ ApiStatus: () => <span>API test placeholder</span> }))
@@ -12,6 +12,17 @@ describe('Neuroverse foundation', () => {
     expect(screen.getByRole('heading', { name: /the universe inside every connection/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /start your discovery/i })).toHaveAttribute('href', '#learning')
     expect(screen.getByRole('heading', { name: /wonder, with evidence/i })).toBeInTheDocument()
+  })
+  it('lets learners disable and re-enable ambient motion', () => {
+    render(<App />)
+    const reduceButton = screen.getByRole('button', { name: 'Reduce ambient motion' })
+    expect(reduceButton).toHaveAttribute('aria-pressed', 'false')
+    fireEvent.click(reduceButton)
+    expect(document.documentElement.dataset.motion).toBe('quiet')
+    const enableButton = screen.getByRole('button', { name: 'Enable ambient motion' })
+    expect(enableButton).toHaveAttribute('aria-pressed', 'true')
+    fireEvent.click(enableButton)
+    expect(document.documentElement.dataset.motion).toBe('ambient')
   })
   it('does not present the conceptual graphic as real research data', () => {
     render(<App />)

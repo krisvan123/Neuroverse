@@ -154,6 +154,6 @@ h2 { margin-top:25px;font-size:clamp(42px,4.4vw,67px);line-height:1.1 }
   .sources-section { padding-bottom:90px } .footer-content { flex-wrap:wrap;padding-block:28px;gap:14px }
   .footer-content>div { order:3;width:100% }
 }
-@media(prefers-reduced-motion:reduce) { html {scroll-behavior:auto} *,*::before,*::after { animation:none!important;transition-duration:.01ms!important } }
+@media(prefers-reduced-motion:reduce) { html:not([data-motion='ambient']) {scroll-behavior:auto} html:not([data-motion='ambient']) *,html:not([data-motion='ambient']) *::before,html:not([data-motion='ambient']) *::after { animation:none!important;transition-duration:.01ms!important } }
 html[data-motion='quiet'] { scroll-behavior:auto }
 html[data-motion='quiet'] *,html[data-motion='quiet'] *::before,html[data-motion='quiet'] *::after { animation:none!important;transition-duration:.01ms!important }
