@@ -1,4 +1,4 @@
-"""Stable, versioned JSON schemas for the initial API contract."""
+"""Explicit system responses; do not misrepresent unverified neuroscience data."""
 
 from typing import Literal
 
@@ -10,18 +10,16 @@ class HealthResponse(BaseModel):
 
     status: Literal["ok"] = "ok"
     service: Literal["neuroverse-api"] = "neuroverse-api"
-    phase: int = 2
-    version: str = "0.1.0"
+    phase: int = 3
+    version: str = "0.2.0"
 
 
 class CapabilityResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    stage: Literal["engineering-foundation"] = "engineering-foundation"
-    real_dataset_loaded: bool = False
+    stage: Literal["scientific-data-pipeline"] = "scientific-data-pipeline"
+    dataset_configured: bool = False
+    real_dataset_loaded: bool = False  # No independent source identity verification.
     three_d_explorer_available: bool = False
     experiments_available: bool = False
-    description: str = (
-        "Foundation only. Real FlyWire data, 3D exploration, and experiments "
-        "will be implemented and validated in subsequent phases."
-    )
+    description: str = "No neuron dataset configured."
