@@ -60,7 +60,7 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
 
   return (
     <div className="brain-experience" data-quality={quality}>
-      <div className="brain-stage">
+      <div className="brain-stage" data-anatomy-style={anatomyStyle}>
         <div className="brain-stage-outline" aria-hidden="true" />
         {!sceneReady && <div className="poster-underlay"><BrainPoster /></div>}
         {sceneEnabled && (
@@ -94,6 +94,7 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
           {modelState === 'ready' ? 'INTERACTIVE / VERIFIED FAFB 3D' : 'INTERACTIVE / 3D VIEWER'}
         </div>
         <span className="brain-stage-index" aria-hidden="true">NV—005.2 / FAFB NEUROANATOMY</span>
+        <div className="brain-stage-render-mode" aria-live="polite">{anatomyStyle === 'shaded' ? 'SOLID ANATOMY' : anatomyStyle === 'depth' ? 'COORDINATE DEPTH' : 'TRIANGLE WIREFRAME'}</div>
         <div className="brain-stage-caption">{anatomySource === 'neuropil' ? 'FAFB-ALIGNED NEUROPIL SURFACE' : 'FAFB WHOLE-BRAIN TISSUE SURFACE'} · ORIGINAL PUBLISHED MESH</div>
       </div>
 
@@ -117,6 +118,7 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
           ))}
         </div>
       </div>
+      {anatomyStyle === 'shaded' && <p className="brain-source-disclaimer" role="note">Anatomy shows the original published surface as a solid shaded shape; fine contours are from the source mesh, not drawn triangle edges.</p>}
       {anatomyStyle === 'depth' && <p className="brain-source-disclaimer" role="note">Depth colors encode source-mesh coordinates, not biological brain regions.</p>}
       {anatomyStyle === 'mesh' && <p className="brain-source-disclaimer" role="note">Wireframe edges are published mesh triangles, not neurons.</p>}
 
