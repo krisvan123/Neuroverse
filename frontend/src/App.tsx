@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ApiStatus } from './components/ApiStatus'
 import { FeatureCard } from './components/FeatureCard'
 import { BrainExperience } from './components/BrainExperience'
+import MissionBanner from './components/MissionBanner'
 import { ScientificExplorer } from './components/ScientificExplorer'
 
 const resources = [
@@ -48,7 +49,7 @@ export default function App() {
           <div className="hero-side-caption" aria-hidden="true">CONNECTING KNOWLEDGE · INSPIRED BY NATURE</div>
         </section>
 
-        <section className="insight-band" aria-label="Project vision"><div className="container band-inner"><span>THE NEUROVERSE MISSION</span><p>Science should be something you <em>experience</em> — not just something you read.</p><span className="band-star" aria-hidden="true">✳</span></div></section>
+        <MissionBanner />
 
         <section id="learning" className="pathways container" aria-labelledby="pathways-title">
           <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-dash" /> THREE WAYS TO SEE FURTHER</div><h2 id="pathways-title">Curiosity has<br /><em>no limits.</em></h2></div><p>One universe. Three journeys. Follow the pathways from introductory neuroscience to real connectome research and computational thinking.</p></div>
@@ -65,7 +66,7 @@ export default function App() {
 
         <section id="sources" className="sources-section container" aria-labelledby="sources-title"><div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-dash" /> GROUNDED IN RESEARCH</div><h2 id="sources-title">Wonder, with <em>evidence.</em></h2></div><p>Our aim is to clearly separate observed scientific data, mathematical models, and visual illustration. Follow the sources behind the ideas.</p></div><ul className="source-list">{resources.map((resource) => <li key={resource.href}><a href={resource.href} target="_blank" rel="noopener noreferrer"><span>{resource.label}</span><span aria-hidden="true">↗</span></a></li>)}</ul></section>
       </main>
-      <footer className="site-footer"><div className="container footer-content"><a className="brand" href="#home"><span className="brand-mark" aria-hidden="true">✺</span>NEUROVERSE<span className="brand-period">.</span></a><div><p>Independent, research-inspired science education. Not affiliated with FlyWire.</p><button className="quiet-toggle" type="button" onClick={() => setQuietMode((value) => !value)} aria-pressed={quietMode}>{quietMode ? 'Enable ambient motion' : 'Reduce ambient motion'}</button></div><span>PHASE 05.2 / SCIENTIFIC VISUALS</span></div></footer>
+      <footer className="site-footer"><div className="container footer-content"><a className="brand" href="#home"><span className="brand-mark" aria-hidden="true">✺</span>NEUROVERSE<span className="brand-period">.</span></a><div><p>Independent, research-inspired science education. Not affiliated with FlyWire.</p><button className="quiet-toggle" type="button" onClick={() => setQuietMode((value) => !value)} aria-pressed={quietMode}>{quietMode ? 'Enable ambient motion' : 'Reduce ambient motion'}</button></div><span>PHASE 05.3 / SCIENTIFIC EXPERIENCE</span></div></footer>
     </div>
   )
 }

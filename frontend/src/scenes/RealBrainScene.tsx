@@ -71,8 +71,8 @@ function TrueTissue({ onStatus, tissueDisplay, source }: { onStatus: ScientificS
       {geometry && (
         <mesh geometry={geometry}>
           {tissueDisplay === 'surface' && (
-            <meshPhysicalMaterial color="#a6dbe7" roughness={0.55} metalness={0.06}
-              clearcoat={0.18} clearcoatRoughness={0.45} side={THREE.DoubleSide} />
+            <meshStandardMaterial color="#96beca" roughness={0.83} metalness={0}
+              flatShading={false} side={THREE.DoubleSide} />
           )}
           {tissueDisplay === 'depth' && (
             <meshStandardMaterial vertexColors roughness={0.64} metalness={0}

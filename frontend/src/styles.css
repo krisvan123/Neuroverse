@@ -505,3 +505,116 @@ html[data-motion="quiet"] .cosmic-shooting-star{opacity:0}
   .brain-source-heading{flex-basis:100%;margin-block:1px 5px}
   .brain-anatomy-controls button{padding:7px 8px}
 }
+
+
+/* Phase 05.3 — seamless, readable, continuous science mission statement.
+ * Two perfectly equal track units eliminate jumps at animation boundaries.
+ * The visible first copy remains readable and pauses on hover/focus.
+ * Reduced-motion shows a complete wrapping static statement instead. */
+.mission-banner{
+  position:relative;isolation:isolate;overflow:hidden;
+  background:
+    radial-gradient(ellipse at 52% 125%,rgba(70,151,204,.11),transparent 64%),
+    linear-gradient(120deg,rgba(13,28,51,.94),rgba(15,30,49,.91));
+  border-block:1px solid rgba(137,191,219,.19);
+}
+.mission-banner__layout{
+  display:grid;grid-template-columns:minmax(160px,210px) minmax(0,1fr);
+  align-items:center;gap:28px;min-height:156px;
+}
+.mission-banner__label{
+  position:relative;z-index:1;color:#91b8d1;font-size:10px;
+  font-weight:850;letter-spacing:.19em;line-height:1.7;
+  white-space:nowrap;
+}
+.mission-banner__marquee{
+  position:relative;min-width:0;overflow:hidden;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent);
+  mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent);
+}
+.mission-banner__track{
+  display:flex;width:max-content;max-width:none;align-items:center;
+  animation:nv-mission-marquee 34s linear infinite;
+  will-change:transform;
+}
+.mission-banner__unit{
+  flex:0 0 auto;display:flex;align-items:center;gap:42px;
+  padding-right:42px;
+}
+.mission-banner__text{
+  flex:0 0 auto;white-space:nowrap;
+  font-size:clamp(24px,2.65vw,39px);font-weight:550;
+  line-height:1.25;letter-spacing:-.048em;color:#f0f6ff;
+}
+.mission-banner__text em{font-style:normal;font-weight:450;color:#6ad9f9}
+.mission-banner__asterisk{
+  font-size:42px;line-height:1;color:#7ee3ff;
+  text-shadow:0 0 22px rgba(97,220,255,.35);
+}
+@keyframes nv-mission-marquee{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(-50%,0,0)}
+}
+.mission-banner:hover .mission-banner__track,
+.mission-banner:focus-within .mission-banner__track{animation-play-state:paused}
+@media(max-width:900px){
+  .mission-banner__layout{
+    grid-template-columns:1fr;align-content:center;gap:14px;
+    min-height:145px;padding-block:25px;
+  }
+  .mission-banner__text{font-size:clamp(22px,4.8vw,32px)}
+  .mission-banner__unit{gap:27px;padding-right:27px}
+}
+@media(max-width:520px){
+  .mission-banner__label{font-size:9px}
+  .mission-banner__asterisk{font-size:31px}
+}
+html[data-motion='quiet'] .mission-banner__track{
+  animation:none!important;will-change:auto;
+}
+html[data-motion='quiet'] .mission-banner__marquee{
+  overflow:visible;mask-image:none;-webkit-mask-image:none;
+}
+html[data-motion='quiet'] .mission-banner__track{width:100%}
+html[data-motion='quiet'] .mission-banner__unit{
+  flex:1;min-width:0;padding-right:0;
+}
+html[data-motion='quiet'] .mission-banner__unit--duplicate{
+  display:none;
+}
+html[data-motion='quiet'] .mission-banner__text{
+  white-space:normal;
+}
+@media(prefers-reduced-motion:reduce){
+  html:not([data-motion='ambient']) .mission-banner__track{
+    animation:none!important;will-change:auto;width:100%;
+  }
+  html:not([data-motion='ambient']) .mission-banner__marquee{
+    overflow:visible;mask-image:none;-webkit-mask-image:none;
+  }
+  html:not([data-motion='ambient']) .mission-banner__unit{
+    flex:1;min-width:0;padding-right:0;
+  }
+  html:not([data-motion='ambient']) .mission-banner__unit--duplicate{
+    display:none;
+  }
+  html:not([data-motion='ambient']) .mission-banner__text{
+    white-space:normal;
+  }
+}
+/* Camera overlay identifies the *actual* selected mode even when toolbar
+   is below the viewport in desktop/mobile screenshot compositions. */
+.brain-stage-render-mode{
+  position:absolute;z-index:4;pointer-events:none;
+  top:14%;right:3%;
+  display:flex;align-items:center;gap:7px;
+  border:1px solid rgba(148,216,242,.22);border-radius:5px;
+  background:rgba(9,25,43,.78);padding:7px 9px;
+  color:#d9eff8;font-size:9px;font-weight:800;letter-spacing:.12em;
+}
+.brain-stage-render-mode::before{
+  content:"";width:5px;height:5px;background:#8cdded;border-radius:50%;
+}
+@media(max-width:670px){
+  .brain-stage-render-mode{top:17%;font-size:8px}
+}

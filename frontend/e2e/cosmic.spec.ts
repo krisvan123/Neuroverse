@@ -249,3 +249,80 @@ test('DNA helix and source controls remain usable with motion paused and no WebG
     await expect(source.getByRole('button', { name: 'Neuropil' })).toBeDisabled()
   }
 })
+
+
+test('Phase 05.3 seamless moving mission marquee pauses when user requests quiet mode', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  const banner = page.getByRole('region', { name: 'The Neuroverse mission' })
+  const track = banner.locator('.mission-banner__track')
+  await expect(banner).toBeVisible()
+  await expect(banner.locator('.mission-banner__unit')).toHaveCount(2)
+  await expect(banner.locator('.mission-banner__unit--duplicate')).toHaveAttribute('aria-hidden', 'true')
+  await expect(track).toHaveCSS('animation-name', 'nv-mission-marquee')
+  await banner.scrollIntoViewIfNeeded()
+  const before = await track.evaluate(el => new DOMMatrixReadOnly(getComputedStyle(el).transform).m41)
+  await page.waitForTimeout(1400)
+  const after = await track.evaluate(el => new DOMMatrixReadOnly(getComputedStyle(el).transform).m41)
+  expect(Math.abs(after - before)).toBeGreaterThan(8)
+  const widths = await track.evaluate(el => {
+    const units = Array.from(el.children) as HTMLElement[]
+    return { a: units[0]!.getBoundingClientRect().width, b: units[1]!.getBoundingClientRect().width, total: (el as HTMLElement).getBoundingClientRect().width }
+  })
+  expect(Math.abs(widths.a - widths.b)).toBeLessThan(1)
+  expect(Math.abs(widths.a * 2 - widths.total)).toBeLessThan(1)
+  await banner.hover()
+  await expect(track).toHaveCSS('animation-play-state', 'paused')
+  await page.getByRole('button', { name: 'Reduce ambient motion' }).click()
+  await expect(track).toHaveCSS('animation-name', 'none')
+  await expect(banner.locator('.mission-banner__unit--duplicate')).toBeHidden()
+  await expect(banner.locator('.mission-banner__text').first()).toHaveCSS('white-space', 'normal')
+  await page.getByRole('button', { name: 'Enable ambient motion' }).click()
+  await expect(track).toHaveCSS('animation-name', 'nv-mission-marquee')
+})
+
+test('Phase 05.3 OS reduced motion shows the complete stationary science mission', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  const banner = page.getByRole('region', { name: 'The Neuroverse mission' })
+  await expect(banner.locator('.mission-banner__track')).toHaveCSS('animation-name', 'none')
+  await expect(banner.locator('.mission-banner__unit--duplicate')).toBeHidden()
+  await expect(banner.locator('.mission-banner__marquee')).toHaveCSS('overflow-x', 'visible')
+})
+
+test('Phase 05.3 original FAFB anatomy is solid and three canvas renderings visibly differ', async ({ page }, testInfo) => {
+  const originalPath = process.env.NEUROVERSE_REAL_NEUROPIL_PLY_FILE
+  test.skip(!originalPath, 'Authenticated source PLY staged by GitHub CI')
+  const original = await readFile(originalPath!)
+  const sha = createHash('sha256').update(original).digest('hex')
+  await page.route('**/api/v1/brain/neuropil-mesh', route => route.fulfill({
+    status: 200, body: original,
+    headers: { 'Content-Type': 'application/octet-stream', 'X-Neuroverse-Source-SHA256': sha },
+  }))
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  if (!(await page.getByLabel('Quality').isEnabled())) {
+    test.skip(true, 'WebGL missing, validated by existing static fallback test')
+  }
+  const stage = page.locator('.brain-stage')
+  await expect(stage).toHaveAttribute('data-anatomy-style', 'shaded')
+  await expect(stage.getByText('SOLID ANATOMY')).toBeVisible()
+  await expect(stage.getByText('INTERACTIVE / VERIFIED FAFB 3D')).toBeVisible({ timeout: 30000 })
+  const canvas = stage.locator('canvas')
+  await expect(canvas).toBeVisible()
+  await page.waitForTimeout(550)
+  const solid = await canvas.screenshot({ animations: 'disabled', path: testInfo.outputPath('05-3-fafb-solid.png') })
+  await page.getByRole('button', { name: 'Depth', exact: true }).click()
+  await expect(stage.getByText('COORDINATE DEPTH')).toBeVisible()
+  await page.waitForTimeout(550)
+  const depth = await canvas.screenshot({ animations: 'disabled', path: testInfo.outputPath('05-3-fafb-depth.png') })
+  await page.getByRole('button', { name: 'Wireframe', exact: true }).click()
+  await expect(stage.getByText('TRIANGLE WIREFRAME')).toBeVisible()
+  await page.waitForTimeout(550)
+  const wire = await canvas.screenshot({ animations: 'disabled', path: testInfo.outputPath('05-3-fafb-wireframe.png') })
+  expect(solid.equals(depth)).toBe(false)
+  expect(solid.equals(wire)).toBe(false)
+  expect(depth.equals(wire)).toBe(false)
+  await page.getByRole('button', { name: 'Anatomy', exact: true }).click()
+  await expect(stage.getByText('SOLID ANATOMY')).toBeVisible()
+})

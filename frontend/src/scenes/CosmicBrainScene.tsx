@@ -88,7 +88,7 @@ function AuthenticBrain({ quality, paused, onModelStatus, anatomySource, anatomy
         if (!parsed.getAttribute('normal')) parsed.computeVertexNormals()
         // Preserve topology, proportions and contours from the original surface.
         parsed.center()
-        const scale = 5.48 / extent
+        const scale = 5.7 / extent
         parsed.scale(scale, scale, scale)
         applySourceDepthColors(parsed)
         if (controller.signal.aborted) return
@@ -117,19 +117,18 @@ function AuthenticBrain({ quality, paused, onModelStatus, anatomySource, anatomy
 
   if (!geometry) return null
   return (
-    <group ref={group} rotation={[0.08, -0.17, 0]}>
+    <group ref={group} rotation={[0.06, -0.14, 0]}>
       {/* Both surfaces are authenticated *source-derived* FlyWire/FAFB PLYs.
           Materials enhance depth but NEVER add triangles or false brain regions. */}
-      <mesh geometry={geometry} castShadow receiveShadow>
+      <mesh name="neuroverse-published-anatomy" geometry={geometry} castShadow receiveShadow>
         {anatomyStyle === 'shaded' && (
-          <meshPhysicalMaterial
-            color="#90bac5"
-            roughness={0.77}
-            metalness={0.0}
-            clearcoat={0.1}
-            clearcoatRoughness={0.75}
-            emissive="#112b3a"
-            emissiveIntensity={0.02}
+          <meshStandardMaterial
+            color="#96beca"
+            roughness={0.86}
+            metalness={0}
+            emissive="#0c2330"
+            emissiveIntensity={0.012}
+            flatShading={false}
             side={THREE.DoubleSide}
           />
         )}
@@ -138,20 +137,14 @@ function AuthenticBrain({ quality, paused, onModelStatus, anatomySource, anatomy
             side={THREE.DoubleSide} />
         )}
         {anatomyStyle === 'mesh' && (
-          <meshStandardMaterial color="#39657a" roughness={0.89}
-            side={THREE.DoubleSide} transparent opacity={0.28} />
+          <meshStandardMaterial color="#264253" roughness={0.92}
+            side={THREE.DoubleSide} transparent opacity={0.19} />
         )}
       </mesh>
       {anatomyStyle === 'mesh' && (
-        <mesh geometry={geometry}>
-          <meshBasicMaterial color="#a0eaff" wireframe transparent
-            opacity={0.48} depthWrite={false} side={THREE.DoubleSide} />
-        </mesh>
-      )}
-      {quality === 'high' && anatomyStyle === 'shaded' && (
-        <mesh geometry={geometry}>
-          <meshBasicMaterial color="#bfe7f3" wireframe transparent
-            opacity={0.025} depthWrite={false} />
+        <mesh name="neuroverse-wireframe-overlay" geometry={geometry}>
+          <meshBasicMaterial color="#a8efff" wireframe transparent
+            opacity={0.68} depthWrite={false} side={THREE.DoubleSide} />
         </mesh>
       )}
     </group>
