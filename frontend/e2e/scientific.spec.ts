@@ -19,6 +19,7 @@ test('real-data explorer keeps accuracy disclosures and handles missing imported
   await expect(explorer.getByText(/separate display coordinates until alignment/i)).toBeVisible()
   await explorer.getByRole('button', { name: 'Inspect directed connections' }).click()
   await expect(explorer.getByRole('alert')).toContainText(/has not been imported locally/i)
+  await explorer.getByText('Scientific sources and limitations').click()
   await expect(explorer.getByRole('link', { name: /whole-brain mask-derived surface/i })).toHaveAttribute('href', /FLYWIRE_whole_brain\.md/)
 })
 
