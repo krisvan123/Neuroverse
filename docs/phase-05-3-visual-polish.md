@@ -18,4 +18,6 @@ Scope: visual polish and defensible original mesh presentation only. Phase 06 ha
 - Original published FAFB neuropil visual check captures solid, depth and wireframe screenshots in independent canvas frames and verifies pixels differ between modes.
 - Software verification is distinct from user visual acceptance on an actual Windows GPU.
 
-Status: CI acceptance pending on Phase 05.3 PR.
+Status: Engineering acceptance **PASS** on 2026-10-20. [PR #10](https://github.com/krisvan123/Neuroverse/pull/10) merged to `main` as commit `732b989c0e43ee807741f9ae66c5a1c614b7c3e2`.
+
+[GitHub Actions run 39391681428](https://github.com/krisvan123/Neuroverse/actions/runs/39391681428): **6/6 jobs passed**; **36/36 real Chromium tests on desktop/mobile emulation passed**. The browser tests measured marquee movement and checked reduced motion and real original FAFB Canvas screenshot differences across all three modes. Physical-device GPU visual acceptance is separate and awaiting user review. Phase 06 has not started.
