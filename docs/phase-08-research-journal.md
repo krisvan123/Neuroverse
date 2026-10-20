@@ -43,3 +43,7 @@ Test evidence must include:
 - All earlier Phase 01–07 checks remain green.
 
 **Manual gates not substitutable by CI:** testing localStorage on real browsers/devices, browser private mode and quota behavior, human accessibility observations and Phase 06's outstanding five-person pilot. These remain explicitly unverified unless personally executed.
+
+## Engineering evidence
+
+Implementation and reviewed file history: [Phase 08 PR #14](https://github.com/krisvan123/Neuroverse/pull/14). The current commit's GitHub Actions checks are the source of truth for automated acceptance. An initial Chromium run detected an error where rejected imports hid existing saved cards (64/66 browser checks passed); the UI error states were separated in a corrective commit. Do not consider a subsequent run successful unless the final recorded GitHub Actions result is green.
