@@ -11,7 +11,7 @@ export const SCENE_BUDGETS: Record<VisualQuality, { fibers: number; stars: numbe
 }
 
 export const CAMERA_PRESETS: Record<CameraView, [number, number, number]> = {
-  front: [0, 0.3, 8.6],
+  front: [2.1, 0.95, 8.6],
   left: [-7.9, 0.55, 2.2],
   right: [7.9, 0.55, 2.2],
   top: [0, 8.6, 0.8],

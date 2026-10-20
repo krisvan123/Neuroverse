@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { PLYLoader } from 'three/addons/loaders/PLYLoader.js'
+import { getApiBaseUrl } from '../api/client'
 import {
-  CAMERA_PRESETS, SCENE_BUDGETS, makeDNA, makeFilaments, makeStars,
+  CAMERA_PRESETS, SCENE_BUDGETS, makeDNA, makeStars,
   type CameraView, type VisualQuality,
 } from './geometry'
 
@@ -13,6 +15,7 @@ export interface BrainSceneProps {
   view: CameraView
   resetToken: number
   onReady: () => void
+  onModelStatus: (state: 'loading' | 'ready' | 'error', message?: string) => void
 }
 
 /** Developer-only renderer telemetry for honest browser-based frame-rate audits. */
@@ -42,61 +45,91 @@ function SceneFrameProbe() {
   return null
 }
 
-/** The shell is intentionally anatomical *concept art*, not verified FlyWire mesh. */
-function BrainSculpture({ quality, paused }: Pick<BrainSceneProps, 'quality' | 'paused'>) {
+/**
+ * Render *published FAFB specimen-derived tissue* from the verified backend.
+ *
+ * Unlike the earlier stacked polyhedra, every visible surface triangle comes
+ * from the pinned and checksum-validated scientific PLY (see backend/app/data/tissue.py).
+ * The normalized presentation transform is uniform: no fabricated anatomy.
+ */
+function AuthenticBrain({ quality, paused, onModelStatus }: Pick<BrainSceneProps, 'quality' | 'paused' | 'onModelStatus'>) {
+  const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null)
   const group = useRef<THREE.Group>(null)
-  const fibers = useMemo(() => makeFilaments(SCENE_BUDGETS[quality].fibers), [quality])
-  useEffect(() => () => fibers.dispose(), [fibers])
 
-  useFrame((_, delta) => {
+  useEffect(() => {
+    const controller = new AbortController()
+    onModelStatus('loading')
+    async function load() {
+      const response = await fetch(getApiBaseUrl() + '/api/v1/brain/tissue-mesh', {
+        signal: controller.signal,
+      })
+      if (!response.ok) throw new Error('Research mesh unavailable. Start the FastAPI backend.')
+      const checksum = response.headers.get('X-Neuroverse-Source-SHA256')
+      if (!checksum || !/^[a-f0-9]{64}$/.test(checksum)) {
+        throw new Error('The research mesh lacks a validated source checksum')
+      }
+      const rawBytes = await response.arrayBuffer()
+      if (rawBytes.byteLength < 1000 || rawBytes.byteLength > 20_000_000) {
+        throw new Error('Research mesh has an unexpected file size')
+      }
+      const parsed = new PLYLoader().parse(rawBytes)
+      try {
+        parsed.computeBoundingBox()
+        if (!parsed.boundingBox) throw new Error('Research mesh has no 3D bounds')
+        const size = new THREE.Vector3()
+        parsed.boundingBox.getSize(size)
+        const extent = Math.max(size.x, size.y, size.z)
+        if (!Number.isFinite(extent) || extent <= 0) throw new Error('Research mesh has invalid geometry')
+        if (!parsed.getAttribute('normal')) parsed.computeVertexNormals()
+        // Preserve topology, proportions and contours from the original surface.
+        parsed.center()
+        const scale = 5.65 / extent
+        parsed.scale(scale, scale, scale)
+        if (controller.signal.aborted) return
+        setGeometry(parsed)
+        onModelStatus('ready')
+      } catch (error) {
+        parsed.dispose()
+        throw error
+      }
+    }
+    load().catch((error: unknown) => {
+      if (!controller.signal.aborted) {
+        onModelStatus('error', error instanceof Error ? error.message : 'The scientific brain mesh could not be loaded')
+      }
+    })
+    return () => controller.abort()
+  }, [onModelStatus])
+
+  useEffect(() => () => geometry?.dispose(), [geometry])
+
+  useFrame((state, delta) => {
     if (!group.current || paused || quality === 'saver') return
-    group.current.rotation.y += Math.min(delta, 0.05) * 0.07
-    group.current.rotation.x = Math.sin(group.current.rotation.y * 1.7) * 0.05
+    group.current.rotation.y += Math.min(delta, 0.05) * 0.09
+    group.current.position.y = Math.sin(state.clock.elapsedTime * 0.55) * 0.06
   })
 
+  if (!geometry) return null
   return (
-    <group ref={group} position={[0, 0.02, 0]}>
-      {([-1, 1] as const).map((side) => (
-        <group key={side}>
-          {/* Core bilateral lobes */}
-          <mesh position={[side * 0.72, 0.22, 0]} scale={[1.12, 1.26, 0.92]} rotation={[0, side * 0.13, side * -0.1]}>
-            <icosahedronGeometry args={[1, quality === 'saver' ? 2 : 3]} />
-            <meshPhysicalMaterial
-              color={side < 0 ? '#3b74af' : '#8275c0'}
-              emissive={side < 0 ? '#163c66' : '#352856'}
-              emissiveIntensity={0.55}
-              roughness={0.52}
-              metalness={0.15}
-              transparent
-              opacity={0.36}
-              depthWrite={false}
-              side={THREE.DoubleSide}
-            />
-          </mesh>
-          {/* Optic-lobe-like masses enhance fly-brain silhouette. */}
-          <mesh position={[side * 1.83, -0.24, 0.1]} scale={[0.58, 0.79, 0.73]} rotation={[0.2, 0, side * 0.3]}>
-            <icosahedronGeometry args={[1, quality === 'saver' ? 2 : 3]} />
-            <meshPhysicalMaterial color="#497e9d" transparent opacity={0.32} depthWrite={false} side={THREE.DoubleSide} roughness={0.6} />
-          </mesh>
-          {/* Paired raised caps suggest sensory neuropil lobes. */}
-          <mesh position={[side * 0.4, 1.18, -0.1]} scale={[0.41, 0.36, 0.53]}>
-            <icosahedronGeometry args={[1, 2]} />
-            <meshBasicMaterial color="#86bedb" transparent opacity={0.16} depthWrite={false} />
-          </mesh>
-        </group>
-      ))}
-      <mesh position={[0, -0.92, 0.05]} scale={[0.55, 0.7, 0.64]}>
-        <icosahedronGeometry args={[1, 3]} />
-        <meshPhysicalMaterial color="#6683ad" emissive="#3a4779" emissiveIntensity={0.3} transparent opacity={0.35} depthWrite={false} />
+    <group ref={group} rotation={[0.11, -0.23, 0]}>
+      {/* Physically lit opaque tissue makes real depth, occlusion and contours visible. */}
+      <mesh geometry={geometry} castShadow receiveShadow>
+        <meshPhysicalMaterial
+          color="#9acbdb"
+          metalness={0.13}
+          roughness={0.43}
+          clearcoat={0.36}
+          clearcoatRoughness={0.27}
+          emissive="#0f3562"
+          emissiveIntensity={0.14}
+          side={THREE.DoubleSide}
+        />
       </mesh>
-      {/* Fiber network and neural points are purely procedural decoration. */}
-      <lineSegments geometry={fibers}>
-        <lineBasicMaterial vertexColors transparent opacity={0.79} depthWrite={false} />
-      </lineSegments>
-      <mesh position={[0, -0.26, 0.75]} scale={[0.09, 0.09, 0.09]}>
-        <sphereGeometry args={[1, 12, 10]} />
-        <meshBasicMaterial color="#bcefff" />
-      </mesh>
+      {quality === 'high' && (
+        <mesh geometry={geometry}>
+          <meshBasicMaterial color="#b5ddff" wireframe transparent opacity={0.035} depthWrite={false} />
+        </mesh>
+      )}
     </group>
   )
 }
@@ -151,7 +184,7 @@ function DNAHelix({ x, paused, quality }: { x: number; paused: boolean; quality:
 }
 
 /** OrbitControls respects manual drag and a deterministic keyboard-accessible view toolbar. */
-function CameraRig({ view, resetToken, paused, quality }: Omit<BrainSceneProps, 'onReady'>) {
+function CameraRig({ view, resetToken, paused, quality }: Pick<BrainSceneProps, 'view' | 'resetToken' | 'paused' | 'quality'>) {
   const { camera, gl, invalidate } = useThree()
   const controls = useRef<OrbitControls | null>(null)
   const moving = useRef(false)
@@ -213,7 +246,7 @@ export default function CosmicBrainScene(props: BrainSceneProps) {
   return (
     <Canvas
       className="neuro-canvas"
-      aria-label="Interactive conceptual 3D fruit fly brain illustration"
+      aria-label="Interactive 3D FAFB specimen-derived fly brain tissue surface"
       camera={{ position: CAMERA_PRESETS.front, fov: 43, near: 0.1, far: 100 }}
       frameloop={props.paused || props.quality === 'saver' ? 'demand' : 'always'}
       dpr={[1, budget.pixelRatio]}
@@ -221,14 +254,16 @@ export default function CosmicBrainScene(props: BrainSceneProps) {
       onCreated={props.onReady}
       fallback={<div className="neuro-webgl-fallback">3D display unavailable. Use the illustrated fallback.</div>}
     >
-      <ambientLight intensity={0.85} />
-      <pointLight position={[-2.5, 3.5, 4]} intensity={34} color="#62bfee" decay={2} distance={10} />
-      <pointLight position={[2.7, -1.2, 3]} intensity={24} color="#a481ec" decay={2} distance={9} />
+      <ambientLight intensity={1.3} />
+      <hemisphereLight args={['#b8edff', '#15214a', 1.45]} />
+      <directionalLight position={[-3.5, 5, 7]} intensity={3.1} color="#d9f5ff" />
+      <directionalLight position={[4.5, 0.2, -3]} intensity={3.9} color="#987aff" />
+      <directionalLight position={[2, -4, 5]} intensity={1.1} color="#54d6f3" />
       <SceneFrameProbe />
       <ParticleField quality={props.quality} />
       {budget.helices > 0 && <DNAHelix x={3.1} paused={props.paused} quality={props.quality} />}
       {budget.helices > 1 && <DNAHelix x={-3.2} paused={props.paused} quality={props.quality} />}
-      <BrainSculpture quality={props.quality} paused={props.paused} />
+      <AuthenticBrain quality={props.quality} paused={props.paused} onModelStatus={props.onModelStatus} />
       <CameraRig view={props.view} resetToken={props.resetToken} paused={props.paused} quality={props.quality} />
     </Canvas>
   )

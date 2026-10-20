@@ -136,6 +136,22 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
+      - name: Verify real FAFB mesh and stage it for Chromium screenshots
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 --max-time 90 \
+            "https://raw.githubusercontent.com/navis-org/navis-flybrains/273333c8d8bf5adeebebd274e554621462e388bd/flybrains/meshes/FLYWIRE_whole_brain.ply" \
+            --output /tmp/neuroverse_verified_fafb.ply
+          python - <<'PY'
+          from pathlib import Path
+          from hashlib import sha1
+          blob=Path('/tmp/neuroverse_verified_fafb.ply').read_bytes()
+          assert 100000 < len(blob) < 20000000
+          digest=sha1(f'blob {len(blob)}\0'.encode()+blob, usedforsecurity=False).hexdigest()
+          assert digest=='3cf14cdd1399f212057f40c918493452abf056da', 'Official PLY content mismatch'
+          print('Authentic FAFB 3D tissue mesh authenticated:',len(blob),'bytes')
+          PY
+          echo "NEUROVERSE_REAL_PLY_FILE=/tmp/neuroverse_verified_fafb.ply" >> "$GITHUB_ENV"
       - name: Exercise real-browser homepage, controls and fallbacks
         run: npm run test:e2e
         env:
@@ -153,7 +169,6 @@ jobs:
 
   real-anatomy-source-audit:
     name: Verify original FAFB tissue mesh and neuron skeleton
-    if: github.event_name == 'pull_request' && github.event.pull_request.number == 5
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
