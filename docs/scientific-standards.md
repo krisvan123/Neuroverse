@@ -179,3 +179,15 @@ Advanced neuron dynamics, if pursued, require a distinct model and explicit assu
 - How do findings vary across snapshots, segmentation revisions, and synapse count thresholds?
 
 These questions must remain open until supported by real data inspection.
+
+## Expanded Academy source register — Phase 06 (2026-10-20)
+
+The five original lessons map every substantive explanatory section and quiz answer to source IDs. Direct links and exact relevant sections are presented in the Academy UI. The text is original educational paraphrase; no copyrighted images or textbook chapters are republished.
+
+| Source | Supporting section | Permitted lesson use |
+| --- | --- | --- |
+| [S-008 OpenStax 12.2 Nervous Tissue](https://openstax.org/books/anatomy-and-physiology-2e/pages/12-2-nervous-tissue) | Neurons: soma, dendrites, axon | Foundational cell anatomy and variation |
+| [S-009 OpenStax 12.5 Communication Between Neurons](https://openstax.org/books/anatomy-and-physiology-2e/pages/12-5-communication-between-neurons) | Synapses; neurotransmitter release | Chemical synapse pre/post, receptors and neurotransmitters |
+| [S-010 NetworkX Traversal reference](https://networkx.org/documentation/stable/reference/algorithms/traversal.html) | Breadth First Search: bfs_edges and bfs_layers | Mathematical graph traversal and reachable nodes, not biological firing |
+
+S-001 Dorkenwald et al. Nature 2024 and S-004 official FlyWire Codex FAQ remain in the earlier source ledger, supporting data scope, neuron/synapse counts, FAFB v783 and directed synaptic connection conventions. The interactive graph A–F is an original **synthetic** example, never presented as a FlyWire source graph. A five-participant learner pilot and manual audit are separate from passing software tests.

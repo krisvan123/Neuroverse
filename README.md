@@ -4,13 +4,13 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 05.3 — Motion, Authentic Anatomy & Connectome Onboarding (merged; 42 browser checks passed).** This phase adds a seamlessly scrolling (and globally pausable) mission statement, original-FAFB solid anatomical surface shading without wire overlays, explicit render-mode labels and distinct depth/triangle inspection styles. The homepage now defaults to the **published FlyWire/FAFB14 neuropil mesh** (a registered neuropil template). Users can switch to the independently published **whole-brain FAFB tissue-mask-derived surface**, or inspect original mesh triangles and non-biological depth colors. Both assets are pinned to source Git blob checksums. Two visible animated DNA helices and more obvious parallax-style drifting stars are artistic overlays, not neuron observations. Neither surface is the original raw EM voxel volume or a named-neuropil segmentation atlas.
+> **Current development status: Phase 06 — Science Learning Academy (pending CI acceptance).** Five fully authored, scientifically cited beginner lessons under Mission 001 — The Hidden Connections, ten original scored comprehension checks with explanations, a reference glossary and a clearly labeled SYNTHETIC directed graph with BFS and reversible model-node removal. No biological evidence is fabricated. Academy progress is temporary until Phase 08. The verified FAFB tissue/neuropil 3D Explorer from Phase 05 is preserved; actual connectivity still requires a separate genuine local dataset.
 
 ## Product direction
 
-- **Learn:** evidence-based neuroscience and computer science lessons.
+- **Learn:** five complete cited lessons, ten knowledge checks and Mission 001's interactive synthetic graph.
 - **Explore:** investigate a clearly attributed subset of the FlyWire adult fruit fly connectome (planned).
-- **Experiment:** run graph algorithms and compare reproducible computational results (planned).
+- **Experiment:** an introductory synthetic BFS is live in the Academy; the full reproducible real-subgraph experiment lab is reserved for Phase 07.
 - **Experience:** an accessible Cosmic Neuroscience interface with a source-validated FAFB-aligned neuropil and tissue-surfaces in 3D, controllable camera, optional decorative DNA and site-wide gently drifting stars (Phase 05.2).
 
 ## Technology
@@ -136,3 +136,9 @@ This is a phased educational engineering project. See the roadmap before proposi
 ### Phase 05.3 usability extension
 
 When the real directed-connectivity graph is unavailable locally, the Scientific Explorer now provides the original FlyWire import steps instead of a dead-end error. After importing the official connections CSV, use **Recheck dataset availability** and, when available, **Use this dataset's seed neuron**. No fictional synapses are generated. The 3D hero stops continuous rendering offscreen or in a hidden tab, retaining selected camera views on return. See [Phase 05.3 methodology and limitations](docs/phase-05-3-visual-polish.md).
+
+## Phase 06 — Science Learning Academy
+
+From the homepage choose **Learn → Science Learning Academy**, or open the local site with `/#academy`. Mission 001: The Hidden Connections has five chapters: **Meet the neuron; How chemical synapses work; Read a connectome; Walk a directed network; What a wiring diagram cannot prove**. Each has original text, objectives, in-line original-source IDs, limitations, a takeaway, and two checked questions with explanations. A fourteen-term glossary links to the source register.
+
+The directed A–F BFS model is explicitly **synthetic teaching material**, not a subset of FAFB and not a recording of signal propagation. Completing all ten practice answers plus the model exercise marks Mission 001 complete only for the current browser session. There is no login, no stored learning progress, and no certificate. Persistent progress belongs to Phase 08. Read the scientific claims, review limits, and pending five-person user pilot in [Phase 06 acceptance notes](docs/phase-06-learning-academy.md). A pilot has **not yet been conducted**; the app makes no claim of validated learning effectiveness.

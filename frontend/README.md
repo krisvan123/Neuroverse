@@ -56,3 +56,9 @@ The mission band scrolls an equal-width repeated statement seamlessly; OS reduce
 ### Final Phase 05.3 UX refinements
 
 If `datasets/current` reports missing connectivity, **Inspect directed connections** opens a source-specific FlyWire import guide with correct Windows commands and **Recheck dataset availability**. Imported bounded subgraphs expose their actual selected seed ID to avoid searching an excluded example neuron. The Three.js hero stops continuous frames when scrolled away/tab hidden, resuming when visible, without resetting the current user-selected view. These runtime optimizations do not alter the original FAFB anatomical polygons.
+
+## Phase 06 — Learning Academy
+
+The Academy section at `#academy` contains five source-mapped original neuroscience lessons, Mission 001, ten checked quiz questions, a 14-term glossary, an interactive deterministic SYNTHETIC BFS graph and a reversible model-node-removal comparison. Native HTML buttons/radios let students complete core tasks by keyboard without WebGL or the FastAPI server. Answer feedback is explicit, with no certificate or saved state; persistence belongs to Phase 08.
+
+Sources are OpenStax Nervous Tissue (§12.2) and Communication Between Neurons (§12.5), Dorkenwald et al. Nature 2024, Codex's FAFB FAQ, and NetworkX traversal reference. See source links in the UI and [Phase 06 scientific acceptance](../docs/phase-06-learning-academy.md). Frontend unit, browser, and mobile checks run through the existing npm scripts.
