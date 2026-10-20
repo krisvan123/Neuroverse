@@ -103,6 +103,7 @@ test('scientific 3D viewer renders a controlled PLY fixture and provides camera 
   }))
   await page.goto('/')
   const explorer = page.locator('#explore')
+  await explorer.getByRole('button', { name: 'Whole-brain surface' }).click()
   const side = explorer.getByRole('button', { name: 'Side', exact: true })
   if (!(await side.isEnabled())) {
     await expect(explorer.getByText(/WebGL is unavailable/i)).toBeVisible()
