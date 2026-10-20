@@ -16,6 +16,14 @@ describe('Neuroverse foundation', () => {
     expect(screen.getByRole('progressbar',{name:'Knowledge checks answered correctly'})).toHaveAttribute('aria-valuenow','0')
     expect(screen.getAllByRole('link',{name:/S-008/})[0]).toHaveAttribute('href',expect.stringContaining('openstax.org'))
   })
+  it('exposes the source-gated experiment Lab with an offline synthetic graph', () => {
+    const { container } = render(<App />)
+    expect(screen.getByRole('heading',{name:/Test the network/i})).toBeInTheDocument()
+    expect(screen.getByRole('group',{name:'Experiment graph source'})).toBeInTheDocument()
+    expect(screen.getByRole('button',{name:'Synthetic teaching graph'})).toHaveAttribute('aria-pressed','true')
+    expect(container.querySelectorAll('.lab-kpis>div')).toHaveLength(3)
+    expect(screen.getByRole('button',{name:'Export JSON ↓'})).toBeInTheDocument()
+  })
   it('exposes navigable learning and research content', () => {
     render(<App />)
     expect(screen.getByRole('heading', { name: /the universe inside every connection/i })).toBeInTheDocument()

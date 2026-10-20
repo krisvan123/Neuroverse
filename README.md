@@ -4,13 +4,13 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 06 — Science Learning Academy (merged; engineering QA passed).** Five fully authored, scientifically cited beginner lessons under Mission 001 — The Hidden Connections, ten original scored comprehension checks with explanations, a reference glossary and a clearly labeled SYNTHETIC directed graph with BFS and reversible model-node removal. No biological evidence is fabricated. Academy progress is temporary until Phase 08. The verified FAFB tissue/neuropil 3D Explorer from Phase 05 is preserved; actual connectivity still requires a separate genuine local dataset.
+> **Current development status: Phase 07 — Computational Experiment Lab (CI review).** Users can run deterministic directed BFS/DFS, adjust a threshold, remove a MODEL node non-destructively, inspect structural metrics and plots, and export full original graph inputs plus results as reproducible JSON/CSV. The default example is explicitly SYNTHETIC; FAFB v783 mode reads only a configured local original-data subset, never fabricated edges. Phase 06 Academy, the published FAFB mesh Explorer and accessibility controls remain available. Phase 08/09 have not started.
 
 ## Product direction
 
 - **Learn:** five complete cited lessons, ten knowledge checks and Mission 001's interactive synthetic graph.
 - **Explore:** investigate a clearly attributed subset of the FlyWire adult fruit fly connectome (planned).
-- **Experiment:** an introductory synthetic BFS is live in the Academy; the full reproducible real-subgraph experiment lab is reserved for Phase 07.
+- **Experiment:** Phase 07 Lab ships BFS/DFS, graph metrics, model node-removal comparison and JSON/CSV export. The Academy retains its separate teaching demo.
 - **Experience:** an accessible Cosmic Neuroscience interface with a source-validated FAFB-aligned neuropil and tissue-surfaces in 3D, controllable camera, optional decorative DNA and site-wide gently drifting stars (Phase 05.2).
 
 ## Technology
@@ -142,3 +142,7 @@ When the real directed-connectivity graph is unavailable locally, the Scientific
 From the homepage choose **Learn → Science Learning Academy**, or open the local site with `/#academy`. Mission 001: The Hidden Connections has five chapters: **Meet the neuron; How chemical synapses work; Read a connectome; Walk a directed network; What a wiring diagram cannot prove**. Each has original text, objectives, in-line original-source IDs, limitations, a takeaway, and two checked questions with explanations. A fourteen-term glossary links to the source register.
 
 The directed A–F BFS model is explicitly **synthetic teaching material**, not a subset of FAFB and not a recording of signal propagation. Completing all ten practice answers plus the model exercise marks Mission 001 complete only for the current browser session. There is no login, no stored learning progress, and no certificate. Persistent progress belongs to Phase 08. Read the scientific claims, review limits, and pending five-person user pilot in [Phase 06 acceptance notes](docs/phase-06-learning-academy.md). A pilot has **not yet been conducted**; the app makes no claim of validated learning effectiveness.
+
+## Phase 07 — Computational Experiment Lab
+
+Open the homepage at #lab (The Lab navigation item). Choose a labeled synthetic directed graph that works offline, or choose a user-imported FAFB v783 local subgraph once the original connection CSV was imported via FastAPI. Set traversal, start node, minimum edge weight and an optional model node to remove; inspect reachable nodes, out-degree and loop-excluded directed density in diagrams, bars and a numerical table. Export complete sorted input, parameters, provenance and results as JSON or CSV. The baseline remains untouched. **No actual neural firing, lesions, behavior or functional outcomes are simulated or inferred.** Real data remain limited to the user's selected subset and locally validated checksum; the external source identity of a user-supplied CSV is not independently established. Full documented methodology: [Phase 07 Experiment Lab](docs/phase-07-experiment-lab.md). Permanent storage/re-import is Phase 08.

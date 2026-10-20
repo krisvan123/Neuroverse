@@ -2,7 +2,7 @@
 
 **Document ID:** NV-ROADMAP-001  
 **Version:** 1.0 · **Baseline:** 2026-10-20  
-**Project state:** Phases 01–05.3 delivered to their scoped engineering gates. Phase 06 Science Learning Academy now implements five cited lessons, Mission 001, a reproducible SYNTHETIC teaching graph, quizzes, glossary, and references; all 6 CI jobs and 48/48 desktop/mobile browser tests passed; the five-person novice pilot remains outstanding. Original FAFB scientific meshes are still not raw EM voxel segmentation. Phases 07–09 remain planned.
+**Project state:** Phases 01–06 passed scoped engineering checks (human participant and physical-device pilots remain open). Phase 07 Computational Experiment Lab now implements bounded BFS/DFS, graphs, metrics, non-destructive node-removal scenarios, optional source-gated FAFB v783 selected subgraph and JSON/CSV export; QA in pull request. Phase 08 Research Journal and Phase 09 production QA remain planned. Anatomical mesh surfaces are not raw EM voxel segmentation.
 
 ## 1. Delivery philosophy
 

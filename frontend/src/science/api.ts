@@ -8,6 +8,9 @@ export interface DatasetState {
   nodes_selected?: number
   edges_selected?: number
   seed_root_id?: string
+  database_sha256?: string
+  min_synapses_per_pair?: number
+  license?: string
   source_identity_verified?: boolean
   source_reference?: string
   limitations?: string[]
