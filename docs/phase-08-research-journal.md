@@ -46,4 +46,14 @@ Test evidence must include:
 
 ## Engineering evidence
 
-Implementation and reviewed file history: [Phase 08 PR #14](https://github.com/krisvan123/Neuroverse/pull/14). The current commit's GitHub Actions checks are the source of truth for automated acceptance. An initial Chromium run detected an error where rejected imports hid existing saved cards (64/66 browser checks passed); the UI error states were separated in a corrective commit. Do not consider a subsequent run successful unless the final recorded GitHub Actions result is green.
+**Implementation:** [PR #14](https://github.com/krisvan123/Neuroverse/pull/14), merged into `main` as commit `a1b3ad059a2e9153b233d485cb26b15541f28bf2` on 2026-10-20.
+
+**Final accepted automated run:** [Neuroverse CI #39426530551](https://github.com/krisvan123/Neuroverse/actions/runs/39426530551) on Phase 08 head `4ef9a408ca4cd995338fafc864c18f5f0a6f6cfd`.
+- **6/6 GitHub Actions jobs successful**, including backend syntax/tests, frontend lint/typecheck/unit tests/build, HTTP smoke test, two source-integrity verification jobs, and browser integration.
+- **49/49 frontend Vitest tests passed** (11 test files).
+- **66/66 Chromium desktop/mobile Playwright scenarios passed** (including journal import/export, Academy resume, model reproducibility, deletion/reset and earlier-phase regression checks).
+- CI is not a replacement for physical GPU profiling, real-device keyboard/screen reader reviews, browser quota/private-mode inspection or human educational validation. These manual gates have **not been independently verified**.
+
+**Issues repaired during review:** An early Chromium run identified that a rejected JSON import hid previously saved journal cards even though storage remained intact (64/66 browser scenarios passed). We separated import errors from storage-load errors and reran the complete suite. Another run exposed an over-broad Scientific Explorer browser-test locator when multiple independent backend-unavailable alerts were present; selectors were narrowed without changing scientific application behavior. The **final 66/66 run is green**.
+
+**Acceptance result:** **ENGINEERING PASS** for the Phase 08 scoped implementation. **Manual UX/device and learner-validation gates remain open** and should be addressed in Phase 09; do not claim these are completed or that an end-to-end FAFB CSV is locally installed on the user's laptop.
