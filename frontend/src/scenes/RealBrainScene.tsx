@@ -79,12 +79,12 @@ function RealSkeleton({ skeleton, onStatus }: { skeleton: Skeleton | null; onSta
     const array = new Float32Array(skeleton.edges.length * 6)
     for (let index = 0; index < skeleton.edges.length; index++) {
       const edge = skeleton.edges[index]
-      if (!edge) continue
+      if (!edge || edge[0] === undefined || edge[1] === undefined) throw new Error('Invalid skeleton edge')
       const pre = skeleton.vertices[edge[0]]
       const post = skeleton.vertices[edge[1]]
-      if (!pre || !post) continue
+      if (!pre || !post || pre.length !== 3 || post.length !== 3) throw new Error('Invalid skeleton vertex')
       const offset = index * 6
-      array.set([pre[0], pre[1], pre[2], post[0], post[1], post[2]], offset)
+      array.set([pre[0]!, pre[1]!, pre[2]!, post[0]!, post[1]!, post[2]!], offset)
     }
     const result = new THREE.BufferGeometry()
     result.setAttribute('position', new THREE.BufferAttribute(array, 3))
