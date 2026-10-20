@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { ACADEMY_RESET_EVENT, EMPTY_PROGRESS, readAcademyProgress, writeAcademyProgress, type AcademyProgress } from '../academy/progress'
 import { ACADEMY_GLOSSARY, ACADEMY_LESSONS, ACADEMY_QUESTIONS, ACADEMY_REVIEWED, ACADEMY_SOURCE_BY_ID, ACADEMY_SOURCES } from '../academy/content'
 import type { AcademyQuestion } from '../academy/content'
 import { TeachingGraph } from './TeachingGraph'
@@ -52,24 +53,60 @@ function KnowledgeCheck({
   )
 }
 
-/** No login, analytics, saved progress or unstated network calls. Phase 08
- * will handle opt-in persistence. The academy remains functional offline.
- */
+/** Minimal progress is retained on this browser only. Answers and personal
+ * details never leave the page; completed checks may be safely revisited. */
 export function LearningAcademy(){
-  const [active,setActive] = useState(0)
+  const [initial] = useState(readAcademyProgress)
+  const [progress,setProgress] = useState<AcademyProgress>(initial.value)
+  const [storageWarning,setStorageWarning] = useState(initial.warning)
   const [choices,setChoices] = useState<Record<string,number>>({})
   const [graded,setGraded] = useState<Record<string,number>>({})
-  const [passed,setPassed] = useState<ReadonlySet<string>>(()=>new Set())
-  const [demoDone,setDemoDone] = useState(false)
+  const active=progress.chapter
+  const passed=new Set(progress.passed)
+  const demoDone=progress.demoDone
   const lesson=ACADEMY_LESSONS[active]!
   const correctCount=passed.size
   const complete=correctCount===ACADEMY_QUESTIONS.length&&demoDone
-  const markDemo=useCallback(()=>setDemoDone(true),[])
+  const remember=(next:AcademyProgress)=>{
+    setProgress(next)
+    try { writeAcademyProgress(next);setStorageWarning('') }
+    catch(error) { setStorageWarning('This browser could not save progress: '+
+      (error instanceof Error?error.message:'storage unavailable')) }
+  }
+  const markDemo=useCallback(()=>{
+    if(!progress.demoDone)remember({...progress,demoDone:true})
+  // Changes to temporary answer selection do not recreate this callback.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[progress])
+  const navigate=(index:number)=>{
+    const chapter=Math.min(ACADEMY_LESSONS.length-1,Math.max(0,index))
+    remember({...progress,chapter})
+  }
+  useEffect(()=>{
+    const reset=()=>{
+      setProgress({...EMPTY_PROGRESS,passed:[]})
+      setChoices({});setGraded({})
+      setStorageWarning('Learning progress was cleared on this browser.')
+    }
+    const sync=(event:StorageEvent)=>{
+      if(event.key!==null&&event.key!=='neuroverse.academy.v1')return
+      const loaded=readAcademyProgress()
+      setProgress(loaded.value);setChoices({});setGraded({})
+      setStorageWarning(loaded.warning)
+    }
+    window.addEventListener(ACADEMY_RESET_EVENT,reset)
+    window.addEventListener('storage',sync)
+    return ()=>{
+      window.removeEventListener(ACADEMY_RESET_EVENT,reset)
+      window.removeEventListener('storage',sync)
+    }
+  },[])
   const check=(question:AcademyQuestion)=>{
     const choice=choices[question.id]
     if(choice===undefined)return
     setGraded((prev)=>({...prev,[question.id]:choice}))
-    if(choice===question.correct)setPassed((prev)=>new Set([...prev,question.id]))
+    if(choice===question.correct&&!passed.has(question.id))
+      remember({...progress,passed:[...progress.passed,question.id]})
   }
   const select=(id:string,index:number)=>{
     setChoices((prev)=>({...prev,[id]:index}))
@@ -93,7 +130,9 @@ export function LearningAcademy(){
         <div className="academy-progress" role="progressbar" aria-valuemin={0} aria-valuemax={10} aria-valuenow={correctCount} aria-label="Knowledge checks answered correctly">
           <span style={{width:(correctCount*10)+'%'}}/>
         </div>
-        <p className="academy-mission-summary">Your learning journey: discover neurons → investigate chemical synapses → read a connectome → traverse a graph → evaluate claims. Progress stays in this page session only.</p>
+        <p className="academy-mission-summary">Your learning journey: discover neurons → investigate chemical synapses → read a connectome → traverse a graph → evaluate claims. Passed questions, your current chapter and graph-demo completion are saved only in this browser. No login or server sync.</p>
+        {storageWarning&&<p className="academy-mission-status" role="alert">{storageWarning}</p>}
+        <p className="academy-mission-status"><a href="#journal">Review, export or clear local learning data in the Research Journal ↗</a></p>
         {complete ? (
           <p className="academy-completed" role="status">✳ Mission 001 complete — all ten checks passed and the graph demo explored. You can now continue into the authentic Scientific Explorer.</p>
         ) : (
@@ -108,7 +147,7 @@ export function LearningAcademy(){
             return (
               <button type="button" key={entry.id} className={index===active?'academy-chapter active':'academy-chapter'}
                 aria-current={index===active?'step':undefined} aria-pressed={index===active}
-                onClick={()=>setActive(index)}>
+                onClick={()=>navigate(index)}>
                 <span className="academy-chapter-index">{entry.id}</span>
                 <span className="academy-chapter-main"><strong>{entry.title}</strong><small>{entry.duration} · {answered}/2 checked</small></span>
                 <span aria-hidden="true">{answered===2?'✓':'↗'}</span>
@@ -148,9 +187,9 @@ export function LearningAcademy(){
             })}
           </div>
           <div className="academy-lesson-footer">
-            <button type="button" onClick={()=>setActive((v)=>Math.max(0,v-1))} disabled={active===0}>← Previous chapter</button>
+            <button type="button" onClick={()=>navigate(active-1)} disabled={active===0}>← Previous chapter</button>
             {active<ACADEMY_LESSONS.length-1
-              ? <button type="button" className="academy-forward" onClick={()=>setActive((v)=>Math.min(v+1,ACADEMY_LESSONS.length-1))}>Next chapter →</button>
+              ? <button type="button" className="academy-forward" onClick={()=>navigate(active+1)}>Next chapter →</button>
               : <a className="academy-forward" href="#explore">Explore authentic FAFB anatomy ↗</a>}
           </div>
         </article>

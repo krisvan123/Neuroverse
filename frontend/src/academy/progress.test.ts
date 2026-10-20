@@ -3,7 +3,7 @@ import { ACADEMY_STORAGE_KEY,clearAcademyProgress,readAcademyProgress,writeAcade
 beforeEach(()=>localStorage.clear())
 describe('Phase 08 Academy persistence',()=>{
   it('saves only a bounded and versioned completion state',()=>{
-    const value={schema:'neuroverse-academy/v1' as const,chapter:3,passed:['Q-001'],demoDone:true}
+    const value={schema:'neuroverse-academy/v1' as const,chapter:3,passed:['q01'],demoDone:true}
     // IDs are tested against the actual authored Academy question list.
     const validId=readAcademyProgress().value.passed
     expect(validId).toEqual([])
