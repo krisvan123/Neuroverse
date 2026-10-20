@@ -35,3 +35,8 @@ data/processed/
 *.hdf5
 *.zip
 *.tar.gz
+
+# Browser test outputs
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/

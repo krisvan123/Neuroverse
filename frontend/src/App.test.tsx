@@ -28,7 +28,7 @@ describe('Neuroverse foundation', () => {
   it('makes 3D controls available but correctly disables them without WebGL', () => {
     render(<App />)
     expect(screen.getByRole('button', { name: 'Top view' })).toBeDisabled()
-    expect(screen.getByLabelText('3D visual quality')).toBeDisabled()
+    expect(screen.getByLabelText('Quality')).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Pause motion' })).toBeEnabled()
     fireEvent.click(screen.getByRole('button', { name: 'Pause motion' }))
     expect(screen.getByRole('button', { name: 'Resume motion' })).toBeInTheDocument()

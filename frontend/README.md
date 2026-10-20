@@ -18,6 +18,7 @@ npm run lint
 npm run typecheck
 npm run test
 npm run build
+npm run test:e2e   # install Chromium first: npx playwright install chromium
 ```
 
 The homepage now uses a **procedural conceptual fly-brain sculpture** rendered by React Three Fiber with a static illustration fallback, independent camera controls, and low-motion/quality modes. This is not a scanned or proofread FlyWire brain. Scientific 3D morphological assets and real-neuron-to-visual mapping remain reserved for Phase 05.
