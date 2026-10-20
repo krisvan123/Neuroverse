@@ -8,6 +8,7 @@ function SourceLinks({ ids }: { ids: readonly string[] }) {
     <span className="academy-citations">
       {ids.map((id)=> {
         const ref=ACADEMY_SOURCE_BY_ID[id]
+        if (!ref) return null
         return <a key={id} href={ref.url} target="_blank" rel="noopener noreferrer"
           title={ref.title+' — '+ref.section}>{id} ↗</a>
       })}
