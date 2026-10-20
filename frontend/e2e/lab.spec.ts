@@ -8,7 +8,7 @@ test('Phase 07 Lab runs BFS, DFS, threshold and non-destructive structural compa
   await page.goto('/#lab')
   const lab=page.locator('#lab')
   await expect(lab.getByRole('heading',{name:/Test the network/i})).toBeVisible()
-  await expect(lab.getByText(/SYNTHETIC TEACHING GRAPH/i)).toBeVisible()
+  await expect(lab.locator('.lab-source-badge')).toContainText('SYNTHETIC TEACHING GRAPH')
   await expect(lab.getByRole('table',{name:/Numerical results/i})).toContainText('Loop-excluded directed density')
   await expect(lab.getByRole('button',{name:'Next step →'})).toBeEnabled()
   await lab.getByRole('button',{name:'Next step →'}).click()
