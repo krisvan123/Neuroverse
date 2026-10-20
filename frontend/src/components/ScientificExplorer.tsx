@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useState, type FormEvent } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { supportsWebGL } from '../scenes/browserSupport'
 import {
   apiGet, EXAMPLE_PROOFREAD_ID, fetchSkeleton, rootIdIsValid,
@@ -85,6 +85,7 @@ export function ScientificExplorer() {
   const [view, setView] = useState<ScientificView>('front')
   const [resetKey, setResetKey] = useState(0)
   const [root, setRoot] = useState(EXAMPLE_PROOFREAD_ID)
+  const hasEditedRoot = useRef(false)
   const [skeleton, setSkeleton] = useState<Skeleton | null>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [renderMessage, setRenderMessage] = useState('')
@@ -111,7 +112,7 @@ export function ScientificExplorer() {
       setDataset(result)
       // A local selected subgraph may not contain the example neuron.
       // Suggest its actual seed only if the visitor has not edited the field.
-      if (result.available && result.seed_root_id && rootIdIsValid(result.seed_root_id)) {
+      if (!hasEditedRoot.current && result.available && result.seed_root_id && rootIdIsValid(result.seed_root_id)) {
         setRoot((value) => value === EXAMPLE_PROOFREAD_ID ? result.seed_root_id! : value)
       }
     } catch {
@@ -252,7 +253,7 @@ export function ScientificExplorer() {
           <form onSubmit={loadRealSkeleton} className="atlas-search-form">
             <label htmlFor="atlas-neuron">Neuron root ID</label>
             <input id="atlas-neuron" inputMode="numeric" value={root}
-              onChange={(e) => setRoot(e.target.value.trim())} maxLength={19} autoComplete="off" />
+              onChange={(e) => { hasEditedRoot.current = true; setRoot(e.target.value.trim()) }} maxLength={19} autoComplete="off" />
             <button type="submit" className="atlas-primary" disabled={working !== null}>
               {working === 'skeleton' ? 'Loading original skeleton…' : 'Load real neuron skeleton'}
             </button>
@@ -270,7 +271,7 @@ export function ScientificExplorer() {
                 <p><strong>{dataset.edges_selected}</strong> directed connections</p>
                 <span className="atlas-caution">Imported local subset · source identity {dataset.source_identity_verified ? 'authenticated' : 'not independently authenticated'}</span>
                 {dataset.seed_root_id && rootIdIsValid(dataset.seed_root_id) && (
-                  <button type="button" className="atlas-seed-button" onClick={() => setRoot(dataset.seed_root_id!)}>
+                  <button type="button" className="atlas-seed-button" onClick={() => { hasEditedRoot.current = true; setRoot(dataset.seed_root_id!) }}>
                     Use this dataset's seed neuron
                   </button>
                 )}
