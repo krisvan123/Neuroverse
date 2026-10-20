@@ -2,7 +2,7 @@
 
 **Document ID:** NV-ROADMAP-001  
 **Version:** 1.0 · **Baseline:** 2026-10-20  
-**Project state:** Phases 01–05.3 delivered to their scoped engineering gates. Phase 06 Science Learning Academy now implements five cited lessons, Mission 001, a reproducible SYNTHETIC teaching graph, quizzes, glossary, and references; automated acceptance and a five-person novice pilot remain separately tracked. Original FAFB scientific meshes are still not raw EM voxel segmentation. Phases 07–09 remain planned.
+**Project state:** Phases 01–05.3 delivered to their scoped engineering gates. Phase 06 Science Learning Academy now implements five cited lessons, Mission 001, a reproducible SYNTHETIC teaching graph, quizzes, glossary, and references; all 6 CI jobs and 48/48 desktop/mobile browser tests passed; the five-person novice pilot remains outstanding. Original FAFB scientific meshes are still not raw EM voxel segmentation. Phases 07–09 remain planned.
 
 ## 1. Delivery philosophy
 

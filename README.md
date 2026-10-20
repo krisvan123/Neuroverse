@@ -4,7 +4,7 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 06 — Science Learning Academy (pending CI acceptance).** Five fully authored, scientifically cited beginner lessons under Mission 001 — The Hidden Connections, ten original scored comprehension checks with explanations, a reference glossary and a clearly labeled SYNTHETIC directed graph with BFS and reversible model-node removal. No biological evidence is fabricated. Academy progress is temporary until Phase 08. The verified FAFB tissue/neuropil 3D Explorer from Phase 05 is preserved; actual connectivity still requires a separate genuine local dataset.
+> **Current development status: Phase 06 — Science Learning Academy (merged; engineering QA passed).** Five fully authored, scientifically cited beginner lessons under Mission 001 — The Hidden Connections, ten original scored comprehension checks with explanations, a reference glossary and a clearly labeled SYNTHETIC directed graph with BFS and reversible model-node removal. No biological evidence is fabricated. Academy progress is temporary until Phase 08. The verified FAFB tissue/neuropil 3D Explorer from Phase 05 is preserved; actual connectivity still requires a separate genuine local dataset.
 
 ## Product direction
 

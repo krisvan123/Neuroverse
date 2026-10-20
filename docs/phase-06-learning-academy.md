@@ -1,6 +1,6 @@
 # Phase 06 — Science Learning Academy: scientific evidence and acceptance
 
-**Deliverable:** Mission 001 — The Hidden Connections. **Reference review:** 2026-10-20. **FAFB context:** snapshot v783. **Phase 07:** not started.
+**Deliverable:** Mission 001 — The Hidden Connections. **Reference review:** 2026-10-20. **FAFB context:** snapshot v783. **Engineering acceptance:** PASS. **Five-person learning pilot:** NOT VERIFIED. **Phase 07:** not started.
 
 ## 1. Actual feature scope
 
@@ -45,11 +45,11 @@ Chapters are ordinary labeled buttons in a navigation landmark. Quizzes are nati
 
 | Requirement | Evidence | Status |
 | --- | --- | --- |
-| P06-A Five full science lessons | Content source and completeness unit checks | Awaiting final GitHub CI |
+| P06-A Five full science lessons | Content source and completeness unit checks | PASS — GitHub Actions run 39412542009 |
 | P06-B Every factual section source-mapped | Claim ledger and visible per-section source IDs | Source review recorded; external peer review not conducted |
-| P06-C Ten checked questions and meaningful feedback | Content tests and complete browser lesson path | Awaiting final GitHub CI |
-| P06-D BFS/model deletion is valid, deterministic and unmistakably synthetic | Known-answer unit tests and real browser graph interaction | Awaiting final GitHub CI |
-| P06-E Accessible and mobile/offline paths | Chromium desktop/mobile and no-backend flow | Awaiting final GitHub CI |
+| P06-C Ten checked questions and meaningful feedback | Content tests and complete browser lesson path | PASS — GitHub Actions run 39412542009 |
+| P06-D BFS/model deletion is valid, deterministic and unmistakably synthetic | Known-answer unit tests and real browser graph interaction | PASS — GitHub Actions run 39412542009 |
+| P06-E Accessible and mobile/offline paths | Chromium desktop/mobile and no-backend flow | PASS — GitHub Actions run 39412542009 |
 | P06-F Five-participant novice user pilot | Goal: at least 4/5 finish independently and 4/5 distinguish wiring from observed activity | NOT VERIFIED — must be completed with actual people |
 | P06-G Owner visual sign-off on Windows device | Review of latest screenshots and interactions | NOT VERIFIED — user feedback needed |
 
@@ -60,3 +60,12 @@ Passing software checks confirms correct implementations of the tested behavior.
 Run the local frontend in its folder with npm run dev, then visit http://localhost:5173/#academy. Read any chapter, answer two questions and try a wrong answer. In chapter 04 step through all six original BFS node visits and click Compare; view the D-removed model. After all ten correct answers and comparison, the mission completion message appears for the session. Reload clears it by design. Do not confuse this exercise with the future Phase 07 full graph experiment lab.
 
 **Deferred:** saved progress to Phase 08; user-run five-person pilot and manual accessibility audit to Phase 06 sign-off/Phase 09; full graph lab to Phase 07.
+
+## 7. Actual engineering acceptance — 2026-10-20
+
+- [Phase 06 Pull Request #12](https://github.com/krisvan123/Neuroverse/pull/12) merged to main at commit `9df9671eca0f04e77023e9a2ba473e82bd913286`.
+- [GitHub Actions run 39412542009](https://github.com/krisvan123/Neuroverse/actions/runs/39412542009) finished **6/6 jobs green**: frontend lint/typecheck/unit/build, backend syntax/tests, HTTP integration, original v783 root IDs, source-derived FAFB mesh verification, and desktop/mobile Chromium.
+- Chromium **48/48 passed**. Both desktop and mobile passed the full five-chapter Mission 001 with ten correct checked answers and original-model BFS/comparison, a deliberately wrong-answer retry, offline/no-WebGL lesson usability, keyboard chapter navigation, no horizontal overflow, and the session-only progress reset.
+- Content unit checks passed for five complete source-mapped lessons, unique quiz IDs, explanation/source integrity, 14 glossary terms, 5 HTTPS source references, and deterministic BFS including directed/disconnected/node removal cases.
+
+**Gate accounting:** the Phase 06 software deliverables are **accepted**. The five-participant human learning-comprehension pilot (minimum 4/5 finish and 4/5 can distinguish structural connectivity from measured activity) and manual Windows-device/assistive-technology audit are **not yet verified**, so the full educational effectiveness goal is **still open**. No participant data or results have been invented.
