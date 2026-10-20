@@ -134,12 +134,13 @@ function AuthenticBrain({ quality, paused, onModelStatus }: Pick<BrainSceneProps
   )
 }
 
+/** Independent sky-space geometry: orbiting the camera cannot sweep stars to one side. */
 function ParticleField({ quality }: { quality: VisualQuality }) {
   const geometry = useMemo(() => makeStars(SCENE_BUDGETS[quality].stars), [quality])
   useEffect(() => () => geometry.dispose(), [geometry])
   return (
     <points geometry={geometry} frustumCulled={false}>
-      <pointsMaterial size={0.034} sizeAttenuation vertexColors transparent opacity={0.74} depthWrite={false} />
+      <pointsMaterial size={0.055} sizeAttenuation vertexColors transparent opacity={0.78} depthWrite={false} />
     </points>
   )
 }

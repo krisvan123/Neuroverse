@@ -24,11 +24,30 @@ describe('procedural cosmic geometry', () => {
     a.dispose()
     b.dispose()
   })
-  it('creates quality-bounded particles behind the brain', () => {
-    const g = makeStars(55)
-    expect(g.getAttribute('position').count).toBe(55)
-    for (let i = 0; i < 55; i++) expect(g.getAttribute('position').getZ(i)).toBeLessThan(-2)
+  it('distributes deterministic particles evenly in ALL directions, not only behind the brain', () => {
+    const g = makeStars(960)
+    const repeat = makeStars(960)
+    const points = g.getAttribute('position')
+    const repeated = repeat.getAttribute('position')
+    expect(points.count).toBe(960)
+    expect(Array.from(points.array)).toEqual(Array.from(repeated.array))
+    const octants = Array.from({ length: 8 }, () => 0)
+    for (let i = 0; i < points.count; i++) {
+      const x = points.getX(i), y = points.getY(i), z = points.getZ(i)
+      const distance = Math.hypot(x, y, z)
+      expect(Number.isFinite(distance)).toBe(true)
+      expect(distance).toBeGreaterThanOrEqual(15.49)
+      expect(distance).toBeLessThanOrEqual(20.01)
+      const octant = (x >= 0 ? 1 : 0) + (y >= 0 ? 2 : 0) + (z >= 0 ? 4 : 0)
+      octants[octant] = (octants[octant] ?? 0) + 1
+    }
+    // A near-uniform sphere must populate ALL eight octants comparably.
+    for (const count of octants) {
+      expect(count).toBeGreaterThan(90)
+      expect(count).toBeLessThan(150)
+    }
     g.dispose()
+    repeat.dispose()
   })
   it('generates a symmetrical double helix with structural rungs', () => {
     const dna = makeDNA()
