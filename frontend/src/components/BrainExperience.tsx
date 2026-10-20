@@ -151,7 +151,7 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
           Lighting, animated DNA, orbit rings, and stars are artistic additions and
           have no biological meaning. <a href="https://github.com/navis-org/navis-flybrains/blob/273333c8d8bf5adeebebd274e554621462e388bd/flybrains/meshes/FLYWIRE_whole_brain.md"
           target="_blank" rel="noopener noreferrer">Read the tissue mesh provenance</a>.
-        </p>    </p>
+        </p>
       </details>
       <span className="sr-only">Available camera presets: {Object.keys(CAMERA_PRESETS).join(', ')}.</span>
     </div>
