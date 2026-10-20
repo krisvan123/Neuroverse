@@ -114,8 +114,11 @@ export function validateLabGraph(input:LabGraph):LabGraph {
   if (input.origin==='fafb-v783-local-subgraph' && input.snapshot!=='783') {
     return fail('only the FAFB v783 snapshot is supported')
   }
-  if (!Array.isArray(input.nodes)||input.nodes.length<1||input.nodes.length>MAX_NODES) {
-    return fail('node count must be 1–80')
+  if (!Array.isArray(input.nodes)||input.nodes.length>MAX_NODES) {
+    return fail('node count must be 0–80')
+  }
+  if (input.nodes.length===0 && input.origin!=='synthetic-teaching-example') {
+    return fail('real imported graphs must contain a selected neuron')
   }
   if (!Array.isArray(input.edges)||input.edges.length>MAX_EDGES) return fail('edge count exceeds 250')
   if (typeof input.sourceReference!=='string'||!input.sourceReference.trim())return fail('missing source provenance')
@@ -133,7 +136,9 @@ export function validateLabGraph(input:LabGraph):LabGraph {
     if (ids.has(id))return fail('duplicate node')
     ids.add(id)
   }
-  if (!ids.has(input.seed))return fail('seed is not in the graph')
+  if ((ids.size===0 && input.seed!=='') || (ids.size>0 && !ids.has(input.seed))) {
+    return fail('seed is not in the graph')
+  }
   const seenEdges=new Set<string>()
   for (const edge of input.edges) {
     if (!edge||!ids.has(edge.from)||!ids.has(edge.to))return fail('edge endpoint is absent')
@@ -156,6 +161,10 @@ function checkOptions(graph:LabGraph, options:LabOptions):void {
   if(options.traversal!=='bfs'&&options.traversal!=='dfs')fail('unknown traversal algorithm')
   if(!Number.isSafeInteger(options.minimumWeight)||options.minimumWeight<1||
     options.minimumWeight>100000000)fail('invalid edge-weight threshold')
+  if(graph.nodes.length===0) {
+    if(options.start!==''||options.removeNode!==null)fail('empty graph must have no starting or removed node')
+    return
+  }
   if(!graph.nodes.some(n=>n.id===options.start))fail('start node is not in the graph')
   if(options.removeNode!==null&&!graph.nodes.some(n=>n.id===options.removeNode))fail('removal node is not in the graph')
 }
