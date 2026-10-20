@@ -22,6 +22,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import TextIO
 
+from app.data.official_root_ids import read_numpy_root_ids, verify_fafb783_root_ids
+
 SCHEMA_VERSION = 1
 PUBLIC_SOURCE_URL = "https://codex.flywire.ai/api/download?dataset=fafb"
 LICENSE = "CC BY-NC 4.0"
@@ -132,6 +134,7 @@ def build_subgraph(
     max_neurons: int = 120,
     max_edges: int = 750,
     neuron_annotations: Path | None = None,
+    proofread_ids: Path | None = None,
 ) -> dict:
     """Aggregate all directed pairs, then select a deterministic 1-hop ego subgraph.
 
@@ -142,6 +145,11 @@ def build_subgraph(
         raise DataValidationError("Connections CSV does not exist")
     if neuron_annotations is not None and not neuron_annotations.is_file():
         raise DataValidationError("Neuron annotation CSV does not exist")
+    official_ids = None
+    official_archive = None
+    if proofread_ids is not None:
+        official_archive = verify_fafb783_root_ids(proofread_ids)
+        official_ids = read_numpy_root_ids(proofread_ids)
     if not 5 <= min_synapses <= 10_000:
         raise DataValidationError("min_synapses must be between 5 and 10000")
     if not 2 <= max_neurons <= 300 or not 1 <= max_edges <= 1000:
@@ -219,6 +227,11 @@ def build_subgraph(
                     "Seed not connected to another neuron at this threshold"
                 )
             selected = {seed, *(row[0] for row in incident)}
+            if official_ids is not None and not selected <= official_ids:
+                raise DataValidationError(
+                    "Selected neuron IDs do not all belong to the officially "
+                    "verified FAFB v783 proofread root ID archive"
+                )
             types = load_neuron_types(neuron_annotations, selected)
             placeholders = ",".join("?" for _ in selected)
             nodes = sorted(selected, key=int)
@@ -259,6 +272,8 @@ def build_subgraph(
             "source_reference": PUBLIC_SOURCE_URL,
             "license": LICENSE,
             "source_identity_verified": False,
+            "verified_neuron_id_membership": official_archive is not None,
+            "proofread_id_archive": official_archive,
             "data_kind": "user-provided-connectome-export",
             "imported_utc": datetime.now(timezone.utc).isoformat(),
             "source_rows_read": incoming_rows,
@@ -298,6 +313,10 @@ def main() -> None:
     parser.add_argument("--connections", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--neurons", type=Path)
+    parser.add_argument(
+        "--proofread-ids", type=Path,
+        help="Optional official Zenodo proofread_root_ids_783.npy (MD5 verified)",
+    )
     parser.add_argument("--seed", help="Root ID for a 1-hop neighborhood (default: top outgoing hub)")
     parser.add_argument("--min-synapses", type=int, default=5)
     parser.add_argument("--max-neurons", type=int, default=120)
@@ -306,10 +325,11 @@ def main() -> None:
     try:
         manifest = build_subgraph(
             args.connections, args.out, seed=args.seed,
-            neuron_annotations=args.neurons, min_synapses=args.min_synapses,
+            neuron_annotations=args.neurons, proofread_ids=args.proofread_ids,
+            min_synapses=args.min_synapses,
             max_neurons=args.max_neurons, max_edges=args.max_edges,
         )
-    except (DataValidationError, OSError, sqlite3.Error) as error:
+    except (DataValidationError, OSError, sqlite3.Error, ValueError) as error:
         parser.error(str(error))
     print(json.dumps(manifest, indent=2))
 

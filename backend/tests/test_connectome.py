@@ -193,3 +193,44 @@ def test_corrupted_configured_dataset_fails_closed(prepared, monkeypatch):
     monkeypatch.setenv("NEUROVERSE_DATASET_DB", str(target))
     with pytest.raises(DataIntegrityError):
         create_app()
+
+def make_synthetic_npy(path, values, descr="<u8"):
+    """Build a tiny valid NPY v1 payload without NumPy dependency."""
+    import struct
+
+    metadata = repr({"descr": descr, "fortran_order": False, "shape": (len(values),)})
+    raw = metadata.encode("latin1")
+    padding = (-(10 + len(raw) + 1)) % 16
+    header = raw + b" " * padding + b"\n"
+    prefix = b"\x93NUMPY" + bytes((1, 0)) + struct.pack("<H", len(header))
+    path.write_bytes(prefix + header + b"".join(struct.pack("<Q", value) for value in values))
+
+
+def test_official_ids_npy_reader_accepts_safe_int64_without_numpy(tmp_path):
+    from app.data.official_root_ids import read_numpy_root_ids
+
+    archive = tmp_path / "fixture.npy"
+    make_synthetic_npy(archive, [int(A), int(B)])
+    assert read_numpy_root_ids(archive) == {A, B}
+
+
+def test_official_ids_npy_reader_rejects_bad_or_duplicate_data(tmp_path):
+    from app.data.official_root_ids import OfficialArchiveError, read_numpy_root_ids
+
+    archive = tmp_path / "fixture.npy"
+    make_synthetic_npy(archive, [int(A), int(A)])
+    with pytest.raises(OfficialArchiveError, match="Duplicate"):
+        read_numpy_root_ids(archive)
+    make_synthetic_npy(archive, [int(A), int(B)])
+    archive.write_bytes(archive.read_bytes()[:-3])
+    with pytest.raises(OfficialArchiveError, match="length"):
+        read_numpy_root_ids(archive)
+
+
+def test_synthetic_archive_cannot_pass_publisher_md5(tmp_path):
+    from app.data.official_root_ids import OfficialArchiveError, verify_fafb783_root_ids
+
+    archive = tmp_path / "proofread_root_ids_783.npy"
+    make_synthetic_npy(archive, [int(A), int(B)])
+    with pytest.raises(OfficialArchiveError, match="MD5"):
+        verify_fafb783_root_ids(archive)

@@ -115,3 +115,20 @@ All endpoints are read-only; none of the graph data represents neuronal firing. 
 5. Codex FAQ, https://codex.flywire.ai/faq
 
 **Independence statement:** Neuroverse is not affiliated with FlyWire or Princeton University.
+
+## 6. Optional verification against official neuron IDs
+
+Zenodo publishes **`proofread_root_ids_783.npy`** (~1.1 MB) with the fixed published MD5 checksum `e0e6c19732fd8c7a4e39a2d170105421` (https://zenodo.org/records/10676866). Verify the *actual binary file* locally with:
+
+```powershell
+cd backend
+python -m app.data.official_root_ids ../data/raw/proofread_root_ids_783.npy
+```
+
+The checker uses a strict non-pickle, integer64 NPY reader and requires 139,255 distinct nonzero neuron IDs. If the archive matches Zenodo, you can additionally restrict selected CSV neurons to **officially published proofread root IDs**:
+
+```powershell
+python -m app.data.pipeline --connections ../data/raw/connections_princeton.csv.gz --out ../data/processed/fafb_sample.sqlite3 --proofread-ids ../data/raw/proofread_root_ids_783.npy
+```
+
+The manifest records `verified_neuron_id_membership` separately from `source_identity_verified`: verifying that selected neuron IDs belong to the official archive **does not** prove that the supplied connection counts, directions, or cell-type annotations came from FlyWire. Those connection records still require independent source verification. GitHub CI includes a small official-archive validation job when its network is available.
