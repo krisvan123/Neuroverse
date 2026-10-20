@@ -1,4 +1,4 @@
-import { Component, Suspense, lazy, useCallback, useState, type ReactNode } from 'react'
+import { Component, Suspense, lazy, useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { BrainPoster } from './BrainPoster'
 import { supportsWebGL } from '../scenes/browserSupport'
 import { CAMERA_PRESETS, type CameraView, type VisualQuality, type AnatomySource, type AnatomyStyle } from '../scenes/geometry'
@@ -40,6 +40,9 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
   const [webglSupported] = useState(supportsWebGL)
   const [sceneReady, setSceneReady] = useState(false)
   const [quality, setQuality] = useState<VisualQuality>('balanced')
+  const stageRef = useRef<HTMLDivElement>(null)
+  const [onScreen, setOnScreen] = useState(true)
+  const [tabVisible, setTabVisible] = useState(() => typeof document === 'undefined' || !document.hidden)
   const [anatomySource, setAnatomySource] = useState<AnatomySource>('neuropil')
   const [anatomyStyle, setAnatomyStyle] = useState<AnatomyStyle>('shaded')
   const [view, setView] = useState<CameraView>('front')
@@ -52,7 +55,24 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
     setModelMessage(message ?? '')
   }, [])
 
+  useEffect(() => {
+    const stage = stageRef.current
+    if (!stage || typeof IntersectionObserver === 'undefined') return
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry) setOnScreen(entry.isIntersecting)
+    }, { rootMargin: '120px 0px' })
+    observer.observe(stage)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const onVisibility = () => setTabVisible(!document.hidden)
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => document.removeEventListener('visibilitychange', onVisibility)
+  }, [])
+
   const sceneEnabled = webglSupported
+  const renderingPaused = paused || !onScreen || !tabVisible
   const handleReset = () => {
     setView('front')
     setResetToken((previous) => previous + 1)
@@ -60,7 +80,7 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
 
   return (
     <div className="brain-experience" data-quality={quality}>
-      <div className="brain-stage" data-anatomy-style={anatomyStyle}>
+      <div className="brain-stage" ref={stageRef} data-anatomy-style={anatomyStyle}>
         <div className="brain-stage-outline" aria-hidden="true" />
         {!sceneReady && <div className="poster-underlay"><BrainPoster /></div>}
         {sceneEnabled && (
@@ -68,7 +88,7 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
             <Suspense fallback={<div className="scene-loading" role="status">Preparing interactive 3D visualization…</div>}>
               <BrainScene
                 quality={quality}
-                paused={paused}
+                paused={renderingPaused}
                 anatomySource={anatomySource}
                 anatomyStyle={anatomyStyle}
                 view={view}
@@ -166,7 +186,7 @@ export function BrainExperience({ paused, onToggleMotion }: BrainExperienceProps
       </div>
       <p className="brain-instructions">
         {sceneEnabled
-          ? 'Drag to orbit · Scroll over the object to zoom · Use camera buttons for keyboard access.'
+          ? 'Drag to orbit · Scroll over the object to zoom · Use camera buttons for keyboard access. 3D motion pauses automatically when offscreen or the tab is hidden.'
           : 'WebGL is unavailable. The accessible illustration and science references remain visible.'}
       </p>
       <details className="visualization-disclosure">

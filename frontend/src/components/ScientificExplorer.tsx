@@ -90,6 +90,8 @@ export function ScientificExplorer() {
   const [renderMessage, setRenderMessage] = useState('')
   const [dataset, setDataset] = useState<DatasetState | null>(null)
   const [datasetError, setDatasetError] = useState('')
+  const [showImportSteps, setShowImportSteps] = useState(false)
+  const [checkingDataset, setCheckingDataset] = useState(false)
   const [details, setDetails] = useState<NeuronDetails | null>(null)
   const [graph, setGraph] = useState<Subgraph | null>(null)
   const [working, setWorking] = useState<'skeleton' | 'graph' | null>(null)
@@ -100,13 +102,32 @@ export function ScientificExplorer() {
     setRenderMessage(message ?? '')
   }, [])
 
+  const refreshDataset = useCallback(async (signal?: AbortSignal) => {
+    setCheckingDataset(true)
+    setDatasetError('')
+    try {
+      const result = await apiGet<DatasetState>('/api/v1/datasets/current', signal)
+      if (signal?.aborted) return
+      setDataset(result)
+      // A local selected subgraph may not contain the example neuron.
+      // Suggest its actual seed only if the visitor has not edited the field.
+      if (result.available && result.seed_root_id && rootIdIsValid(result.seed_root_id)) {
+        setRoot((value) => value === EXAMPLE_PROOFREAD_ID ? result.seed_root_id! : value)
+      }
+    } catch {
+      if (!signal?.aborted) {
+        setDatasetError('Connectome API is offline. Start FastAPI and try again.')
+      }
+    } finally {
+      if (!signal?.aborted) setCheckingDataset(false)
+    }
+  }, [])
+
   useEffect(() => {
     const controller = new AbortController()
-    apiGet<DatasetState>('/api/v1/datasets/current', controller.signal)
-      .then((data) => { if (!controller.signal.aborted) setDataset(data) })
-      .catch(() => { if (!controller.signal.aborted) setDatasetError('Connectome API is offline; start FastAPI to access original morphology and connectivity data.') })
+    void refreshDataset(controller.signal)
     return () => controller.abort()
-  }, [])
+  }, [refreshDataset])
 
   const loadRealSkeleton = async (event?: FormEvent) => {
     event?.preventDefault()
@@ -132,7 +153,8 @@ export function ScientificExplorer() {
     setDetails(null)
     if (!rootIdIsValid(root)) { setError('Enter a valid FAFB root ID.'); return }
     if (!dataset?.available) {
-      setError('Real connectivity has not been imported locally. Follow the Phase 03 dataset setup guide; no synthetic connections are substituted.')
+      setShowImportSteps(true)
+      setError('Connectome connections need a locally imported, original FAFB dataset. See the real-data setup guide below.')
       return
     }
     setWorking('graph')
@@ -155,7 +177,7 @@ export function ScientificExplorer() {
   return (
     <section id="explore" className="atlas container" aria-labelledby="explore-title">
       <div className="atlas-heading">
-        <div><div className="eyebrow"><span className="eyebrow-dash" /> 05.2 / SCAN-DERIVED ANATOMY</div>
+        <div><div className="eyebrow"><span className="eyebrow-dash" /> 05.3 / SCIENTIFIC EXPLORER</div>
           <h2 id="explore-title">The real anatomy.<br /><em>The real evidence.</em></h2>
         </div>
         <p>Compare published FlyWire-space neuropil and processed FAFB tissue surfaces, inspect original neuron centerlines, and examine source-based structural connectivity. No simulated anatomy masquerading as research.</p>
@@ -235,20 +257,45 @@ export function ScientificExplorer() {
               {working === 'skeleton' ? 'Loading original skeleton…' : 'Load real neuron skeleton'}
             </button>
           </form>
-          <button type="button" className="atlas-secondary" disabled={working !== null}
-            onClick={loadRealConnections}> {working === 'graph' ? 'Searching…' : 'Inspect directed connections'}</button>
+          <button type="button" className="atlas-secondary" disabled={working !== null || checkingDataset}
+            onClick={loadRealConnections}>{working === 'graph' ? 'Searching…' : 'Inspect directed connections'}</button>
           {error && <p className="atlas-message-error" role="alert">{error}</p>}
           <div className="atlas-rule" />
           <div className="atlas-overline">CURRENT DATA AVAILABILITY</div>
-          {datasetError ? <p className="atlas-message-error">{datasetError}</p> :
+          {datasetError ? <p className="atlas-message-error" role="status">{datasetError}</p> :
             dataset === null ? <p>Checking research API…</p> :
             dataset.available ? (
               <div className="atlas-metrics">
                 <p><strong>{dataset.nodes_selected}</strong> selected neurons</p>
                 <p><strong>{dataset.edges_selected}</strong> directed connections</p>
-                <span className="atlas-caution">Local imported subset · source identity {dataset.source_identity_verified ? 'authenticated' : 'not independently authenticated'}</span>
+                <span className="atlas-caution">Imported local subset · source identity {dataset.source_identity_verified ? 'authenticated' : 'not independently authenticated'}</span>
+                {dataset.seed_root_id && rootIdIsValid(dataset.seed_root_id) && (
+                  <button type="button" className="atlas-seed-button" onClick={() => setRoot(dataset.seed_root_id!)}>
+                    Use this dataset's seed neuron
+                  </button>
+                )}
+                <p className="atlas-dataset-note">The selected subset may exclude other valid FAFB neuron IDs. These connection counts do not describe the complete brain.</p>
               </div>
-            ) : <p className="atlas-caution">No selected connectivity dataset configured. The real skeleton endpoint can work independently. To inspect connections, follow the <a href="https://github.com/krisvan123/Neuroverse/blob/main/docs/scientific-data-pipeline.md" target="_blank" rel="noopener noreferrer">local data import guide ↗</a>.</p>}
+            ) : (
+              <div className="atlas-empty-data">
+                <p className="atlas-caution"><strong>3D anatomy is ready. Directed connectivity needs one additional local dataset.</strong> The published FAFB mesh and neuron-skeleton viewer work independently; no fictitious connections will be generated.</p>
+                <details className="atlas-import-steps" open={showImportSteps}
+                  onToggle={(event) => setShowImportSteps(event.currentTarget.open)}>
+                  <summary>Set up real FAFB directed connections (Windows)</summary>
+                  <div className="atlas-import-body">
+                    <p>1. Obtain the original FAFB v783 connectivity CSV/CSV.gz from the <a href="https://codex.flywire.ai/api/download?dataset=fafb" target="_blank" rel="noopener noreferrer">FlyWire Codex download portal ↗</a>. Codex may require a login. Do not paste an API token into this site.</p>
+                    <p>2. Save the file as <code>Neuroverse/data/raw/connections_princeton.csv.gz</code>. From the <code>backend</code> folder with your Python environment activated, import a bounded original-data subset:</p>
+                    <pre><code>{'python -m app.data.pipeline --connections ../data/raw/connections_princeton.csv.gz --out ../data/processed/fafb_sample.sqlite3 --max-neurons 120 --max-edges 750'}</code></pre>
+                    <p>3. Restart FastAPI in that same terminal with the actual database path:</p>
+                    <pre><code>{'$env:NEUROVERSE_DATASET_DB = (Resolve-Path ../data/processed/fafb_sample.sqlite3).Path\npython -m uvicorn app.main:app --reload'}</code></pre>
+                    <p>For different filenames, formats and scientific limitations, see the <a href="https://github.com/krisvan123/Neuroverse/blob/main/docs/scientific-data-pipeline.md" target="_blank" rel="noopener noreferrer">complete Phase 03 import guide ↗</a>. Verify data availability again after the backend restarts.</p>
+                  </div>
+                </details>
+              </div>
+            )}
+          <button type="button" className="atlas-refresh-data" onClick={() => { void refreshDataset() }} disabled={checkingDataset}>
+            {checkingDataset ? 'Checking local dataset…' : 'Recheck dataset availability'}
+          </button>
           {skeleton && mode === 'skeleton' && (
             <div className="atlas-observation">
               <div className="atlas-overline">SOURCE-DERIVED MORPHOLOGY</div>

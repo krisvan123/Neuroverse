@@ -618,3 +618,51 @@ html[data-motion='quiet'] .mission-banner__text{
 @media(max-width:670px){
   .brain-stage-render-mode{top:17%;font-size:8px}
 }
+
+
+/* Phase 05.3 final UX gate — clear scientific data prerequisites,
+   keyboard focus, bounded copyable command lines, no decorative blocking. */
+.atlas-empty-data{
+  display:grid;gap:12px;padding:15px 14px;
+  border-radius:7px;border:1px solid rgba(126,193,227,.23);
+  background:linear-gradient(155deg,rgba(18,43,63,.92),rgba(9,26,46,.94));
+}
+.atlas-empty-data .atlas-caution{font-size:12px;line-height:1.75}
+.atlas-empty-data strong{color:#e3f5ff}
+.atlas-import-steps{
+  border:1px solid rgba(129,200,235,.3);
+  background:rgba(9,20,37,.7);border-radius:6px;
+}
+.atlas-import-steps summary{
+  cursor:pointer;color:#aeeaff;font-size:12px;
+  font-weight:750;line-height:1.6;padding:13px 12px;
+}
+.atlas-import-steps summary:hover{text-decoration:underline}
+.atlas-import-steps summary:focus-visible,
+.atlas-refresh-data:focus-visible,
+.atlas-seed-button:focus-visible{outline:2px solid #acecff;outline-offset:3px}
+.atlas-import-body{
+  border-top:1px solid rgba(129,200,235,.21);padding:12px;
+  display:grid;gap:12px;font-size:11px;line-height:1.75;color:#c8dce9;
+}
+.atlas-import-body a{color:#9ceaff;text-decoration:underline;text-underline-offset:2px}
+.atlas-import-body code{color:#e5f8ff;font-size:10px}
+.atlas-import-body pre{
+  min-width:0;max-width:100%;overflow-x:auto;
+  white-space:pre;padding:12px;border-radius:5px;
+  border:1px solid rgba(129,200,235,.21);
+  background:#091624;
+}
+.atlas-import-body pre code{font-size:10px;white-space:pre}
+.atlas-refresh-data,.atlas-seed-button{
+  width:100%;padding:10px 12px;border-radius:5px;
+  border:1px solid rgba(132,203,229,.39);
+  color:#c8eefb;background:rgba(35,83,111,.34);
+  cursor:pointer;font-size:11px;font-weight:700;line-height:1.5;
+}
+.atlas-refresh-data:hover:enabled,.atlas-seed-button:hover:enabled{
+  background:rgba(54,113,145,.55);border-color:#a8ebff;
+}
+.atlas-refresh-data:disabled{cursor:progress;opacity:.65}
+.atlas-metrics{display:grid;gap:9px}
+.atlas-dataset-note{font-size:11px;line-height:1.65;color:#acc5d8}
