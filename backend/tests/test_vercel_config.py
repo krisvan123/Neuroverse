@@ -1,5 +1,6 @@
 """Deployment contract checks for the optional single-domain Vercel Services setup."""
 import json
+import tomllib
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -39,3 +40,17 @@ def test_vercel_entrypoint_uses_the_real_fastapi_app(monkeypatch):
         no_dataset = client.get("/api/v1/datasets/current")
         assert no_dataset.status_code == 200
         assert no_dataset.json()["available"] is False
+
+
+def test_vercel_uv_has_valid_project_metadata_and_runtime_dependencies():
+    """Vercel invokes uv lock; tool-only pyproject.toml previously broke builds."""
+    backend = ROOT / "backend"
+    with (backend / "pyproject.toml").open("rb") as file:
+        metadata = tomllib.load(file)
+    project = metadata["project"]
+    assert project["name"] == "neuroverse-api"
+    assert project["version"] == "0.3.0"
+    assert project["requires-python"] == ">=3.11"
+    requirements = (backend / "requirements.txt").read_text(encoding="utf-8").splitlines()
+    assert set(project["dependencies"]) == {line for line in requirements if line and not line.startswith("#")}
+    assert (backend / ".python-version").read_text(encoding="utf-8").strip() == "3.12"
