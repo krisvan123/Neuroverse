@@ -1,6 +1,6 @@
 # Phase 05.2 — Source-Derived 3D Inspection and Global Cosmic Animation
 
-**Project:** Neuroverse · **Snapshot:** FlyWire FAFB v783 context · **Status:** Final scientific-source and browser QA for the expanded geometry options.
+**Project:** Neuroverse · **Snapshot:** FlyWire FAFB v783 context · **Status:** PR #9 merged to `main`; expanded scientific-source and browser verification passed (2026-10-20).
 
 ## What is anatomically authentic?
 

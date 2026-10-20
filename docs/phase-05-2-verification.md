@@ -1,6 +1,6 @@
 # Phase 05.2 — Acceptance Checks
 
-**Status:** Expanded Phase 05.2 gate in progress for the additional original neuropil, DNA and perceptible star movement. Previous version passed a smaller, documented scope. Original FAFB source integrity and reproducible visual controls verified by GitHub CI.
+**Status:** Expanded Phase 05.2 scoped engineering gate accepted: PR #9 merged and all six CI jobs passed, including 30/30 desktop/mobile Chromium checks. Device-specific visual appraisal remains a separate user acceptance step. Original FAFB source integrity and reproducible visual controls verified by GitHub CI.
 
 | ID | Acceptance target | Verification |
 | --- | --- | --- |
@@ -26,13 +26,24 @@
 
 **Scope limitation:** A successful software WebGL test does not certify every physical laptop/mobile GPU or prove a one-to-one voxel-exact electron-microscope reconstruction. The published surface was generated from a FAFB tissue mask and manually processed. A complete atlas registered to voxel segmentation needs further scientific validation.
 
-## Expanded final user-request gate — PR #9 (pending)
+## Expanded final user-request gate — PR #9 (merged; accepted)
 
-- [ ] **Actual additional fly-brain anatomy, not cosmetic recolor:** authenticate published transformed FAFB14 neuropil `FLYWIRE.ply` SHA-1 `468c217c41602a8d34df2af6afd00a2aa1c11077`, integrate default hero and separate scientific explorer source, ensure original tissue mesh remains selectable.
-- [ ] **Visibly drifting global stars:** desktop and mobile Chromium measure at least 9 CSS pixels of star drift during a 1.3-second interval, and reduced-motion toggles disable it.
-- [ ] **Animated DNA:** verify two lightweight 3D helices with moving molecular tracer, one static helix for Saver, stop on Pause/reduced-motion; decorative only.
-- [ ] New upstream source checksum verification and real original mesh screenshots in GitHub Actions.
-- [ ] Full integration/browser/source CI jobs green on final PR SHA.
-- [ ] Explicitly retain scientific scope: registered template and manually derived tissue mask do not equal the original raw EM scan or atlas regions.
+- [x] **Actual additional fly-brain anatomy, not cosmetic recolor:** authenticate published transformed FAFB14 neuropil `FLYWIRE.ply` SHA-1 `468c217c41602a8d34df2af6afd00a2aa1c11077`, integrate default hero and separate scientific explorer source, ensure original tissue mesh remains selectable.
+- [x] **Visibly drifting global stars:** desktop and mobile Chromium measure at least 9 CSS pixels of star drift during a 1.3-second interval, and reduced-motion toggles disable it.
+- [x] **Animated DNA:** verify two lightweight 3D helices with moving molecular tracer, one static helix for Saver, stop on Pause/reduced-motion; decorative only.
+- [x] New upstream source checksum verification and real original mesh screenshots in GitHub Actions.
+- [x] Full integration/browser/source CI jobs green on final PR SHA.
+- [x] Explicitly retain scientific scope: registered template and manually derived tissue mask do not equal the original raw EM scan or atlas regions.
 
 **Important:** Phase 06 has not begun.
+
+## Final expanded source and browser audit
+
+- [Pull Request #9](https://github.com/krisvan123/Neuroverse/pull/9) merged with commit `54e91e05ea014c6db85d90103c0ce8a28cf19d15`.
+- [GitHub Actions run 39387994799](https://github.com/krisvan123/Neuroverse/actions/runs/39387994799): **six of six jobs passed**, including TypeScript/lint/unit/build, backend tests, source integrity checks, and full-stack HTTP smoke verification.
+- Chromium job: **30/30 passed** across desktop and mobile-emulated projects; checks include real original published FAFB neuropil in hero, original whole-tissue geometry, source switching, motion pauses, and measured CSS star movement.
+- Both source geometries are pinned independently: neuropil FLYWIRE.ply Git blob `468c217c41602a8d34df2af6afd00a2aa1c11077`, whole-tissue FLYWIRE_whole_brain.ply `3cf14cdd1399f212057f40c918493452abf056da`.
+- DNA rendering is independently controlled by the app's pause and quality state; browser coverage exercises controls and reduced-motion behavior. Exact moving-tracer trajectory was code-reviewed but not independently quantified by the browser test, and physical-device frame rates remain unmeasured.
+- **Science limit:** published FAFB template and processed mask surfaces are not raw microscope voxels, individual reconstructed neuron volumes, verified neuropil regions, or live neuronal activity. No fake morphology substitutes for missing source bytes.
+
+**Phase 06:** not started. Phase 05.2 engineering tests passing do not mean user visual acceptance has been recorded.

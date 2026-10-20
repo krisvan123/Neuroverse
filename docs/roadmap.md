@@ -2,7 +2,7 @@
 
 **Document ID:** NV-ROADMAP-001  
 **Version:** 1.0 · **Baseline:** 2026-10-20  
-**Project state:** Phases 01–05 completed to their limited engineering scopes. Phase 05.2 adds original FAFB-derived neuropil and whole-tissue mesh comparison, measurable drifting global CSS stars, and two animated DNA helices (expanded acceptance verification underway). **Full 3D EM segmentation alignment and anatomical region labels remain unverified and are not claimed.** Phases 06–09 remain planned.
+**Project state:** Phases 01–05 completed to their limited engineering scopes. Phase 05.2 adds original FAFB-derived neuropil and whole-tissue mesh comparison, measurable drifting global CSS stars, and two animated DNA helices (expanded CI acceptance passed; 30/30 desktop/mobile Chromium tests, physical-device visual acceptance pending). **Full 3D EM segmentation alignment and anatomical region labels remain unverified and are not claimed.** Phases 06–09 remain planned.
 
 ## 1. Delivery philosophy
 
