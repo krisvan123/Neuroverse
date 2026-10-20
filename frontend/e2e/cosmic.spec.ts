@@ -82,7 +82,13 @@ test('reduced-motion preference starts with animation paused', async ({ page }) 
 })
 
 test('3D drawing performance records a software-rendered baseline', async ({ page }) => {
+  // The previous test emulates reduced motion. Explicitly request an animated
+  // scene so demand-rendering is not incorrectly evaluated as zero FPS.
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto('/')
+  if (await page.getByRole('button', { name: 'Resume motion' }).isVisible()) {
+    await page.getByRole('button', { name: 'Resume motion' }).click()
+  }
   if (!(await page.getByLabel('Quality').isEnabled())) {
     test.skip(true, 'No WebGL exposed by Chromium fixture — visual fallback was tested separately')
   }
