@@ -19,7 +19,14 @@ React, TypeScript, Vite, Tailwind CSS, Three.js/React Three Fiber, Python, FastA
 
 ## Documentation
 
-Phase 01 is developed on the `phase/01-product-foundation` branch. Its four planning documents cover product requirements, scientific standards, visual design, and the delivery roadmap. Once reviewed and merged, links will be added here.
+Phase 01 planning documents are available on the `phase/01-product-foundation` branch:
+
+- [Product Requirements Document](docs/product-requirements.md) — scope, core learning flow, MVP/non-goals, acceptance criteria.
+- [Scientific Standards](docs/scientific-standards.md) — paper references, claims registry, datasets, licenses and limitations.
+- [Cosmic UI/UX Blueprint](docs/design-blueprint.md) — homepage, 3D brain explorer, motion/accessibility and responsive behavior.
+- [Development Roadmap](docs/roadmap.md) — nine phases, dependencies and evidence-based 10/10 gates.
+
+**Phase 01 is a planning-only milestone:** none of the user-facing product experiences described above has been implemented yet.
 
 ## Research foundations
 
