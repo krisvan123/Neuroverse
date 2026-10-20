@@ -183,7 +183,7 @@ test('empty FAFB connections provide a real source-only import path and refresh 
   await expect(explorer.getByText('1 directed connections')).toBeVisible()
   await expect(explorer.getByLabel('Neuron root ID')).toHaveValue(actualSeed)
   await explorer.getByLabel('Neuron root ID').fill('720575940625431866')
-  await explorer.getByRole('button', { name: 'Use this dataset\\'s seed neuron' }).click()
+  await explorer.getByRole('button', { name: "Use this dataset's seed neuron" }).click()
   await expect(explorer.getByLabel('Neuron root ID')).toHaveValue(actualSeed)
 })
 
@@ -204,6 +204,6 @@ test('connectivity status refresh never overrides a visitor-edited neuron ID', a
   seed = '720575940625444444'
   await explorer.getByRole('button', { name: 'Recheck dataset availability' }).click()
   await expect(explorer.getByLabel('Neuron root ID')).toHaveValue(userChoice)
-  await explorer.getByRole('button', { name: 'Use this dataset\\'s seed neuron' }).click()
+  await explorer.getByRole('button', { name: "Use this dataset's seed neuron" }).click()
   await expect(explorer.getByLabel('Neuron root ID')).toHaveValue(seed)
 })
