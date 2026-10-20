@@ -2,7 +2,7 @@
 
 **Document ID:** NV-ROADMAP-001  
 **Version:** 1.0 · **Baseline:** 2026-10-20  
-**Project state:** Phases 01–06 passed scoped engineering checks (human participant and physical-device pilots remain open). Phase 07 Computational Experiment Lab now implements bounded BFS/DFS, graphs, metrics, non-destructive node-removal scenarios, optional source-gated FAFB v783 selected subgraph and JSON/CSV export; PR #13 merged with six CI gates and 56/56 Chromium browser tests green; manual device/user checks still outstanding. Phase 08 Research Journal and Phase 09 production QA remain planned. Anatomical mesh surfaces are not raw EM voxel segmentation.
+**Project state:** Phases 01–06 passed scoped engineering checks (human participant and physical-device pilots remain open). Phase 07 Computational Experiment Lab now implements bounded BFS/DFS, graphs, metrics, non-destructive node-removal scenarios, optional source-gated FAFB v783 selected subgraph and JSON/CSV export; PR #13 merged with six CI gates and 56/56 Chromium browser tests green; manual device/user checks still outstanding. Phase 08 Research Journal is implemented in a review branch (CI and manual gates pending); Phase 09 production QA remains planned. Anatomical mesh surfaces are not raw EM voxel segmentation.
 
 ## 1. Delivery philosophy
 
@@ -114,7 +114,11 @@ For documentation-only Phase 01, implementation-dependent gates become **documen
 
 **Scope:** local-first persistence of learning status and experiment records; import/export and provenance; no mandatory user account.
 
+**Implementation:** Versioned localStorage Academy progress and bounded Research Journal; Lab save/reopen; original Phase 07 and journal JSON import; recomputation on import; explicit record deletion and confirmed reset. Details in [Phase 08 Journal documentation](phase-08-research-journal.md).
+
 **Acceptance checks:** exported experiment reproduces inputs and numeric outcomes; corrupted-import handling; safe storage and no silent data loss; privacy disclosure; tested reset/delete experience.
+
+**Status:** implementation in Phase 08 PR; acceptance is pending CI results, review and manual-device gates.
 
 ### Phase 09 — Quality Assurance & Deployment
 
