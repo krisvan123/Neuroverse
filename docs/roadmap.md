@@ -2,7 +2,7 @@
 
 **Document ID:** NV-ROADMAP-001  
 **Version:** 1.0 · **Baseline:** 2026-10-20  
-**Project state:** Phases 01–06 passed scoped engineering checks (human participant and physical-device pilots remain open). Phase 07 Computational Experiment Lab now implements bounded BFS/DFS, graphs, metrics, non-destructive node-removal scenarios, optional source-gated FAFB v783 selected subgraph and JSON/CSV export; PR #13 merged with six CI gates and 56/56 Chromium browser tests green; manual device/user checks still outstanding. Phase 08 Research Journal implementation and review are tracked in PR #14; Phase 09 production QA remains planned. Consult PR #14 for CI evidence and open manual validation gates. Anatomical mesh surfaces are not raw EM voxel segmentation.
+**Project state:** Phases 01–06 passed scoped engineering checks (human participant and physical-device pilots remain open). Phase 07 Computational Experiment Lab now implements bounded BFS/DFS, graphs, metrics, non-destructive node-removal scenarios, optional source-gated FAFB v783 selected subgraph and JSON/CSV export; PR #13 merged with six CI gates and 56/56 Chromium browser tests green; manual device/user checks still outstanding. Phase 08 Research Journal & Learning Progress merged via PR #14 (six CI jobs and 66/66 Chromium desktop/mobile tests passed, 49 frontend unit tests). Phase 09 quality assurance and public deployment have not started. Phase 06's five-person pilot and Phase 08 real-device/manual accessibility/storage checks remain open. Anatomical mesh surfaces are not raw EM voxel segmentation.
 
 ## 1. Delivery philosophy
 
@@ -118,7 +118,7 @@ For documentation-only Phase 01, implementation-dependent gates become **documen
 
 **Acceptance checks:** exported experiment reproduces inputs and numeric outcomes; corrupted-import handling; safe storage and no silent data loss; privacy disclosure; tested reset/delete experience.
 
-**Status:** Phase 08 deliverables are tracked in [PR #14](https://github.com/krisvan123/Neuroverse/pull/14). The PR's final check results determine the automated engineering acceptance; real-device and five-person learner validations are separate, still-open gates.
+**Status:** **ENGINEERING PASS — merged** in [PR #14](https://github.com/krisvan123/Neuroverse/pull/14), merge SHA `a1b3ad059a2e9153b233d485cb26b15541f28bf2`. [Final GitHub Actions run 39426530551](https://github.com/krisvan123/Neuroverse/actions/runs/39426530551): 6/6 CI jobs successful, 49/49 frontend unit tests, and 66/66 Playwright Chromium tests across desktop and mobile. This is an automated engineering gate only; real-device and human accessibility/storage reviews, plus Phase 06's five-person learner pilot, remain **NOT VERIFIED**.
 
 ### Phase 09 — Quality Assurance & Deployment
 
