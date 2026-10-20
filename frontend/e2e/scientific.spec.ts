@@ -83,3 +83,36 @@ test('mobile science workspace does not overflow the viewport', async ({ page })
   }))
   expect(sizes.page).toBeLessThanOrEqual(sizes.viewport + 2)
 })
+
+test('scientific 3D viewer renders a controlled PLY fixture and provides camera presets', async ({ page }) => {
+  // Synthetic PLY in the test runner ONLY; production uses the pinned scientific archive.
+  const miniPly = [
+    'ply', 'format ascii 1.0', 'element vertex 4',
+    'property float x', 'property float y', 'property float z',
+    'element face 2', 'property list uchar int vertex_indices',
+    'end_header', '0 0 0', '1 0 0', '0 1 0', '0 0 1',
+    '3 0 1 2', '3 0 1 3',
+  ].join('\n') + '\n'
+  await page.route('**/api/v1/datasets/current', async (route) => route.fulfill({ json: { available: false } }))
+  await page.route('**/api/v1/brain/tissue-mesh', async (route) => route.fulfill({
+    body: miniPly, status: 200,
+    headers: {
+      'Content-Type': 'application/octet-stream',
+      'X-Neuroverse-Source-SHA256': 'a'.repeat(64),
+    },
+  }))
+  await page.goto('/')
+  const explorer = page.locator('#explore')
+  const side = explorer.getByRole('button', { name: 'Side', exact: true })
+  if (!(await side.isEnabled())) {
+    await expect(explorer.getByText(/WebGL is unavailable/i)).toBeVisible()
+    return
+  }
+  await expect(explorer.getByText('SOURCE-DERIVED 3D')).toBeVisible({ timeout: 20_000 })
+  await side.click()
+  await expect(side).toHaveAttribute('aria-pressed', 'true')
+  await explorer.getByRole('button', { name: 'Top', exact: true }).click()
+  await expect(explorer.getByRole('button', { name: 'Top', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await explorer.getByRole('button', { name: 'Reset camera' }).click()
+  await expect(explorer.getByRole('button', { name: 'Front', exact: true })).toHaveAttribute('aria-pressed', 'true')
+})
