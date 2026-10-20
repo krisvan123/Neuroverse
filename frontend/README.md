@@ -62,3 +62,7 @@ If `datasets/current` reports missing connectivity, **Inspect directed connectio
 The Academy section at `#academy` contains five source-mapped original neuroscience lessons, Mission 001, ten checked quiz questions, a 14-term glossary, an interactive deterministic SYNTHETIC BFS graph and a reversible model-node-removal comparison. Native HTML buttons/radios let students complete core tasks by keyboard without WebGL or the FastAPI server. Answer feedback is explicit, with no certificate or saved state; persistence belongs to Phase 08.
 
 Sources are OpenStax Nervous Tissue (§12.2) and Communication Between Neurons (§12.5), Dorkenwald et al. Nature 2024, Codex's FAFB FAQ, and NetworkX traversal reference. See source links in the UI and [Phase 06 scientific acceptance](../docs/phase-06-learning-academy.md). Frontend unit, browser, and mobile checks run through the existing npm scripts.
+
+## Phase 07 Computational Experiment Lab
+
+The Lab is live at #lab with bounded deterministic directed BFS/DFS, node-removal model comparison, density/out-degree metrics, an accessible table/visual graph and self-contained JSON/CSV downloads. Seven independently authored reference cases are checked against NetworkX in backend tests. A synthetic offline teaching graph is the default; genuine FAFB v783 mode requires a selected, previously imported local CSV database and the backend. There are no fictional FAFB edges or neural activity claims. See [Phase 07 methodology](../docs/phase-07-experiment-lab.md).
