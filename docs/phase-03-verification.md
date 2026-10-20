@@ -45,3 +45,18 @@ python -m app.data.pipeline --help
 ```
 
 GitHub Actions results to be appended after PR creation.
+
+## Confirmed official neuron ID verification — 2026-10-20
+
+GitHub Actions run: https://github.com/krisvan123/Neuroverse/actions/runs/39351821273
+
+- Verified exact Zenodo `proofread_root_ids_783.npy` binary against official MD5 `e0e6c19732fd8c7a4e39a2d170105421`.
+- Decoded the NPY array and counted **139,255 distinct root IDs**.
+- SHA-256: `7c7b7e818e9232e5ab64793d52ba20574dbe9da3a6509fbc74193b0f259a01be`.
+- The official-ID job, Python tests, frontend checks and HTTP integration checks all succeeded.
+
+**This authenticates the neuron ID archive, NOT all neuronal connection records.**
+
+## Official connections audit in progress
+
+A one-time CI job for PR #3 attempts to download the official ~852 MB Feather connection archive, check its published MD5, extract a clearly biased sample, and test the complete importer. Do not claim it succeeded before reviewing the CI result.

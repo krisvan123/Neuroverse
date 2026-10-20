@@ -132,3 +132,19 @@ python -m app.data.pipeline --connections ../data/raw/connections_princeton.csv.
 ```
 
 The manifest records `verified_neuron_id_membership` separately from `source_identity_verified`: verifying that selected neuron IDs belong to the official archive **does not** prove that the supplied connection counts, directions, or cell-type annotations came from FlyWire. Those connection records still require independent source verification. GitHub CI includes a small official-archive validation job when its network is available.
+
+## 7. Official Zenodo Feather import (no Codex API token)
+
+The canonical `proofread_connections_783.feather` is approximately **852 MB** with publisher MD5 `f48f972d262323a102aed49af1396b8a` on [Zenodo record 10676866](https://zenodo.org/records/10676866). Neuroverse includes an optional **checksum-verified converter** for a limited sample.
+
+Install the optional reader: `python -m pip install "pyarrow>=16,<24"`.
+
+From `backend/` run:
+
+```powershell
+python -m app.data.feather_sample --source ../data/raw/proofread_connections_783.feather --out ../data/raw/official_prefix_sample.csv --rows 20000 --proofread-ids ../data/raw/proofread_root_ids_783.npy
+```
+
+The converter validates the **entire archive checksum** before taking a file-order prefix and writes a small CSV compatible with the existing importer. Then import that CSV and pass the `--proofread-ids` option to check membership of selected neurons.
+
+**File-order prefixes are not random or representative samples.** This conversion is an audit of real imported records, not a substitute for a full whole-brain network analysis. The sampled CSV manifest remains `source_identity_verified: false`; the converter writes separate evidence that its parent archive matched a published checksum. Do not mislabel the sampled CSV as a full official release.

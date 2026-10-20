@@ -26,3 +26,5 @@ Create the two folders locally. The root `.gitignore` prevents accidentally comm
 Only FAFB **v783** is within current scope; never mix root IDs from other materializations without a supported mapping step. The processing utility cannot independently authenticate uploaded files as an official FlyWire export and therefore records `source_identity_verified: false`.
 
 See [the detailed pipeline documentation](../docs/scientific-data-pipeline.md).
+
+For the Zenodo Feather data source and validation converter, see Section 7 of the [pipeline guide](../docs/scientific-data-pipeline.md).

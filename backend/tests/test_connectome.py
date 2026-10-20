@@ -234,3 +234,12 @@ def test_synthetic_archive_cannot_pass_publisher_md5(tmp_path):
     make_synthetic_npy(archive, [int(A), int(B)])
     with pytest.raises(OfficialArchiveError, match="MD5"):
         verify_fafb783_root_ids(archive)
+
+
+def test_official_feather_checksum_fails_for_fabricated_archive(tmp_path):
+    from app.data.feather_sample import FeatherSourceError, verify_official_feather
+
+    archive = tmp_path / "proofread_connections_783.feather"
+    archive.write_bytes(b"not a FlyWire archive")
+    with pytest.raises(FeatherSourceError, match="MD5"):
+        verify_official_feather(archive)
