@@ -13,7 +13,7 @@ test('immersive homepage is informative, interactive, and accessible', async ({ 
 
   const method = page.locator('details.visualization-disclosure')
   await method.locator('summary').click()
-  await expect(method.getByText(/not a live brain scan/i)).toBeVisible()
+  await expect(method.getByText(/neither mesh is the original unprocessed EM volume/i)).toBeVisible()
 
   const quality = page.getByLabel('Quality')
   if (await quality.isEnabled()) {
