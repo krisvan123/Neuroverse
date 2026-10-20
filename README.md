@@ -4,7 +4,7 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 03 — Scientific Data Pipeline (under review).** The React landing interface and FastAPI system endpoints are implemented as a foundation. **A functional 3D fly-brain explorer, completed lessons, and experiments do not exist yet. A local CSV-to-SQLite importer and read-only neuron API are being developed, but NO officially verified FlyWire data have been loaded into this repository.** The animated network diagram is a clearly labeled conceptual graphic, not a scientific scan.
+> **Current development status: Phase 03 — Scientific Data Pipeline (completed).** The React frontend, FastAPI API, versioned local CSV/Feather data pipeline, checksum checks, read-only graph endpoints, and automated tests exist. Official FlyWire v783 archives were independently downloaded and checksum-verified in GitHub Actions; **20,000 authentic connectivity records were sampled for integration testing**, yielding a test subgraph of **14 neurons / 15 directed edges**. **No full scientific dataset is bundled or automatically served.** 3D anatomical exploration, lessons, and computational experiments are future phases; the current landing network illustration is conceptual, not a scientific scan.
 
 ## Product direction
 
@@ -80,7 +80,7 @@ npm run build
 python -m pytest -q
 ```
 
-GitHub Actions runs both test jobs for pull requests. Read [Phase 02 Verification](docs/phase-02-verification.md) for actual evidence and incomplete acceptance checks.
+GitHub Actions runs frontend/backend/integration tests and a lightweight verified neuron ID archive check. A large-connectivity checksum/sample audit is available as a manual workflow.  Read [Phase 02 Verification](docs/phase-02-verification.md) for actual evidence and incomplete acceptance checks.
 
 ## Documentation
 
@@ -91,6 +91,10 @@ GitHub Actions runs both test jobs for pull requests. Read [Phase 02 Verificatio
 - [Phase 02 Verification](docs/phase-02-verification.md): completed foundational CI.
 - [Scientific Data Pipeline Guide](docs/scientific-data-pipeline.md): source acquisition, schema, importer, API, caveats.
 - [Phase 03 Quality Gate](docs/phase-03-verification.md): tests and real-data verification status.
+
+## Authentic FlyWire verification
+
+A GitHub Actions run verified the original Zenodo ~852 MB FAFB v783 connectivity archive against its published MD5, extracted a **non-representative** 20,000-row prefix, and ran the CSV/SQLite API pipeline. The verification evidence is [documented here](docs/phase-03-verification.md). To repeat the large download only when needed, use the GitHub Actions workflow **Audit official FAFB connections (manual)**. Do not commit scientific archives, tokens, or user files.
 
 ## Scientific references
 

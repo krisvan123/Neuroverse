@@ -147,4 +147,4 @@ python -m app.data.feather_sample --source ../data/raw/proofread_connections_783
 
 The converter validates the **entire archive checksum** before taking a file-order prefix and writes a small CSV compatible with the existing importer. Then import that CSV and pass the `--proofread-ids` option to check membership of selected neurons.
 
-**File-order prefixes are not random or representative samples.** This conversion is an audit of real imported records, not a substitute for a full whole-brain network analysis. The sampled CSV manifest remains `source_identity_verified: false`; the converter writes separate evidence that its parent archive matched a published checksum. Do not mislabel the sampled CSV as a full official release.
+**File-order prefixes are not random or representative samples.** This conversion is an audit of real imported records, not a substitute for a full whole-brain network analysis. The sampled CSV manifest remains `source_identity_verified: false`; the converter prints a separate source-checksum audit record; preserve that output with your research notes to retain provenance. Do not mislabel the sampled CSV as a full official release.
