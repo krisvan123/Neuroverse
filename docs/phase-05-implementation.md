@@ -1,10 +1,10 @@
 # Phase 05 — Scientific Anatomy and Connectivity Implementation
 
-Status: in review. Dataset: adult female fruit fly FAFB v783.
+Status: Phase 05 engineering gate accepted; Phase 05.2 visual refinements documented separately. Dataset: adult female fruit fly FAFB v783.
 
 ## Scientific integrity
 
-The Cosmic hero from Phase 04 is concept art, NOT anatomy. The scientific workspace shows three *distinct* sources:
+The original Phase 04 cosmic hero was concept art. Since the Phase 05 hero upgrade, the visible 3D brain surface uses the pinned FAFB tissue-mask-derived PLY; the surrounding DNA, stars, lighting and atmospheric effects remain decorative. The fallback SVG is conceptual, not a scan. The scientific workspace shows three *distinct* sources:
 1. Whole-brain tissue envelope from the real FAFB tissue mask, reconstructed through erosion, filling, marching cubes, manual cleanup and transformation (Peter Li / Google; distributed by navis-flybrains).
 2. Individual neuron *skeleton centerlines* (real segment geometry) from the published FAFB v783 precomputed skeleton archive operated at MRC Laboratory of Molecular Biology, Cambridge. These are not volume meshes and do not represent electrical impulses.
 3. Selected local directed synaptic graph based on an imported provenance-recorded FAFB connections file. Its radial diagram is not anatomical location.

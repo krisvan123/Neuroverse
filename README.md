@@ -4,14 +4,14 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 05 — Scientific Brain Explorer (completed, scoped acceptance).** The Cosmic 3D homepage remains conceptual artwork. The new scientific explorer fetches a source-pinned FAFB whole-brain tissue envelope and real FAFB v783 precomputed neuron centerlines; it does not fabricate anatomy. The tissue and skeleton are viewed separately until coordinate frames are independently aligned. Local graph connectivity still needs an imported source dataset. Scientific source and browser testing are in progress.
+> **Current development status: Phase 05.2 — Source-derived 3D & Cosmic Motion (in verification).** The homepage and the Scientific Explorer both render a **real FAFB tissue-mask-derived surface mesh** fetched from a pinned, checksum-validated research source. The updated explorer has Tissue Shading, Depth Colors (mesh-local coordinate only), and Triangle Mesh modes. **None of those colors identify brain regions.** Site-wide decorative stars now drift and twinkle with a global Reduce Motion toggle. This PLY is *processed tissue-mask geometry*, not a raw electron-microscopy voxel scan or a segmentation of every neuron.
 
 ## Product direction
 
 - **Learn:** evidence-based neuroscience and computer science lessons.
 - **Explore:** investigate a clearly attributed subset of the FlyWire adult fruit fly connectome (planned).
 - **Experiment:** run graph algorithms and compare reproducible computational results (planned).
-- **Experience:** an accessible Cosmic Neuroscience interface with a lightweight procedural 3D concept brain, controllable camera, optional animated DNA/helices, and star particles (Phase 04).
+- **Experience:** an accessible Cosmic Neuroscience interface with a source-validated FAFB tissue-surface 3D brain, controllable camera, optional decorative DNA and site-wide gently drifting stars (Phase 05.2).
 
 ## Technology
 
@@ -19,7 +19,7 @@ Neuroverse is an independent, research-inspired science learning platform that w
 | --- | --- | --- |
 | Frontend | React, TypeScript, Vite, Tailwind CSS | Responsive homepage and tests implemented |
 | API | Python, FastAPI, Pydantic | Running endpoints / tests |
-| 3D scenes | Three.js, React Three Fiber 9 | Concept 3D hero with camera/quality/motion controls; scientific morphology deferred to Phase 05 |
+| 3D scenes | Three.js, React Three Fiber 9 | Authentic specimen-derived tissue-surface hero + scientific mesh inspection; neuron skeletons in separate mode |
 | Graph analysis | NetworkX | Planned |
 | Scientific data | FlyWire FAFB v783 local CSV import, SQLite subset | Implemented pipeline; no authenticated source imported by default |
 | Persistence | SQLite (selected neuron graph) | Local-only generated dataset, opt-in |
@@ -103,6 +103,14 @@ GitHub Actions runs frontend/backend/integration tests and a lightweight verifie
 ## Authentic FlyWire verification
 
 A GitHub Actions run verified the original Zenodo ~852 MB FAFB v783 connectivity archive against its published MD5, extracted a **non-representative** 20,000-row prefix, and ran the CSV/SQLite API pipeline. The verification evidence is [documented here](docs/phase-03-verification.md). To repeat the large download only when needed, use the GitHub Actions workflow **Audit official FAFB connections (manual)**. Do not commit scientific archives, tokens, or user files.
+
+## Phase 05.2 — Scientific 3D display and site-wide cosmic stars
+
+The **whole-brain tissue geometry** is a FAFB-derived PLY from the original `navis-flybrains` project, checked against a fixed upstream Git blob by the FastAPI backend. You can inspect it in the Scientific Explorer using **Tissue shading**, **Depth colors** or **Triangle mesh**. Depth colors encode only **relative Z position of the same vertices** (violet → cyan → gold). **They do not represent anatomical regions, cell types, neural activity, or segmentation labels.** Source vertices, triangle indices, and proportions are never altered for the color display.
+
+The background stars, subtle nebula, and occasional shooting star are **purely decorative** and drift over every section. Use **Reduce ambient motion** in the footer or the hero's **Pause motion** control to stop them; the website also respects the system's reduced-motion setting. The global star animation uses composited CSS layers, not separate animation loops for individual stars.
+
+A derived tissue-mask PLY is **not a complete raw 3D electron-microscope voxel reconstruction**. See the [Phase 05.2 implementation and limitations](docs/phase-05-2-visualization.md) and [verification checklist](docs/phase-05-2-verification.md).
 
 ## Phase 05: source-derived anatomy
 
