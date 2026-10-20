@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
 import { expect, test } from '@playwright/test'
 
 test('immersive homepage is informative, interactive, and accessible', async ({ page }, testInfo) => {
@@ -134,4 +136,36 @@ test('3D drawing performance records a software-rendered baseline', async ({ pag
   }).__neuroverseSceneDiagnostics)
   expect(renderer?.rendererDrawCalls).toBeGreaterThan(0)
   console.log('Three.js scene-render baseline (not physical GPU FPS):', renderer)
+})
+
+
+test('published original FAFB tissue surface renders in the actual 3D homepage', async ({ page }, testInfo) => {
+  const sourceFile = process.env.NEUROVERSE_REAL_PLY_FILE
+  test.skip(!sourceFile, 'Real published PLY is staged only in authenticated GitHub CI')
+  const raw = await readFile(sourceFile!)
+  const sha256 = createHash('sha256').update(raw).digest('hex')
+  await page.route('**/api/v1/brain/tissue-mesh', async (route) => {
+    await route.fulfill({
+      status: 200,
+      body: raw,
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'X-Neuroverse-Source-SHA256': sha256,
+      },
+    })
+  })
+  await page.goto('/')
+  const hero = page.locator('.brain-stage')
+  if (!(await page.getByLabel('Quality').isEnabled())) {
+    test.skip(true, 'No WebGL in Chromium; original source mesh test requires WebGL')
+  }
+  await expect(hero.getByText('INTERACTIVE / VERIFIED FAFB 3D')).toBeVisible({ timeout: 30000 })
+  await expect(hero.getByText(/fafb tissue surface · not individual neuron morphology/i)).toBeVisible()
+  const canvas = hero.locator('canvas')
+  await expect(canvas).toBeVisible()
+  await page.getByRole('button', { name: 'Left view' }).click()
+  await expect(page.getByRole('button', { name: 'Left view' })).toHaveAttribute('aria-pressed', 'true')
+  await page.getByRole('button', { name: 'Front view' }).click()
+  await page.waitForTimeout(800)
+  await hero.screenshot({ path: testInfo.outputPath('authentic-FAFB-3D-tissue-hero.png'), animations: 'disabled' })
 })
