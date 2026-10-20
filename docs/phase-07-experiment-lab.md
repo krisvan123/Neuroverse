@@ -1,6 +1,6 @@
 # Phase 07 — Computational Experiment Lab: mathematical methods and QA
 
-**Scope:** bounded deterministic directed graph computations, a synthetic offline example and an optional authentic user-imported FAFB v783 selected neighborhood. **Status:** in PR CI verification. **Phase 08:** not started.
+**Scope:** bounded deterministic directed graph computations, a synthetic offline example and an optional authentic user-imported FAFB v783 selected neighborhood. **Status:** Engineering PASS — merged in PR #13; physical-device and human usability audit still outstanding. **Phase 08:** not started.
 
 ## Delivered interactions
 
@@ -50,11 +50,20 @@ FAFB local-connectome users must first follow the scientific data pipeline guide
 
 | Gate | Evidence | Status |
 | --- | --- | --- |
-| P07-A BFS/DFS and deterministic directed behavior | Reference cases and independent NetworkX tests | Awaiting CI |
-| P07-B Reversible baseline/model removal and metrics | Unit tests plus full UI comparison | Awaiting CI |
-| P07-C Graph, plot, numerical table and accessibility | Browser desktop/mobile interaction and overflow checks | Awaiting CI |
-| P07-D Full valid JSON/CSV export and safeguards | Download tests with parameter/source inspection | Awaiting CI |
-| P07-E No fake FAFB fallback, accurate provenance/snapshot | Type-level adapter validation and simulated API browser tests | Awaiting CI |
+| P07-A BFS/DFS and deterministic directed behavior | Reference cases and independent NetworkX tests | PASS — run 39417517774 |
+| P07-B Reversible baseline/model removal and metrics | Unit tests plus full UI comparison | PASS — run 39417517774 |
+| P07-C Graph, plot, numerical table and accessibility | Browser desktop/mobile interaction and overflow checks | PASS — run 39417517774 |
+| P07-D Full valid JSON/CSV export and safeguards | Download tests with parameter/source inspection | PASS — run 39417517774 |
+| P07-E No fake FAFB fallback, accurate provenance/snapshot | Type-level adapter validation and simulated API browser tests | PASS — run 39417517774 |
 | P07-F Physical-device performance and user sign-off | Actual laptop/manual usability check | Not verified |
 
 **Phase 08 (Research Journal and Progress) and Phase 09 (production deployment and QA) are NOT started.**
+
+## Final engineering acceptance — 2026-10-20
+
+- [Phase 07 Pull Request #13](https://github.com/krisvan123/Neuroverse/pull/13) was merged to main as commit ec47ffcfe94ad41bcbf20566661520d1928c9221.
+- [GitHub Actions run 39417517774](https://github.com/krisvan123/Neuroverse/actions/runs/39417517774) completed successfully: **6/6 jobs passed** (frontend TypeScript/lint/unit/build, backend tests including independent NetworkX, full-stack HTTP integration, verified FAFB root IDs, authentic mesh/skeleton provenance, and browser).
+- **56/56 desktop/mobile Chromium checks passed**. Tests exercise actual controls, directed BFS/DFS, non-destructive node comparison, threshold filtering, JSON and CSV browser downloads inspected as content, missing-dataset error states, and the source-labeled FAFB adapter using an explicitly **mocked browser fixture** rather than an invented official graph.
+- The original FAFB source-mesh hash checks and science Academy tests from preceding phases continue to pass.
+
+**Scope caveats:** Real FAFB connection data are **not bundled**. The user must separately import an official v783 connectivity export before the real-data Lab can calculate. Passing a mocked API-browser test does **not** prove an upstream FAFB CSV has been downloaded or independently authenticated. Hardware-specific FPS benchmarking, manual accessibility audit, user visual acceptance, and the earlier five-person learning pilot remain **not verified**; their absence is not masked by a passing CI suite. Phase 08/09 are not started.

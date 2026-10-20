@@ -4,7 +4,7 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 07 — Computational Experiment Lab (CI review).** Users can run deterministic directed BFS/DFS, adjust a threshold, remove a MODEL node non-destructively, inspect structural metrics and plots, and export full original graph inputs plus results as reproducible JSON/CSV. The default example is explicitly SYNTHETIC; FAFB v783 mode reads only a configured local original-data subset, never fabricated edges. Phase 06 Academy, the published FAFB mesh Explorer and accessibility controls remain available. Phase 08/09 have not started.
+> **Current development status: Phase 07 — Computational Experiment Lab (merged; six CI gates passed).** Users can run deterministic directed BFS/DFS, adjust a threshold, remove a MODEL node non-destructively, inspect structural metrics and plots, and export full original graph inputs plus results as reproducible JSON/CSV. The default example is explicitly SYNTHETIC; FAFB v783 mode reads only a configured local original-data subset, never fabricated edges. Phase 06 Academy, the published FAFB mesh Explorer and accessibility controls remain available. Phase 08/09 have not started.
 
 ## Product direction
 

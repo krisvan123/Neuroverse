@@ -2,7 +2,7 @@
 
 **Document ID:** NV-ROADMAP-001  
 **Version:** 1.0 · **Baseline:** 2026-10-20  
-**Project state:** Phases 01–06 passed scoped engineering checks (human participant and physical-device pilots remain open). Phase 07 Computational Experiment Lab now implements bounded BFS/DFS, graphs, metrics, non-destructive node-removal scenarios, optional source-gated FAFB v783 selected subgraph and JSON/CSV export; QA in pull request. Phase 08 Research Journal and Phase 09 production QA remain planned. Anatomical mesh surfaces are not raw EM voxel segmentation.
+**Project state:** Phases 01–06 passed scoped engineering checks (human participant and physical-device pilots remain open). Phase 07 Computational Experiment Lab now implements bounded BFS/DFS, graphs, metrics, non-destructive node-removal scenarios, optional source-gated FAFB v783 selected subgraph and JSON/CSV export; PR #13 merged with six CI gates and 56/56 Chromium browser tests green; manual device/user checks still outstanding. Phase 08 Research Journal and Phase 09 production QA remain planned. Anatomical mesh surfaces are not raw EM voxel segmentation.
 
 ## 1. Delivery philosophy
 
