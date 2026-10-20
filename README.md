@@ -4,7 +4,7 @@
 
 Neuroverse is an independent, research-inspired science learning platform that will connect neuroscience, connectome data, and computer science through accessible interactive education, biological network exploration, and reproducible mathematical experiments.
 
-> **Current development status: Phase 08 merged and engineering-accepted; Phase 09 release hardening under review.** The Academy and Research Journal persist local progress and versioned saved experiments in the browser. The Lab supports deterministic structural BFS/DFS and reproducible exports. Authentic FAFB-aligned surfaces use pinned source checksums; connectivity requires a separately imported genuine dataset. Production deployment, human learning pilot, physical-device accessibility/performance, and public hosting are not yet verified.
+> **Current development status: Phases 01–09 implemented with automated engineering acceptance. Vercel deployment configuration prepared; a real public Vercel URL has not yet been verified.** The Academy and Research Journal persist local progress and versioned saved experiments in the browser. The Lab supports deterministic structural BFS/DFS and reproducible exports. Authentic FAFB-aligned surfaces use pinned source checksums; connectivity requires a separately imported genuine dataset. Production deployment, human learning pilot, physical-device accessibility/performance, and public hosting are not yet verified.
 
 ## Product direction
 
@@ -95,6 +95,7 @@ GitHub Actions runs frontend/backend/integration tests and a lightweight verifie
 - [Cosmic Design Blueprint](docs/design-blueprint.md): visual language, camera and responsive/reduced-motion rules.
 - [Roadmap & Quality Gates](docs/roadmap.md): nine phases and exit criteria.
 - [Phase 09 Release Audit](docs/phase-09-release-audit.md): production hosting, verification and remaining manual gates.
+- [Vercel Deployment Guide](docs/deploy-vercel.md): free Hobby setup with FastAPI + Vite Services, test URLs and independent-service fallback.
 - [Data & Third-Party Notices](docs/licenses-and-attribution.md): scientific source licensing and noncommercial constraints.
 - [Phase 02 Verification](docs/phase-02-verification.md): completed foundational CI.
 - [Scientific Data Pipeline Guide](docs/scientific-data-pipeline.md): source acquisition, schema, importer, API, caveats.
@@ -157,6 +158,8 @@ The Academy now retains only completed checks, current chapter and synthetic gra
 Phase 08 passed the automated engineering gate in [PR #14](https://github.com/krisvan123/Neuroverse/pull/14) ([6/6 CI jobs, 66/66 Chromium checks](https://github.com/krisvan123/Neuroverse/actions/runs/39426530551)). See [Phase 08 persistence, provenance, privacy and tests](docs/phase-08-research-journal.md). Browser storage is device-specific and can be cleared: export a journal JSON backup before resetting or changing browsers. Real-device and accessibility checks remain open.
 
 ## Phase 09 — Release candidate and zero-cost demonstration
+
+**Recommended current deployment:** [Vercel Hobby — verified setup guide](docs/deploy-vercel.md). The repository now includes `vercel.json` Vercel Services routing, allowing `frontend/` Vite and `backend/` FastAPI to share one URL if Services is available to your account. Vercel hosting and live external network behavior have **not** yet been verified for this user account. The Render Docker option below is preserved as an optional alternative, not a required step.
 
 A single-container deployment now builds the React app and serves it from the same FastAPI origin. The **Dockerfile** includes a non-root runtime, versioned immutable UI assets, isolated /api endpoints and basic security headers. Render's published `free` Docker Web Service plan is encoded in [render.yaml](render.yaml); no account, paid API, dataset archive, token or uploaded user journal is bundled.
 
