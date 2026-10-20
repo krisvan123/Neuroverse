@@ -87,10 +87,23 @@ function ParticleField({ quality }: { quality: VisualQuality }) {
 function DNAHelix({ x, paused, quality }: { x: number; paused: boolean; quality: VisualQuality }) {
   const ref = useRef<THREE.Group>(null)
   const geometry = useMemo(makeDNA, [])
+  const strands = useMemo(
+    () => geometry.strands.map((strand, index) => new THREE.Line(
+      strand,
+      new THREE.LineBasicMaterial({
+        color: index === 0 ? '#82cde9' : '#b8a4e5',
+        transparent: true,
+        opacity: 0.31,
+        depthWrite: false,
+      }),
+    )),
+    [geometry],
+  )
   useEffect(() => () => {
+    for (const line of strands) line.material.dispose()
     for (const strand of geometry.strands) strand.dispose()
     geometry.rungs.dispose()
-  }, [geometry])
+  }, [geometry, strands])
 
   useFrame((_, delta) => {
     if (ref.current && !paused && quality !== 'saver') {
@@ -100,10 +113,8 @@ function DNAHelix({ x, paused, quality }: { x: number; paused: boolean; quality:
 
   return (
     <group ref={ref} position={[x, -0.15, -2.25]} rotation={[0.2, 0.12, x < 0 ? -0.28 : 0.25]} scale={0.9}>
-      {geometry.strands.map((strand, index) => (
-        <line key={index} geometry={strand}>
-          <lineBasicMaterial color={index === 0 ? '#82cde9' : '#b8a4e5'} transparent opacity={0.31} depthWrite={false} />
-        </line>
+      {strands.map((strand, index) => (
+        <primitive key={index} object={strand} />
       ))}
       <lineSegments geometry={geometry.rungs}>
         <lineBasicMaterial color="#78aac8" transparent opacity={0.17} depthWrite={false} />
@@ -130,11 +141,12 @@ function CameraRig({ view, resetToken, paused, quality }: Omit<BrainSceneProps, 
     instance.maxPolarAngle = Math.PI - 0.2
     instance.target.set(0, 0, 0)
     instance.addEventListener('start', () => { moving.current = false })
-    instance.addEventListener('change', invalidate)
+    const onChange = () => invalidate()
+    instance.addEventListener('change', onChange)
     controls.current = instance
     instance.update()
     return () => {
-      instance.removeEventListener('change', invalidate)
+      instance.removeEventListener('change', onChange)
       instance.dispose()
       controls.current = null
     }
