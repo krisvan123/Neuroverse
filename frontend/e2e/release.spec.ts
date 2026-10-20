@@ -10,7 +10,7 @@ test('release navigation points to real accessible sections', async ({ page }) =
   expect(missing).toEqual([])
   await page.getByRole('link', { name: 'Journal', exact: true }).click()
   await expect(page).toHaveURL(/#journal$/)
-  await expect(page.getByRole('heading', { name: /research journal/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /your discoveries/i })).toBeVisible()
 })
 
 test('source links use safe new-tab attributes and disclaimers remain visible', async ({ page }) => {
