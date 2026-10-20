@@ -8,6 +8,14 @@ vi.mock('./scenes/browserSupport', () => ({ supportsWebGL: () => false }))
 afterEach(cleanup)
 
 describe('Neuroverse foundation', () => {
+  it('mounts the five-lesson interactive academy in the primary experience', () => {
+    const { container } = render(<App />)
+    expect(screen.getByRole('heading',{name:/learn the science/i})).toBeInTheDocument()
+    expect(screen.getByRole('navigation',{name:'Academy lesson chapters'})).toBeInTheDocument()
+    expect(container.querySelectorAll('.academy-chapter')).toHaveLength(5)
+    expect(screen.getByRole('progressbar',{name:'Knowledge checks answered correctly'})).toHaveAttribute('aria-valuenow','0')
+    expect(screen.getAllByRole('link',{name:/S-008/})[0]).toHaveAttribute('href',expect.stringContaining('openstax.org'))
+  })
   it('exposes navigable learning and research content', () => {
     render(<App />)
     expect(screen.getByRole('heading', { name: /the universe inside every connection/i })).toBeInTheDocument()
