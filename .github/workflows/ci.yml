@@ -150,3 +150,32 @@ jobs:
           path: |
             frontend/test-results/
             frontend/playwright-report/
+
+  real-anatomy-source-audit:
+    name: Verify original FAFB tissue mesh and neuron skeleton
+    if: github.event_name == 'pull_request' && github.event.pull_request.number == 5
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read and authenticate original scientific geometry
+        run: |
+          python - <<'PY'
+          from app.data.tissue import load_official_tissue_mesh
+          from app.data.morphology import get_skeleton
+          mesh, sha = load_official_tissue_mesh()
+          assert mesh.startswith(b"ply") and len(sha) == 64
+          print("REAL TISSUE MESH", len(mesh), "bytes, SHA256", sha)
+          neuron = get_skeleton("720575940625431866")
+          assert neuron["snapshot"] == "783" and neuron["units"] == "nanometer"
+          assert neuron["vertex_count"] > 10 and neuron["edge_count"] > 5
+          print("REAL FAFB783 NEURON", neuron["root_id"], "vertices",
+                neuron["vertex_count"], "edges", neuron["edge_count"],
+                "SHA256", neuron["source_sha256"])
+          PY

@@ -7,6 +7,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.connectome import router as connectome_router
+from app.api.morphology import router as morphology_router
+from app.api.tissue import router as tissue_router
 from app.api.v1 import router as api_router
 from app.config import get_allowed_origins
 from app.data.store import GraphStore
@@ -16,7 +18,7 @@ def create_app() -> FastAPI:
     """Reject untrusted/inconsistent configured data at startup."""
     application = FastAPI(
         title="Neuroverse API",
-        version="0.2.0",
+        version="0.3.0",
         description=(
             "An educational connectome API serving bounded subgraphs from local "
             "FAFB v783 exports. An imported file's source identity is NOT "
@@ -34,6 +36,8 @@ def create_app() -> FastAPI:
     )
     application.include_router(api_router)
     application.include_router(connectome_router)
+    application.include_router(morphology_router)
+    application.include_router(tissue_router)
     return application
 
 
