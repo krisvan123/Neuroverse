@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { ApiStatus } from './components/ApiStatus'
 import { FeatureCard } from './components/FeatureCard'
 import { BrainExperience } from './components/BrainExperience'
+import { ScientificExplorer } from './components/ScientificExplorer'
 
 const resources = [
   { label: 'Nature · Adult fruit fly connectome', href: 'https://doi.org/10.1038/s41586-024-07558-y' },
@@ -53,14 +54,12 @@ export default function App() {
           <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-dash" /> THREE WAYS TO SEE FURTHER</div><h2 id="pathways-title">Curiosity has<br /><em>no limits.</em></h2></div><p>One universe. Three journeys. Follow the pathways from introductory neuroscience to real connectome research and computational thinking.</p></div>
           <div className="feature-grid">
             <FeatureCard number="01" icon="✺" title="Understand the science" description="Uncover the fundamentals of neurons, synapses, and the incredible systems they form." state="LEARNING ACADEMY · PLANNED" href="#sources" />
-            <FeatureCard number="02" icon="⌁" title="Explore the connections" description="Navigate research-backed structural networks with scientific context and verifiable sources." state="CONNECTOME EXPLORER · PLANNED" href="#explore" />
+            <FeatureCard number="02" icon="⌁" title="Explore the connections" description="Navigate research-backed structural networks with scientific context and verifiable sources." state="SCIENTIFIC EXPLORER · SOURCE DRIVEN" href="#explore" />
             <FeatureCard number="03" icon="⟡" title="Experiment with ideas" description="Turn biological questions into graph algorithms, structured experiments, and reproducible results." state="EXPERIMENT STUDIO · PLANNED" href="#lab" />
           </div>
         </section>
 
-        <section id="explore" className="explore-section container" aria-labelledby="explore-title">
-          <div className="explore-panel"><div className="explore-orbit" aria-hidden="true"><div className="orbit-core">✳</div></div><div className="explore-description"><div className="eyebrow"><span className="eyebrow-dash" /> BENEATH THE SURFACE</div><h2 id="explore-title">A real network.<br /><em>A universe of questions.</em></h2><p>Neuroverse will use an attributed subset of the adult fruit fly connectome. The source-validated connectome data pipeline is available. Data-linked anatomical exploration arrives in a later phase. The 3D fly-brain hero is original procedural concept art, not a biological reconstruction.</p><div className="tag-row"><span>FAFB V783 PIPELINE · AVAILABLE</span><span>FLYWIRE FAFB V783</span></div></div></div>
-        </section>
+        <ScientificExplorer />
 
         <section id="lab" className="lab-section container" aria-labelledby="lab-title"><div><div className="eyebrow"><span className="eyebrow-dash" /> THE EXPERIMENTAL MINDSET</div><h2 id="lab-title">Don't just observe.<br /><em>Ask what happens next.</em></h2></div><div><p>Future labs will combine graph theory, computational experiments, and clear distinctions between model results and biological evidence. We are building the foundation first.</p><a href="https://github.com/krisvan123/Neuroverse" target="_blank" rel="noopener noreferrer" className="button-outline">View development on GitHub <span aria-hidden="true">↗</span></a></div></section>
 
