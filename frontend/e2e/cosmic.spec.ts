@@ -106,6 +106,24 @@ test('3D drawing performance records a software-rendered baseline', async ({ pag
       requestAnimationFrame(track)
     })
   })
-  console.log('Browser rAF scheduling baseline (not measured 3D FPS):', measurement)
+  console.log('Browser rAF scheduling baseline:', measurement)
   expect(measurement.frames).toBeGreaterThan(10)
+
+  // Unlike rAF alone, this is recorded from R3F useFrame and Three renderer info.
+  await expect.poll(
+    () => page.evaluate(() => (window as Window & {
+      __neuroverseSceneDiagnostics?: { sampledSceneFrames: number }
+    }).__neuroverseSceneDiagnostics?.sampledSceneFrames ?? 0),
+    { timeout: 20_000 },
+  ).toBeGreaterThan(10)
+  const renderer = await page.evaluate(() => (window as Window & {
+    __neuroverseSceneDiagnostics?: {
+      sampledSceneFrames: number
+      medianSceneFrameMs: number
+      rendererDrawCalls: number
+      note: string
+    }
+  }).__neuroverseSceneDiagnostics)
+  expect(renderer?.rendererDrawCalls).toBeGreaterThan(0)
+  console.log('Three.js scene-render baseline (not physical GPU FPS):', renderer)
 })
