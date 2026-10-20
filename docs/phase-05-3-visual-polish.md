@@ -32,4 +32,4 @@ Status: Engineering acceptance **PASS** on 2026-10-20. [PR #10](https://github.c
 
 No Phase 06 features, no fabricated connectome and no claims of raw-vxel-complete anatomy.
 
-**Extension verification:** pending GitHub Actions on the new branch.
+**Extension verification:** PASS. [PR #11](https://github.com/krisvan123/Neuroverse/pull/11) merged into main as commit `610e0e168a461453f97bba742b6d99019af30ed9`. [GitHub Actions run 39406934884](https://github.com/krisvan123/Neuroverse/actions/runs/39406934884) passed **all six checks** and **42/42 desktop/mobile Chromium tests**, including real mesh original source audit, dataset refresh/recovery and explicit preservation of visitor-chosen root ID, plus measured offscreen WebGL frame suspension and orientation preservation. Physical-device performance remains unbenchmarked and connectivity requires an original user-imported dataset.
