@@ -11,7 +11,8 @@ describe('procedural cosmic geometry', () => {
   it('keeps saver strictly cheaper than balanced and high', () => {
     expect(SCENE_BUDGETS.saver.stars).toBeLessThan(SCENE_BUDGETS.balanced.stars)
     expect(SCENE_BUDGETS.balanced.stars).toBeLessThan(SCENE_BUDGETS.high.stars)
-    expect(SCENE_BUDGETS.saver.helices).toBe(0)
+    expect(SCENE_BUDGETS.saver.helices).toBe(1)
+    expect(SCENE_BUDGETS.balanced.helices).toBe(2)
     expect(SCENE_BUDGETS.saver.pixelRatio).toBe(1)
   })
   it('builds continuous finite and deterministic fiber segments', () => {

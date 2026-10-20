@@ -137,3 +137,17 @@ test('FAFB scan-derived mesh display modes label depth honestly and preserve cam
   await shading.click()
   await expect(shading).toHaveAttribute('aria-pressed', 'true')
 })
+
+
+test('scientific explorer compares two source-derived brain envelopes without fabricated labels', async ({ page }) => {
+  await page.goto('/')
+  const explorer = page.locator('#explore')
+  const neuropil = explorer.getByRole('button', { name: 'FAFB neuropil' })
+  await expect(neuropil).toHaveAttribute('aria-pressed', 'true')
+  const tissue = explorer.getByRole('button', { name: 'Whole-brain surface' })
+  await tissue.click()
+  await expect(tissue).toHaveAttribute('aria-pressed', 'true')
+  await neuropil.click()
+  await expect(neuropil).toHaveAttribute('aria-pressed', 'true')
+  await expect(explorer.getByText(/two independent FAFB-derived surfaces/i)).toBeVisible()
+})
