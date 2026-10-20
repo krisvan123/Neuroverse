@@ -304,3 +304,124 @@ html[data-motion='quiet'] *,html[data-motion='quiet'] *::before,html[data-motion
 }
 .hero-model-alert{border-color:rgba(238,182,150,.47);color:#ffe4d6}
 .visualization-disclosure a{color:#a5e7fa;text-decoration:underline}
+
+
+/* Phase 05.2: scientific visual inspection controls / non-biological depth legend. */
+.atlas-render-modes{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  padding:11px 20px;background:rgba(11,26,46,.92);border-bottom:1px solid #2b4b63;
+}
+.atlas-render-label{
+  font-size:10px;color:#97bdd4;letter-spacing:.13em;font-weight:800;margin-right:6px;
+}
+.atlas-render-modes button{
+  border:1px solid rgba(138,185,212,.36);color:#d1eaf5;background:#162f48;
+  font-size:11px;padding:9px 11px;border-radius:5px;cursor:pointer;
+}
+.atlas-render-modes button.selected{
+  background:#285d78;color:#f3fcff;border-color:#81d8ef;
+}
+.atlas-render-modes button:hover:enabled{border-color:#a6eeff}
+.atlas-render-modes button:disabled{opacity:.48;cursor:not-allowed}
+.atlas-depth-legend{
+  display:flex;gap:12px;align-items:center;padding:13px 20px;
+  background:rgba(9,24,41,.92);border-top:1px solid #2b4b63;
+  font-size:11px;line-height:1.6;color:#c2dce9;
+}
+.atlas-depth-legend strong{color:#ffdfbc}
+.atlas-depth-ramp{
+  width:112px;max-width:26%;height:12px;flex-shrink:0;border-radius:3px;
+  background:linear-gradient(90deg,#7764ca,#49c2d8,#f1d6a7);
+  border:1px solid rgba(255,255,255,.25);
+}
+.atlas-topology-note{
+  padding:13px 20px;color:#e0cedd;background:rgba(25,22,43,.76);
+  border-top:1px solid #3b4269;font-size:11px;line-height:1.6;
+}
+@media(max-width:650px){
+ .atlas-render-modes{padding-inline:12px}
+ .atlas-render-modes button{font-size:10px;padding:8px}
+ .atlas-render-label{flex-basis:100%}
+}
+
+
+/* Phase 05.2 — three very slow, viewport-fixed CSS star layers.
+   Background particles are DECORATIVE, never anatomical/neural data.
+   Composited group motion avoids one requestAnimationFrame loop per star. */
+.cosmic-backdrop{
+  position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;
+  contain:paint;
+  background:
+    radial-gradient(ellipse at 77% 18%,rgba(49,80,147,.23),transparent 49%),
+    radial-gradient(ellipse at 12% 73%,rgba(71,51,123,.19),transparent 48%),
+    #070c18;
+}
+.cosmic-backdrop .starlayer{inset:-35%;pointer-events:none;will-change:transform,opacity}
+.cosmic-backdrop .layer-one{
+  opacity:.58;
+  background-image:radial-gradient(1.4px 1.4px at 40px 80px,#c7f1ff 98%,transparent),
+    radial-gradient(1.1px 1.1px at 170px 190px,#eefaff 98%,transparent),
+    radial-gradient(1.3px 1.3px at 265px 32px,#acb5ff 98%,transparent);
+  background-size:300px 245px;
+  animation:nv-stars-near 105s linear infinite alternate;
+}
+.cosmic-backdrop .layer-two{
+  opacity:.34;
+  background-image:radial-gradient(1.7px 1.7px at 22px 10px,#cadbff 98%,transparent),
+    radial-gradient(1.2px 1.2px at 100px 140px,#8de2ff 98%,transparent),
+    radial-gradient(1px 1px at 195px 68px,#e2d6ff 98%,transparent);
+  background-size:211px 183px;
+  animation:nv-stars-far 157s linear infinite alternate;
+}
+.cosmic-backdrop .layer-three{
+  opacity:.29;
+  background-image:radial-gradient(2px 2px at 43px 60px,rgba(255,255,255,.95) 98%,transparent),
+    radial-gradient(1.8px 1.8px at 270px 230px,rgba(150,219,255,.9) 98%,transparent),
+    radial-gradient(1.8px 1.8px at 390px 110px,rgba(203,172,255,.9) 98%,transparent);
+  background-size:460px 320px;
+  animation:nv-stars-slow 205s linear infinite alternate,
+    nv-stars-twinkle 9s ease-in-out infinite alternate;
+}
+.cosmic-backdrop .cosmic-haze{
+  opacity:.65;animation:nv-haze 38s ease-in-out infinite alternate;
+  will-change:transform;
+}
+.cosmic-shooting-star{
+  position:absolute;left:72%;top:13%;width:135px;height:1px;
+  transform:rotate(-32deg) translate3d(0,0,0);transform-origin:left center;
+  background:linear-gradient(90deg,rgba(173,235,255,0),rgba(177,230,255,.82),rgba(245,251,255,0));
+  box-shadow:0 0 9px rgba(141,213,250,.3);opacity:0;
+  animation:nv-meteor 24s linear infinite;will-change:transform,opacity;
+}
+@keyframes nv-stars-near{
+  0%{transform:translate3d(-24px,18px,0)}
+  100%{transform:translate3d(54px,-31px,0)}
+}
+@keyframes nv-stars-far{
+  0%{transform:translate3d(45px,-20px,0)}
+  100%{transform:translate3d(-36px,42px,0)}
+}
+@keyframes nv-stars-slow{
+  0%{transform:translate3d(-22px,-36px,0)}
+  100%{transform:translate3d(32px,28px,0)}
+}
+@keyframes nv-stars-twinkle{0%,100%{opacity:.18}45%{opacity:.42}70%{opacity:.28}}
+@keyframes nv-haze{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-11vw,5vh,0)}}
+@keyframes nv-meteor{
+  0%,91%,100%{opacity:0;transform:rotate(-32deg) translate3d(0,0,0)}
+  92%{opacity:.65}
+  95%{opacity:0;transform:rotate(-32deg) translate3d(-205px,0,0)}
+}
+html[data-motion="quiet"] .cosmic-backdrop .starlayer,
+html[data-motion="quiet"] .cosmic-backdrop .cosmic-haze,
+html[data-motion="quiet"] .cosmic-backdrop .cosmic-shooting-star{
+  animation:none!important;will-change:auto;
+}
+html[data-motion="quiet"] .cosmic-shooting-star{opacity:0}
+@media(prefers-reduced-motion:reduce){
+  html:not([data-motion="ambient"]) .cosmic-backdrop .starlayer,
+  html:not([data-motion="ambient"]) .cosmic-backdrop .cosmic-haze,
+  html:not([data-motion="ambient"]) .cosmic-backdrop .cosmic-shooting-star{
+    animation:none!important;will-change:auto;
+  }
+}

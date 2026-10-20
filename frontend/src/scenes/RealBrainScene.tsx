@@ -4,15 +4,18 @@ import * as THREE from 'three'
 import { PLYLoader } from 'three/addons/loaders/PLYLoader.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { getApiBaseUrl } from '../api/client'
+import { applySourceDepthColors } from './surfaceColors'
 import type { Skeleton } from '../science/api'
 
 export type ScientificMode = 'tissue' | 'skeleton'
 export type ScientificView = 'front' | 'side' | 'top'
+export type TissueDisplayMode = 'surface' | 'depth' | 'mesh'
 export interface ScientificSceneProps {
   mode: ScientificMode
   skeleton: Skeleton | null
   view: ScientificView
   resetKey: number
+  tissueDisplay: TissueDisplayMode
   onStatus: (status: 'loading' | 'ready' | 'error', message?: string) => void
 }
 
@@ -30,7 +33,7 @@ function fitGeometry(source: THREE.BufferGeometry): THREE.BufferGeometry {
   return geometry
 }
 
-function TrueTissue({ onStatus }: { onStatus: ScientificSceneProps['onStatus'] }) {
+function TrueTissue({ onStatus, tissueDisplay }: { onStatus: ScientificSceneProps['onStatus']; tissueDisplay: TissueDisplayMode }) {
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null)
   useEffect(() => {
     const controller = new AbortController()
@@ -48,6 +51,8 @@ function TrueTissue({ onStatus }: { onStatus: ScientificSceneProps['onStatus'] }
       if (!raw.getAttribute('normal')) raw.computeVertexNormals()
       const fitted = fitGeometry(raw)
       raw.dispose()
+      try { applySourceDepthColors(fitted) }
+      catch (error) { fitted.dispose(); throw error }
       if (!controller.signal.aborted) {
         setGeometry(fitted)
         onStatus('ready')
@@ -64,7 +69,18 @@ function TrueTissue({ onStatus }: { onStatus: ScientificSceneProps['onStatus'] }
     <group>
       {geometry && (
         <mesh geometry={geometry}>
-          <meshStandardMaterial color="#8cd0e2" roughness={0.7} metalness={0.08} side={THREE.DoubleSide} />
+          {tissueDisplay === 'surface' && (
+            <meshPhysicalMaterial color="#a6dbe7" roughness={0.55} metalness={0.06}
+              clearcoat={0.18} clearcoatRoughness={0.45} side={THREE.DoubleSide} />
+          )}
+          {tissueDisplay === 'depth' && (
+            <meshStandardMaterial vertexColors roughness={0.64} metalness={0}
+              side={THREE.DoubleSide} />
+          )}
+          {tissueDisplay === 'mesh' && (
+            <meshBasicMaterial color="#9cdbed" wireframe transparent opacity={0.83}
+              depthWrite={false} side={THREE.DoubleSide} />
+          )}
         </mesh>
       )}
       {/* No invented biological surface when the official source fails. */}
@@ -135,18 +151,19 @@ function NavigationCamera({ view, resetKey }: { view: ScientificView; resetKey: 
   return null
 }
 
-export default function RealBrainScene({ mode, skeleton, view, resetKey, onStatus }: ScientificSceneProps) {
+export default function RealBrainScene({ mode, skeleton, view, resetKey, tissueDisplay, onStatus }: ScientificSceneProps) {
   return (
     <Canvas camera={{ position: [0, 0, 8.4], fov: 45, near: 0.1, far: 200 }}
       frameloop="demand" dpr={[1, 1.5]} gl={{ alpha: true, antialias: true }}
       aria-label="Source-derived scientific anatomy canvas; controls available below"
     >
       <color attach="background" args={['#081422']} />
-      <ambientLight intensity={2.2} />
-      <directionalLight position={[4, 7, 8]} intensity={2.6} color="#a4dbff" />
+      <ambientLight intensity={1.35} />
+      <hemisphereLight args={["#c9f0ff", "#17243b", 1.25]} />
+      <directionalLight position={[4, 7, 8]} intensity={3.1} color="#d0f2ff" />
       <directionalLight position={[-4, -3, -6]} intensity={1.5} color="#a49aff" />
       {mode === 'tissue'
-        ? <TrueTissue onStatus={onStatus} />
+        ? <TrueTissue onStatus={onStatus} tissueDisplay={tissueDisplay} />
         : <RealSkeleton skeleton={skeleton} onStatus={onStatus} />}
       <NavigationCamera view={view} resetKey={resetKey} />
     </Canvas>

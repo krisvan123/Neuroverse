@@ -1,4 +1,4 @@
-# Neuroverse Frontend (Phase 02)
+# Neuroverse Frontend
 
 Prerequisites: Node.js >=22.12 (Vite 7 also supports Node >=20.19).
 
@@ -21,13 +21,13 @@ npm run build
 npm run test:e2e   # install Chromium first: npx playwright install chromium
 ```
 
-The homepage now uses a **procedural conceptual fly-brain sculpture** rendered by React Three Fiber with a static illustration fallback, independent camera controls, and low-motion/quality modes. This is not a scanned or proofread FlyWire brain. Scientific 3D morphological assets and real-neuron-to-visual mapping remain reserved for Phase 05.
+The homepage loads a **source-derived FAFB whole-brain tissue surface** from the local FastAPI API. The original, pinned PLY source is checksum-verified in the backend; geometry is only uniformly normalized for display. A static **conceptual SVG illustration** appears if WebGL is unavailable. The surface is NOT a raw microscopy voxel scan or an atlas of every neuron.
 
 For production, use `VITE_API_BASE_URL` to point to the HTTPS backend origin. Vite env values are publicly embedded in the frontend; never put secrets in this file.
 
 ## Cosmic 3D behavior
 
-On the homepage, drag the sculpture to orbit, use the mouse wheel to zoom while over its canvas, or use the **Front / Left / Right / Top / Reset** buttons. Motion and display quality are independent controls. **Saver** cuts geometry and disables background DNA; **Pause motion** disables ambient movement without disabling manual camera exploration. WebGL absence yields original SVG concept artwork and the rest of the website remains accessible. No user account or GPU-heavy imported scientific mesh is required.
+On the homepage, drag the FAFB tissue surface to orbit, use the mouse wheel to zoom while over its canvas, or use the **Front / Left / Right / Top / Reset** buttons. Motion and display quality are independent controls. **Saver** cuts geometry and disables background DNA; **Pause motion** disables ambient movement without disabling manual camera exploration. WebGL absence yields original SVG concept artwork and the rest of the website remains accessible. No user account or GPU-heavy imported scientific mesh is required.
 
 ### Validated Phase 04 UI
 
@@ -36,3 +36,9 @@ On the homepage, drag the sculpture to orbit, use the mouse wheel to zoom while 
 ## Phase 05 scientific explorer
 
 Below the cinematic homepage, open the scientific workspace. It renders unchanged source-derived anatomy (apart from uniform view normalization), supports camera controls, and displays citations and limitations. Tissue-envelope, individual skeleton, and connectivity graph positions are never falsely conflated. It has a clear unavailable state when WebGL or the scientific service fails.
+
+## Phase 05.2 — Visual modes and global cosmic motion
+
+The Scientific Explorer has tissue-shaded, normalized-Z false-color, and original-triangle wireframe modes. The depth gradient is a **coordinate visualization**, not verified anatomical region labeling. Source geometry and connectivity remain separate.
+
+Across **every** page section, three subtly drifting decorative background star layers and an occasional meteor provide cosmic ambience. A footer/hero global motion control stops their CSS animation, and system reduced-motion settings initialize them paused. Test with `npm run test` and `npm run test:e2e`. See [Phase 05.2 implementation](../docs/phase-05-2-visualization.md).

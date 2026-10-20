@@ -24,7 +24,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main">Skip to main content</a>
-      <div className="cosmic-backdrop" aria-hidden="true"><span className="starlayer layer-one" /><span className="starlayer layer-two" /><span className="cosmic-haze" /></div>
+      <div className="cosmic-backdrop" aria-hidden="true"><span className="starlayer layer-one" /><span className="starlayer layer-two" /><span className="starlayer layer-three" /><span className="cosmic-haze" /><span className="cosmic-shooting-star" /></div>
       <header className="site-header">
         <div className="container navigation">
           <a href="#home" className="brand" aria-label="Neuroverse home"><span className="brand-mark" aria-hidden="true">✺</span>NEUROVERSE<span className="brand-period">.</span></a>
@@ -65,7 +65,7 @@ export default function App() {
 
         <section id="sources" className="sources-section container" aria-labelledby="sources-title"><div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-dash" /> GROUNDED IN RESEARCH</div><h2 id="sources-title">Wonder, with <em>evidence.</em></h2></div><p>Our aim is to clearly separate observed scientific data, mathematical models, and visual illustration. Follow the sources behind the ideas.</p></div><ul className="source-list">{resources.map((resource) => <li key={resource.href}><a href={resource.href} target="_blank" rel="noopener noreferrer"><span>{resource.label}</span><span aria-hidden="true">↗</span></a></li>)}</ul></section>
       </main>
-      <footer className="site-footer"><div className="container footer-content"><a className="brand" href="#home"><span className="brand-mark" aria-hidden="true">✺</span>NEUROVERSE<span className="brand-period">.</span></a><div><p>Independent, research-inspired science education. Not affiliated with FlyWire.</p><button className="quiet-toggle" type="button" onClick={() => setQuietMode((value) => !value)} aria-pressed={quietMode}>{quietMode ? 'Enable ambient motion' : 'Reduce ambient motion'}</button></div><span>PHASE 04 / COSMIC EXPERIENCE</span></div></footer>
+      <footer className="site-footer"><div className="container footer-content"><a className="brand" href="#home"><span className="brand-mark" aria-hidden="true">✺</span>NEUROVERSE<span className="brand-period">.</span></a><div><p>Independent, research-inspired science education. Not affiliated with FlyWire.</p><button className="quiet-toggle" type="button" onClick={() => setQuietMode((value) => !value)} aria-pressed={quietMode}>{quietMode ? 'Enable ambient motion' : 'Reduce ambient motion'}</button></div><span>PHASE 05.2 / SCIENTIFIC VISUALS</span></div></footer>
     </div>
   )
 }

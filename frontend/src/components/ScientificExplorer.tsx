@@ -4,7 +4,7 @@ import {
   apiGet, EXAMPLE_PROOFREAD_ID, fetchSkeleton, rootIdIsValid,
   type DatasetState, type NeuronDetails, type Skeleton, type Subgraph,
 } from '../science/api'
-import type { ScientificMode, ScientificView } from '../scenes/RealBrainScene'
+import type { ScientificMode, ScientificView, TissueDisplayMode } from '../scenes/RealBrainScene'
 
 const RealBrainScene = lazy(() => import('../scenes/RealBrainScene'))
 
@@ -81,6 +81,7 @@ function NetworkGraph({ graph, onChoose }: { graph: Subgraph; onChoose: (value: 
 export function ScientificExplorer() {
   const [webglAvailable] = useState(supportsWebGL)
   const [mode, setMode] = useState<ScientificMode>('tissue')
+  const [tissueDisplay, setTissueDisplay] = useState<TissueDisplayMode>('surface')
   const [view, setView] = useState<ScientificView>('front')
   const [resetKey, setResetKey] = useState(0)
   const [root, setRoot] = useState(EXAMPLE_PROOFREAD_ID)
@@ -154,7 +155,7 @@ export function ScientificExplorer() {
   return (
     <section id="explore" className="atlas container" aria-labelledby="explore-title">
       <div className="atlas-heading">
-        <div><div className="eyebrow"><span className="eyebrow-dash" /> 05 / SCIENTIFIC BRAIN EXPLORER</div>
+        <div><div className="eyebrow"><span className="eyebrow-dash" /> 05.2 / SCAN-DERIVED ANATOMY</div>
           <h2 id="explore-title">The real anatomy.<br /><em>The real evidence.</em></h2>
         </div>
         <p>Explore a specimen-derived brain surface, inspect published neuron centerlines, and examine structural connectivity with traceable sources. No simulated anatomy masquerading as research.</p>
@@ -168,10 +169,25 @@ export function ScientificExplorer() {
             <button type="button" className={mode === 'skeleton' ? 'atlas-tab selected' : 'atlas-tab'}
               aria-pressed={mode === 'skeleton'} onClick={() => setMode('skeleton')}>Neuron skeleton</button>
           </div>
+          {mode === 'tissue' && (
+            <div className="atlas-render-modes" role="group" aria-label="FAFB scientific surface display mode">
+              <span className="atlas-render-label">SHOW THE SOURCE MESH AS</span>
+              {([
+                ['surface', 'Tissue shading'],
+                ['depth', 'Depth colors'],
+                ['mesh', 'Triangle mesh'],
+              ] as const).map(([value, label]) => (
+                <button type="button" key={value} disabled={!webglAvailable}
+                  aria-pressed={tissueDisplay === value}
+                  className={tissueDisplay === value ? 'selected' : ''}
+                  onClick={() => setTissueDisplay(value)}>{label}</button>
+              ))}
+            </div>
+          )}
           <div className="atlas-viewport">
             {webglAvailable ? (
               <Suspense fallback={<p className="atlas-loading">Loading scientific renderer…</p>}>
-                <RealBrainScene mode={mode} skeleton={skeleton} view={view} resetKey={resetKey} onStatus={updateStatus} />
+                <RealBrainScene mode={mode} skeleton={skeleton} view={view} resetKey={resetKey} tissueDisplay={tissueDisplay} onStatus={updateStatus} />
               </Suspense>
             ) : (
               <div className="atlas-loading" role="status">
@@ -193,6 +209,15 @@ export function ScientificExplorer() {
             ))}
             <button type="button" disabled={!webglAvailable} onClick={() => { setView('front'); setResetKey((v) => v + 1) }}>Reset camera</button>
           </div>
+          {mode === 'tissue' && tissueDisplay === 'depth' && (
+            <div className="atlas-depth-legend" role="note" aria-label="Depth colors legend">
+              <span className="atlas-depth-ramp" aria-hidden="true" />
+              <span>Relative mesh Z: back → front. <strong>Colors represent position, NOT anatomical regions.</strong></span>
+            </div>
+          )}
+          {mode === 'tissue' && tissueDisplay === 'mesh' && (
+            <p className="atlas-topology-note" role="note">Triangle edges come from the original FAFB-derived mesh; these lines are not neurons or synapses.</p>
+          )}
           <p className="atlas-figure-foot">The 3D scene is a scientific visualization, not a measurement of live neuronal signals. The surface and skeleton use separate display coordinates until alignment has been independently verified.</p>
         </div>
 

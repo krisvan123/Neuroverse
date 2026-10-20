@@ -14,6 +14,12 @@ describe('Neuroverse foundation', () => {
     expect(screen.getByRole('link', { name: /start your discovery/i })).toHaveAttribute('href', '#learning')
     expect(screen.getByRole('heading', { name: /wonder, with evidence/i })).toBeInTheDocument()
   })
+  it('renders global decorative stars independently from the scientific 3D model', () => {
+    const { container } = render(<App />)
+    expect(container.querySelectorAll('.cosmic-backdrop .starlayer')).toHaveLength(3)
+    expect(container.querySelector('.cosmic-backdrop .cosmic-shooting-star')).toBeInTheDocument()
+    expect(container.querySelector('.cosmic-backdrop')).toHaveAttribute('aria-hidden', 'true')
+  })
   it('lets learners disable and re-enable ambient motion', () => {
     render(<App />)
     const reduceButton = screen.getByRole('button', { name: 'Reduce ambient motion' })

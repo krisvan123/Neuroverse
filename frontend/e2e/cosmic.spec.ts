@@ -169,3 +169,24 @@ test('published original FAFB tissue surface renders in the actual 3D homepage',
   await page.waitForTimeout(800)
   await hero.screenshot({ path: testInfo.outputPath('authentic-FAFB-3D-tissue-hero.png'), animations: 'disabled' })
 })
+
+
+test('site-wide stars animate at every scroll position and honor reduced motion toggle', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  const background = page.locator('.cosmic-backdrop')
+  const stars = background.locator('.layer-one')
+  await expect(background).toBeVisible()
+  const motion = await stars.evaluate(element => ({
+    name: getComputedStyle(element).animationName,
+    position: getComputedStyle(element.parentElement!).position,
+  }))
+  expect(motion.name).toContain('nv-stars-near')
+  expect(motion.position).toBe('fixed')
+  await page.locator('#sources').scrollIntoViewIfNeeded()
+  await expect(background).toBeVisible()
+  await page.getByRole('button', { name: 'Reduce ambient motion' }).click()
+  await expect.poll(() => stars.evaluate(element => getComputedStyle(element).animationName)).toBe('none')
+  await page.getByRole('button', { name: 'Enable ambient motion' }).click()
+  await expect.poll(() => stars.evaluate(element => getComputedStyle(element).animationName)).toContain('nv-stars-near')
+})
