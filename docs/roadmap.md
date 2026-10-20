@@ -2,7 +2,7 @@
 
 **Document ID:** NV-ROADMAP-001  
 **Version:** 1.0 · **Baseline:** 2026-10-20  
-**Project state:** Phase 01 documentation in progress; no application code, dataset ETL, tests, or production deployment exist.
+**Project state:** Phases 01–04 implemented and reviewed as of 2026-10-20. Phase 04 includes a conceptual 3D homepage, not a data-driven morphology explorer. Phases 05–09 remain planned; no public deployment exists.
 
 ## 1. Delivery philosophy
 
