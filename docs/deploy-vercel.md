@@ -45,6 +45,12 @@ Vercel Services has been announced as available in Beta on all plans, but UI acc
 
 A single Services deployment is preferred since it avoids cross-origin configuration and duplicate projects. The fallback is still subject to account-specific build/runtime constraints.
 
+## Vercel Python build troubleshooting
+
+If the Vercel build log shows `No project table found in backend/pyproject.toml`, make sure the deployed commit contains the updated `[project]` metadata under `backend/pyproject.toml` and `backend/.python-version` is `3.12`. The Python service uses `uv lock` during its cloud build: a pytest-only `pyproject.toml` is **not** sufficient. CI now reproduces this `uv lock` and `uv sync` step before accepting a change.
+
+Use the **latest commit on main** and redeploy. If an older deployment was created before the fix, choose the latest deployment in Vercel or trigger a new deployment after GitHub changes are synced; optionally disable build cache for troubleshooting. After a successful build, verify `https://YOUR-DOMAIN.vercel.app/api/v1/health`. A successful frontend build alone does not prove the Python API is online. If it still fails, open the **api service's build/runtime logs** and share the precise new error message; do not add secrets or paid services to work around a build error.
+
 ## Limits and scientific honesty
 
 - **Cost:** Hobby is free for personal/noncommercial use within usage caps; exceeding limits can pause service or features. Do not assume unlimited bandwidth, functions, build minutes, or support.

@@ -48,6 +48,12 @@ jobs:
           cache-dependency-path: backend/requirements*.txt
       - name: Install dependencies
         run: python -m pip install -r requirements-dev.txt
+      - name: Reproduce Vercel's uv dependency resolution
+        run: |
+          python -m pip install uv==0.10.11
+          uv lock --python 3.12
+          uv sync --frozen --python 3.12
+          .venv/bin/python -c 'from main import app; assert app.title == "Neuroverse API"'
       - name: Compile Python sources
         run: python -m compileall -q app tests
       - name: Run tests
