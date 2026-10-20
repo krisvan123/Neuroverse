@@ -4,14 +4,17 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { PLYLoader } from 'three/addons/loaders/PLYLoader.js'
 import { getApiBaseUrl } from '../api/client'
+import { applySourceDepthColors } from './surfaceColors'
 import {
   CAMERA_PRESETS, SCENE_BUDGETS, makeDNA, makeStars,
-  type CameraView, type VisualQuality,
+  type CameraView, type VisualQuality, type AnatomySource, type AnatomyStyle,
 } from './geometry'
 
 export interface BrainSceneProps {
   quality: VisualQuality
   paused: boolean
+  anatomySource: AnatomySource
+  anatomyStyle: AnatomyStyle
   view: CameraView
   resetToken: number
   onReady: () => void
@@ -52,18 +55,20 @@ function SceneFrameProbe() {
  * from the pinned and checksum-validated scientific PLY (see backend/app/data/tissue.py).
  * The normalized presentation transform is uniform: no fabricated anatomy.
  */
-function AuthenticBrain({ quality, paused, onModelStatus }: Pick<BrainSceneProps, 'quality' | 'paused' | 'onModelStatus'>) {
+function AuthenticBrain({ quality, paused, onModelStatus, anatomySource, anatomyStyle }: Pick<BrainSceneProps, 'quality' | 'paused' | 'onModelStatus' | 'anatomySource' | 'anatomyStyle'>) {
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null)
   const group = useRef<THREE.Group>(null)
 
   useEffect(() => {
     const controller = new AbortController()
     onModelStatus('loading')
+    setGeometry(null)
     async function load() {
-      const response = await fetch(getApiBaseUrl() + '/api/v1/brain/tissue-mesh', {
+      const endpoint = anatomySource === 'neuropil' ? '/api/v1/brain/neuropil-mesh' : '/api/v1/brain/tissue-mesh'
+      const response = await fetch(getApiBaseUrl() + endpoint, {
         signal: controller.signal,
       })
-      if (!response.ok) throw new Error('Research mesh unavailable. Start the FastAPI backend.')
+      if (!response.ok) throw new Error('Source-derived brain anatomy unavailable. Verify that FastAPI is running.')
       const checksum = response.headers.get('X-Neuroverse-Source-SHA256')
       if (!checksum || !/^[a-f0-9]{64}$/.test(checksum)) {
         throw new Error('The research mesh lacks a validated source checksum')
@@ -83,8 +88,9 @@ function AuthenticBrain({ quality, paused, onModelStatus }: Pick<BrainSceneProps
         if (!parsed.getAttribute('normal')) parsed.computeVertexNormals()
         // Preserve topology, proportions and contours from the original surface.
         parsed.center()
-        const scale = 5.65 / extent
+        const scale = 6.05 / extent
         parsed.scale(scale, scale, scale)
+        applySourceDepthColors(parsed)
         if (controller.signal.aborted) return
         setGeometry(parsed)
         onModelStatus('ready')
@@ -99,7 +105,7 @@ function AuthenticBrain({ quality, paused, onModelStatus }: Pick<BrainSceneProps
       }
     })
     return () => controller.abort()
-  }, [onModelStatus])
+  }, [onModelStatus, anatomySource])
 
   useEffect(() => () => geometry?.dispose(), [geometry])
 
@@ -111,23 +117,41 @@ function AuthenticBrain({ quality, paused, onModelStatus }: Pick<BrainSceneProps
 
   if (!geometry) return null
   return (
-    <group ref={group} rotation={[0.11, -0.23, 0]}>
-      {/* Physically lit opaque tissue makes real depth, occlusion and contours visible. */}
+    <group ref={group} rotation={[0.08, -0.17, 0]}>
+      {/* Both surfaces are authenticated *source-derived* FlyWire/FAFB PLYs.
+          Materials enhance depth but NEVER add triangles or false brain regions. */}
       <mesh geometry={geometry} castShadow receiveShadow>
-        <meshPhysicalMaterial
-          color="#9acbdb"
-          metalness={0.13}
-          roughness={0.43}
-          clearcoat={0.36}
-          clearcoatRoughness={0.27}
-          emissive="#0f3562"
-          emissiveIntensity={0.14}
-          side={THREE.DoubleSide}
-        />
+        {anatomyStyle === 'shaded' && (
+          <meshPhysicalMaterial
+            color="#afcfd7"
+            roughness={0.67}
+            metalness={0.015}
+            clearcoat={0.14}
+            clearcoatRoughness={0.65}
+            emissive="#163044"
+            emissiveIntensity={0.035}
+            side={THREE.DoubleSide}
+          />
+        )}
+        {anatomyStyle === 'depth' && (
+          <meshStandardMaterial vertexColors roughness={0.7} metalness={0}
+            side={THREE.DoubleSide} />
+        )}
+        {anatomyStyle === 'mesh' && (
+          <meshStandardMaterial color="#39657a" roughness={0.89}
+            side={THREE.DoubleSide} transparent opacity={0.28} />
+        )}
       </mesh>
-      {quality === 'high' && (
+      {anatomyStyle === 'mesh' && (
         <mesh geometry={geometry}>
-          <meshBasicMaterial color="#b5ddff" wireframe transparent opacity={0.035} depthWrite={false} />
+          <meshBasicMaterial color="#a0eaff" wireframe transparent
+            opacity={0.48} depthWrite={false} side={THREE.DoubleSide} />
+        </mesh>
+      )}
+      {quality === 'high' && anatomyStyle === 'shaded' && (
+        <mesh geometry={geometry}>
+          <meshBasicMaterial color="#bfe7f3" wireframe transparent
+            opacity={0.025} depthWrite={false} />
         </mesh>
       )}
     </group>
@@ -145,16 +169,18 @@ function ParticleField({ quality }: { quality: VisualQuality }) {
   )
 }
 
+/** Decorative DNA in the *environment*, not connected to actual fly morphology. */
 function DNAHelix({ x, paused, quality }: { x: number; paused: boolean; quality: VisualQuality }) {
   const ref = useRef<THREE.Group>(null)
+  const tracer = useRef<THREE.Mesh>(null)
   const geometry = useMemo(makeDNA, [])
   const strands = useMemo(
     () => geometry.strands.map((strand, index) => new THREE.Line(
       strand,
       new THREE.LineBasicMaterial({
-        color: index === 0 ? '#82cde9' : '#b8a4e5',
+        color: index === 0 ? '#7ce7ff' : '#cfadff',
         transparent: true,
-        opacity: 0.31,
+        opacity: 0.77,
         depthWrite: false,
       }),
     )),
@@ -166,20 +192,38 @@ function DNAHelix({ x, paused, quality }: { x: number; paused: boolean; quality:
     geometry.rungs.dispose()
   }, [geometry, strands])
 
-  useFrame((_, delta) => {
-    if (ref.current && !paused && quality !== 'saver') {
-      ref.current.rotation.y += Math.min(delta, 0.05) * 0.14
+  useFrame((state, delta) => {
+    if (!ref.current || paused || quality === 'saver') return
+    const elapsed = state.clock.elapsedTime
+    ref.current.rotation.y += Math.min(delta, 0.05) * 0.56
+    ref.current.rotation.x = 0.16 + Math.sin(elapsed * 0.4) * 0.05
+    for (const [index, line] of strands.entries()) {
+      const material = line.material as THREE.LineBasicMaterial
+      material.opacity = 0.68 + Math.sin(elapsed * 1.2 + index * 2.2) * 0.15
     }
+    const progress = (elapsed * 0.13) % 1
+    const theta = progress * Math.PI * 6
+    tracer.current?.position.set(
+      Math.cos(theta) * 0.36,
+      (progress - 0.5) * 4.2,
+      Math.sin(theta) * 0.36,
+    )
   })
 
   return (
-    <group ref={ref} position={[x, -0.15, -2.25]} rotation={[0.2, 0.12, x < 0 ? -0.28 : 0.25]} scale={0.9}>
+    <group ref={ref} position={[x, -0.08, 0.55]}
+      rotation={[0.16, 0.12, x < 0 ? -0.26 : 0.22]}
+      scale={quality === 'saver' ? 0.71 : 0.85}>
       {strands.map((strand, index) => (
         <primitive key={index} object={strand} />
       ))}
       <lineSegments geometry={geometry.rungs}>
-        <lineBasicMaterial color="#78aac8" transparent opacity={0.17} depthWrite={false} />
+        <lineBasicMaterial color="#abd9f8" transparent opacity={0.39} depthWrite={false} />
       </lineSegments>
+      <mesh ref={tracer}>
+        <sphereGeometry args={[0.085, 10, 10]} />
+        <meshBasicMaterial color="#dbfbff" />
+      </mesh>
     </group>
   )
 }
@@ -255,16 +299,16 @@ export default function CosmicBrainScene(props: BrainSceneProps) {
       onCreated={props.onReady}
       fallback={<div className="neuro-webgl-fallback">3D display unavailable. Use the illustrated fallback.</div>}
     >
-      <ambientLight intensity={1.3} />
-      <hemisphereLight args={['#b8edff', '#15214a', 1.45]} />
-      <directionalLight position={[-3.5, 5, 7]} intensity={3.1} color="#d9f5ff" />
-      <directionalLight position={[4.5, 0.2, -3]} intensity={3.9} color="#987aff" />
-      <directionalLight position={[2, -4, 5]} intensity={1.1} color="#54d6f3" />
+      <ambientLight intensity={0.8} />
+      <hemisphereLight args={['#d6f5ff', '#162541', 1.55]} />
+      <directionalLight position={[-4.7, 5, 8]} intensity={3.1} color="#ebfaff" />
+      <directionalLight position={[4.5, 2.2, -4.7]} intensity={2.9} color="#a598ee" />
+      <directionalLight position={[2, -4, 5]} intensity={1.25} color="#65dce9" />
       <SceneFrameProbe />
       <ParticleField quality={props.quality} />
-      {budget.helices > 0 && <DNAHelix x={3.1} paused={props.paused} quality={props.quality} />}
-      {budget.helices > 1 && <DNAHelix x={-3.2} paused={props.paused} quality={props.quality} />}
-      <AuthenticBrain quality={props.quality} paused={props.paused} onModelStatus={props.onModelStatus} />
+      {budget.helices > 0 && <DNAHelix x={3.57} paused={props.paused} quality={props.quality} />}
+      {budget.helices > 1 && <DNAHelix x={-3.57} paused={props.paused} quality={props.quality} />}
+      <AuthenticBrain quality={props.quality} paused={props.paused} anatomySource={props.anatomySource} anatomyStyle={props.anatomyStyle} onModelStatus={props.onModelStatus} />
       <CameraRig view={props.view} resetToken={props.resetToken} paused={props.paused} quality={props.quality} />
     </Canvas>
   )
