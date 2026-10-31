@@ -7,6 +7,7 @@ from app.api.connectome import router as connectome_router
 from app.api.morphology import router as morphology_router
 from app.api.tissue import router as tissue_router
 from app.api.v1 import router as api_router
+from app.api.atlas import router as atlas_router
 from app.config import get_allowed_origins
 from app.data.store import GraphStore
 from app.site import install_public_site
@@ -44,6 +45,7 @@ def create_app() -> FastAPI:
         return response
 
     application.include_router(api_router)
+    application.include_router(atlas_router)
     application.include_router(connectome_router)
     application.include_router(morphology_router)
     application.include_router(tissue_router)

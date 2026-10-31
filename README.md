@@ -73,6 +73,14 @@ python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 Read [the full scientific data guide](docs/scientific-data-pipeline.md) before importing. The generated manifest records local source hashes, version, and limitations; it does **not** independently authenticate file origin. Without a configured dataset, neuron endpoints return HTTP 503 instead of invented neuroscience data.
 
+## Interactive neuron atlas
+
+Choose **Explore → Load mapped neurons** to browse the 139,255 annotated neurons
+in the pinned FlyWire FAFB v783 release. Click a mapped cell to focus the camera
+and open its original branch reconstruction, identity, source annotations and
+cell-class context. Search by root ID, type or class. Unknown individual functions
+remain explicitly unknown. See [sources, coordinate units and limitations](docs/neuron-atlas.md).
+
 ## Quality checks
 
 ```bash

@@ -91,7 +91,7 @@ function TrueTissue({ onStatus, tissueDisplay, source }: { onStatus: ScientificS
 
 function RealSkeleton({ skeleton, onStatus }: { skeleton: Skeleton | null; onStatus: ScientificSceneProps['onStatus'] }) {
   const geometry = useMemo(() => {
-    if (!skeleton) return null
+    if (!skeleton || skeleton.edges.length === 0) return null
     // Every segment is one pair of real skeleton vertices, never a decorative path.
     const array = new Float32Array(skeleton.edges.length * 6)
     for (let index = 0; index < skeleton.edges.length; index++) {
@@ -105,11 +105,14 @@ function RealSkeleton({ skeleton, onStatus }: { skeleton: Skeleton | null; onSta
     }
     const result = new THREE.BufferGeometry()
     result.setAttribute('position', new THREE.BufferAttribute(array, 3))
-    return fitGeometry(result)
+    try { return fitGeometry(result) }
+    catch { return null }
+    finally { result.dispose() }
   }, [skeleton])
   useEffect(() => () => geometry?.dispose(), [geometry])
   useEffect(() => {
-    onStatus(skeleton && geometry ? 'ready' : 'loading')
+    if (skeleton && !geometry) onStatus('error', 'This source has no renderable branch segments. Its annotations remain available.')
+    else onStatus(skeleton && geometry ? 'ready' : 'loading')
   }, [geometry, skeleton, onStatus])
   return geometry ? (
     <lineSegments geometry={geometry}>
@@ -118,7 +121,7 @@ function RealSkeleton({ skeleton, onStatus }: { skeleton: Skeleton | null; onSta
   ) : null
 }
 
-function NavigationCamera({ view, resetKey }: { view: ScientificView; resetKey: number }) {
+export function NavigationCamera({ view, resetKey, enabled = true }: { view: ScientificView; resetKey: number; enabled?: boolean }) {
   const { camera, gl, invalidate } = useThree()
   const controls = useRef<OrbitControls | null>(null)
   useEffect(() => {
@@ -137,6 +140,7 @@ function NavigationCamera({ view, resetKey }: { view: ScientificView; resetKey: 
       controls.current = null
     }
   }, [camera, gl, invalidate])
+  useEffect(() => { if (controls.current) controls.current.enabled = enabled }, [enabled])
   useEffect(() => {
     const positions: Record<ScientificView, [number, number, number]> = {
       front: [0, 0, 8.4],

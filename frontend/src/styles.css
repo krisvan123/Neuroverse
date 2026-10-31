@@ -1,5 +1,71 @@
 @import "tailwindcss";
 
+/* Published neuron positions and the selected-cell reading view. */
+.cells{padding-block:86px;scroll-margin-top:24px}
+.cells-welcome{display:flex;align-items:center;justify-content:space-between;gap:32px;padding:38px;border:1px solid #34546b;border-radius:12px;background:radial-gradient(ellipse at right,#173954,#0d1c30 75%)}
+.cells-welcome h3{font-size:26px;margin:14px 0}
+.cells-welcome p{max-width:650px;color:#b4cddd;line-height:1.8;font-size:14px}
+.cells-welcome button{flex-shrink:0}
+.cells-toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:15px 20px;background:#11263b;border:1px solid #35516a;border-radius:12px 12px 0 0;color:#a7d9ed;font-size:11px;letter-spacing:.08em}
+.cells-back{border:0;background:none;color:#d4f2fb;cursor:pointer;padding:0;font:inherit;letter-spacing:normal}
+.cells-workspace{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,1fr);border:1px solid #35516a;border-top:0;background:#081422}
+.cells-observatory{min-width:0}
+.cells-viewport{height:540px;position:relative;overflow:hidden}
+.cells-viewport canvas{touch-action:none}
+.cells-viewport .atlas-loading{gap:15px;align-content:center}
+.cells-map-hint{position:absolute;bottom:20px;left:20px;right:20px;text-align:center;color:#b9dae8;background:#081422cc;padding:10px;font-size:12px;pointer-events:none;border-radius:5px}
+.cells-legend{display:flex;flex-wrap:wrap;gap:15px;padding:0 20px 20px;font-size:11px;color:#b3c9d8}
+.cells-legend span{display:flex;align-items:center;gap:7px}
+.cells-legend i{display:inline-block;width:7px;height:7px;border-radius:50%}
+.cells-soma-dot{background:#79d9ef}
+.cells-anchor-dot{background:#f3b97c}
+.cells-inspector{min-width:0;padding:28px;max-height:720px;overflow-y:auto;border-left:1px solid #35516a;background:#102238}
+.cells-inspector h3{font-size:27px;letter-spacing:-.03em;overflow-wrap:anywhere;margin-bottom:14px}
+.cells-inspector h3:focus-visible{outline:2px solid #8ee3ef;outline-offset:5px}
+.cells-inspector p{color:#c0d3e1;font-size:13px;line-height:1.8;margin:16px 0}
+.cells-inspector a,.cells-provenance a{color:#9cdef3;text-decoration:underline;text-underline-offset:3px;font-size:12px}
+.cells-root-id{font-size:12px;overflow-wrap:anywhere;color:#97b9cc}
+.cells-facts{margin:22px 0;padding:0;display:grid;gap:12px}
+.cells-facts>div{display:grid;grid-template-columns:1fr 1.1fr;gap:10px;padding-bottom:10px;border-bottom:1px solid #294258}
+.cells-facts dt{font-size:11px;color:#99b6c9}
+.cells-facts dd{margin:0;font-size:12px;color:#e6f2f8;overflow-wrap:anywhere}
+.cells-facts small{display:block;margin-top:6px;color:#a3b7c9;line-height:1.5}
+.cells-counts dd{font-size:20px;font-variant-numeric:tabular-nums}
+.cells-function{border:1px solid #3a5469;border-radius:7px;background:#152d43;padding:17px}
+.cells-function .atlas-overline{font-size:9px}
+.cells-function h4{font-size:17px;margin:12px 0 0;line-height:1.4;color:#e5f5fc}
+.cells-function p{font-size:12px;margin:12px 0}
+.cells-function .cells-evidence-note{font-size:11px;color:#adc0cc}
+.cells-position code{display:block;color:#acd9e9;font-size:11px;overflow-wrap:anywhere}
+.cells-source-links{display:grid;gap:10px;margin-top:20px}
+.cells-catalog{padding:25px;border:1px solid #35516a;border-top:0;background:#0c1b2d;border-radius:0 0 12px 12px}
+.cells-search label{display:block;color:#e1f2fb;font-size:15px;margin-bottom:12px}
+.cells-search>div{display:flex;gap:12px;max-width:730px}
+.cells-search input{min-width:0;flex:1;border:1px solid #547086;background:#081422;border-radius:5px;color:#e1f2fb;padding:12px;font:inherit;font-size:14px}
+.cells-result-count{font-size:12px;color:#9dbbce;margin:18px 0}
+.cells-results{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.cells-results li{min-width:0}
+.cells-results button{position:relative;width:100%;height:100%;display:grid;gap:7px;text-align:left;padding:17px 30px 17px 15px;border:1px solid #344e64;border-radius:6px;background:#13283d;cursor:pointer;color:#e0f2fa;transition:border-color .18s,background .18s,transform .18s}
+.cells-results button:hover{background:#1a374e;border-color:#88d4e6;transform:translateY(-2px)}
+.cells-results button[aria-pressed=true]{border-color:#f3b97c;background:#223949}
+.cells-results button>span:first-child{font-size:14px;overflow-wrap:anywhere}
+.cells-results small{font-size:11px;color:#b0c8d8;overflow-wrap:anywhere}
+.cells-results code{font-size:10px;color:#93afc2;overflow-wrap:anywhere}
+.cells-card-arrow{position:absolute;right:13px;top:17px;color:#86d7ee;font-size:16px}
+.cells-pagination{display:flex;justify-content:center;align-items:center;gap:20px;margin-top:23px;font-size:12px;color:#a3c5d6;flex-wrap:wrap}
+.cells-pagination button{border:1px solid #476179;color:#d0e7f3;background:transparent;padding:10px 14px;border-radius:5px;cursor:pointer}
+.cells-pagination button:disabled{opacity:.4;cursor:default}
+.cells-provenance{font-size:11px;color:#8eaabc;line-height:1.8;margin:17px 5px}
+.cells-error{padding:20px;border:1px solid #ad7583;background:#342332;color:#ffd8df}
+.cells button:focus-visible,.cells input:focus-visible{outline:2px solid #a8e4f2;outline-offset:3px}
+.cells-inspector-open{animation:cell-details-enter .42s ease-out both}
+@keyframes cell-details-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:900px){.cells-workspace{grid-template-columns:1fr}.cells-inspector{border-left:0;border-top:1px solid #35516a;max-height:none}.cells-viewport{height:420px}.cells-welcome{align-items:start;flex-direction:column}.cells-results{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.cells{padding-block:55px}.cells-welcome{padding:24px}.cells-viewport{height:340px}.cells-catalog,.cells-inspector{padding:20px}.cells-results{grid-template-columns:1fr}.cells-search>div{flex-direction:column}.cells-map-hint{font-size:10px;left:10px;right:10px}.cells-toolbar{font-size:10px}.cells-pagination{gap:10px}}
+@media(prefers-reduced-motion:reduce){.cells-inspector-open{animation:none}.cells-results button{transition:none}.cells-results button:hover{transform:none}}
+:root[data-motion=quiet] .cells-inspector-open{animation:none}
+:root[data-motion=quiet] .cells-results button{transition:none}
+
 :root {
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;

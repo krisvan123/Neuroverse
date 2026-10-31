@@ -15,6 +15,12 @@ These are **source and license notices**, not a statement that the Neuroverse co
 
 ## Educational references and software
 
+- **Interactive neuron atlas:** the annotation table from `flyconnectome/flywire_annotations`
+  v2.1.0 is downloaded from its pinned source commit and verified before use. The
+  source table is not bundled. See [the neuron atlas source and coordinate notes](neuron-atlas.md)
+  for the checksum, Schlegel et al. (Nature, 2024) attribution, position meanings
+  and limits of cell-class explanations. The interface links CC BY-NC 4.0 terms.
+
 - Scientific publications, OpenStax teaching sources, graph algorithm references and provenance links appear in [Scientific Standards](scientific-standards.md), [Academy notes](phase-06-learning-academy.md), and the lesson UI. The app uses original teaching prose rather than redistributing research articles.
 - React, Vite, Three.js, FastAPI and their dependencies retain their own upstream licenses. See the package manifests and dependency source repositories for their exact versions and license texts.
 - Hero stars, DNA accents, color gradients and node layouts are decorative/modeling choices, **not** scientific measurements.
