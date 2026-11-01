@@ -176,10 +176,10 @@ export function ScientificExplorer() {
   }
 
   return (
-    <section id="explore" className="atlas container" aria-labelledby="explore-title">
+    <section id="scientific-tools" className="atlas" aria-labelledby="research-tools-title">
       <div className="atlas-heading">
         <div><div className="eyebrow"><span className="eyebrow-dash" /> 05.3 / SCIENTIFIC EXPLORER</div>
-          <h2 id="explore-title">The real anatomy.<br /><em>The real evidence.</em></h2>
+          <h2 id="research-tools-title">Research tools<br /><em>& source data.</em></h2>
         </div>
         <p>Compare published FlyWire-space neuropil and processed FAFB tissue surfaces, inspect original neuron centerlines, and examine source-based structural connectivity. No simulated anatomy masquerading as research.</p>
       </div>

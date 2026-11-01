@@ -43,6 +43,26 @@ def test_static_files_do_not_expose_parent_or_unknown_paths(production_site):
         assert client.get("/assets/%2e%2e/secret.txt").status_code in (404, 400)
         assert client.get("/api/v1/health").status_code == 200
 
+def test_release_serves_static_atlas_with_version_appropriate_caching(production_site):
+    data = production_site / "data"
+    data.mkdir()
+    (data / "fafb-v783-atlas.json").write_text('{"format_version": 1}', encoding="utf-8")
+    filename = "fafb-v783-1234567890abcdef.bin"
+    (data / filename).write_bytes(b"synthetic test bytes")
+    with TestClient(create_app()) as client:
+        manifest = client.get("/data/fafb-v783-atlas.json")
+        assert manifest.status_code == 200
+        assert manifest.json()["format_version"] == 1
+        assert manifest.headers["cache-control"] == "no-cache"
+        preview = client.get("/data/" + filename)
+        assert preview.status_code == 200
+        assert preview.content == b"synthetic test bytes"
+        assert preview.headers["cache-control"] == "public, max-age=31536000, immutable"
+        assert preview.headers["content-type"] == "application/octet-stream"
+        assert client.get("/data/missing.bin").status_code == 404
+        assert client.get("/data/%2e%2e/index.html").status_code in (404, 400)
+        assert client.get("/api/v1/health").status_code == 200
+
 def test_bad_bundle_configuration_fails_loudly(tmp_path, monkeypatch):
     monkeypatch.setenv("NEUROVERSE_STATIC_DIR", str(tmp_path))
     monkeypatch.delenv("NEUROVERSE_DATASET_DB", raising=False)

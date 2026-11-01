@@ -1,8 +1,11 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { supportsWebGL } from '../scenes/browserSupport'
-import { fetchSkeleton, type Skeleton } from '../science/api'
+import { fetchSkeleton, ResearchApiError, type Skeleton } from '../science/api'
 import { fetchAtlas, fetchNeuronProfile, searchAtlas, type AtlasSearch, type NeuronAtlasData, type NeuronProfile } from '../science/atlas'
 import type { ScientificView } from '../scenes/RealBrainScene'
+import { CELL_PALETTE, overviewIds } from '../scenes/connectomeGeometry'
+import { NeuronProfilePanel } from './NeuronProfilePanel'
+import { ScientificExplorer } from './ScientificExplorer'
 
 const NeuronAtlasScene = lazy(() => import('../scenes/NeuronAtlasScene'))
 const RealBrainScene = lazy(() => import('../scenes/RealBrainScene'))
@@ -10,10 +13,23 @@ const message = (error: unknown) => error instanceof Error ? error.message : 'Th
 
 export function NeuronAtlas({ reducedMotion = false }: { reducedMotion?: boolean }) {
   const [webgl] = useState(supportsWebGL)
+  const stage = useRef<HTMLDivElement>(null)
+  const viewport = useRef<HTMLDivElement>(null)
   const [enabled, setEnabled] = useState(false)
+  const [onScreen, setOnScreen] = useState(false)
+  const [tabVisible, setTabVisible] = useState(!document.hidden)
+  const [paused, setPaused] = useState(false)
+  const [fullscreen, setFullscreen] = useState(false)
   const [atlas, setAtlas] = useState<NeuronAtlasData | null>(null)
   const [mapError, setMapError] = useState('')
   const [retry, setRetry] = useState(0)
+  const [traces, setTraces] = useState<Skeleton[]>([])
+  const [traceState, setTraceState] = useState<'loading' | 'ready' | 'unavailable'>('loading')
+  const [traceRetry, setTraceRetry] = useState(0)
+  const [showTraces, setShowTraces] = useState(true)
+  const [hovered, setHovered] = useState<string | null>(null)
+  const [catalogOpen, setCatalogOpen] = useState(false)
+  const [toolsOpen, setToolsOpen] = useState(false)
   const [draftQuery, setDraftQuery] = useState('')
   const [query, setQuery] = useState('')
   const [offset, setOffset] = useState(0)
@@ -30,192 +46,188 @@ export function NeuronAtlas({ reducedMotion = false }: { reducedMotion?: boolean
   const [resetKey, setResetKey] = useState(0)
   const detailHeading = useRef<HTMLHeadingElement>(null)
   const sourceControl = useRef<HTMLElement | null>(null)
-  const viewport = useRef<HTMLDivElement>(null)
   const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [focusing, setFocusing] = useState(false)
   const [mapReady, setMapReady] = useState(false)
   const markMapReady = useCallback(() => setMapReady(true), [])
-  useEffect(() => () => { if (transitionTimer.current) clearTimeout(transitionTimer.current) }, [])
+  const stopRotation = useCallback(() => setPaused(true), [])
+  const rotating = !paused && !reducedMotion && !selected && onScreen && tabVisible
 
+  useEffect(() => {
+    // Vite renders the section after the browser's initial fragment lookup.
+    const followLink = () => {
+      if (window.location.hash === '#explore' || window.location.hash === '#neurons') {
+        setEnabled(true)
+        stage.current?.closest('section')?.scrollIntoView({ block: 'start', behavior: 'instant' })
+      }
+    }
+    followLink()
+    window.addEventListener('hashchange', followLink)
+    return () => window.removeEventListener('hashchange', followLink)
+  }, [])
+
+  useEffect(() => {
+    if (!stage.current || typeof IntersectionObserver === 'undefined') { setEnabled(true); setOnScreen(true); return }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry) { setOnScreen(entry.isIntersecting); if (entry.isIntersecting) setEnabled(true) }
+    }, { rootMargin: '180px' })
+    observer.observe(stage.current)
+    return () => observer.disconnect()
+  }, [])
+  useEffect(() => {
+    const visible = () => setTabVisible(!document.hidden)
+    const expanded = () => setFullscreen(document.fullscreenElement === stage.current)
+    document.addEventListener('visibilitychange', visible); document.addEventListener('fullscreenchange', expanded)
+    return () => { document.removeEventListener('visibilitychange', visible); document.removeEventListener('fullscreenchange', expanded) }
+  }, [])
+  useEffect(() => () => { if (transitionTimer.current) clearTimeout(transitionTimer.current) }, [])
   useEffect(() => {
     if (!enabled) return
     const controller = new AbortController()
     setMapError('')
-    void fetchAtlas(controller.signal).then(data => {
-      if (!controller.signal.aborted) setAtlas(data)
-    }).catch(error => { if (!controller.signal.aborted) setMapError(message(error)) })
+    void fetchAtlas(controller.signal).then(data => { if (!controller.signal.aborted) setAtlas(data) })
+      .catch(error => { if (!controller.signal.aborted) setMapError(message(error)) })
     return () => controller.abort()
   }, [enabled, retry])
 
   useEffect(() => {
-    if (!enabled) return
+    if (!atlas || !webgl) return
     const controller = new AbortController()
-    setSearching(true)
-    setSearchError('')
-    void searchAtlas(query, offset, controller.signal).then(data => {
-      if (!controller.signal.aborted) setSearch(data)
-    }).catch(error => { if (!controller.signal.aborted) setSearchError(message(error)) })
+    const ids = overviewIds(atlas.points)
+    let cursor = 0, edges = 0, stopped = false, loaded = 0
+    setTraces([]); setTraceState('loading')
+    const worker = async () => {
+      while (!controller.signal.aborted && !stopped && cursor < ids.length) {
+        const id = ids[cursor++]!
+        try {
+          const original = await fetchSkeleton(id, controller.signal)
+          if (controller.signal.aborted) return
+          if (original.coordinate_space !== 'FlyWire FAFB v783 precomputed skeleton coordinate frame' || !original.edge_count) continue
+          if (edges + original.edge_count > 600000) { stopped = true; break }
+          edges += original.edge_count; loaded++
+          setTraces(previous => [...previous, original])
+        } catch (error) {
+          if (controller.signal.aborted) return
+          // A source outage stops the queue, rather than repeating dozens of failed requests.
+          if (!(error instanceof ResearchApiError) || error.status !== 404) stopped = true
+        }
+      }
+    }
+    void Promise.all([worker(), worker()]).then(() => {
+      if (!controller.signal.aborted) setTraceState(loaded ? 'ready' : 'unavailable')
+    })
+    return () => controller.abort()
+  }, [atlas, webgl, traceRetry])
+
+  useEffect(() => {
+    if (catalogOpen) {
+      const input = document.getElementById('cells-query')
+      input?.focus({ preventScroll: true })
+      input?.closest('.cells-catalog')?.scrollIntoView({ block: 'center', behavior: reducedMotion ? 'instant' : 'smooth' })
+    }
+  }, [catalogOpen, reducedMotion])
+  useEffect(() => {
+    if (!catalogOpen) return
+    const controller = new AbortController()
+    setSearching(true); setSearchError('')
+    void searchAtlas(query, offset, controller.signal).then(data => { if (!controller.signal.aborted) setSearch(data) })
+      .catch(error => { if (!controller.signal.aborted) setSearchError(message(error)) })
       .finally(() => { if (!controller.signal.aborted) setSearching(false) })
     return () => controller.abort()
-  }, [enabled, query, offset, retry])
+  }, [catalogOpen, query, offset, retry])
 
   useEffect(() => {
     if (!selected) return
     const controller = new AbortController()
-    setProfile(null)
-    setSkeleton(null)
-    setProfileError('')
-    setSkeletonError('')
+    setProfile(null); setSkeleton(null); setProfileError(''); setSkeletonError('')
     detailHeading.current?.focus({ preventScroll: true })
-    // Annotation and morphology fail independently; an unavailable skeleton
-    // must not hide the identity and scientific context of the selected cell.
-    void fetchNeuronProfile(selected, controller.signal).then(data => {
-      if (!controller.signal.aborted) setProfile(data)
-    }).catch(error => { if (!controller.signal.aborted) setProfileError(message(error)) })
-    void fetchSkeleton(selected, controller.signal).then(data => {
-      if (!controller.signal.aborted) setSkeleton(data)
-    }).catch(error => { if (!controller.signal.aborted) setSkeletonError(message(error)) })
+    void fetchNeuronProfile(selected, controller.signal).then(data => { if (!controller.signal.aborted) setProfile(data) })
+      .catch(error => { if (!controller.signal.aborted) setProfileError(message(error)) })
+    void fetchSkeleton(selected, controller.signal).then(data => { if (!controller.signal.aborted) setSkeleton(data) })
+      .catch(error => { if (!controller.signal.aborted) setSkeletonError(message(error)) })
     return () => controller.abort()
   }, [selected, selectionRetry])
 
   const choose = useCallback((id: string) => {
     if (transitionTimer.current) clearTimeout(transitionTimer.current)
     const animate = !selected && !reducedMotion && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    setFocusing(animate)
+    setFocusing(animate); setPaused(true); setHovered(null)
     if (animate) transitionTimer.current = setTimeout(() => setFocusing(false), 460)
     sourceControl.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
-    if (sourceControl.current?.closest('.cells-results')) {
-      viewport.current?.scrollIntoView({ block: 'center', behavior: animate ? 'smooth' : 'auto' })
-    }
-    setProfile(null)
-    setSkeleton(null)
-    setProfileError('')
-    setSkeletonError('')
-    setSelected(id)
-    setSelectionRetry(n => n + 1)
+    if (sourceControl.current?.closest('.cells-results')) viewport.current?.scrollIntoView({ block: 'center', behavior: animate ? 'smooth' : 'auto' })
+    setProfile(null); setSkeleton(null); setProfileError(''); setSkeletonError('')
+    setSelected(id); setSelectionRetry(n => n + 1)
   }, [selected, reducedMotion])
-
   const back = () => {
     if (transitionTimer.current) clearTimeout(transitionTimer.current)
-    setFocusing(false)
-    setMapReady(false)
-    setSelected(null)
+    setFocusing(false); if (skeleton && !skeletonError) setMapReady(false); setSelected(null); setResetKey(n => n + 1)
     if (sourceControl.current && sourceControl.current !== document.body) sourceControl.current.focus()
     else viewport.current?.focus({ preventScroll: true })
   }
   const updateScene = useCallback((status: 'loading' | 'ready' | 'error', reason?: string) => {
     if (status === 'error') setSkeletonError(reason || 'The neuron could not be rendered.')
   }, [])
-  const submitSearch = (event: FormEvent) => {
-    event.preventDefault()
-    setQuery(draftQuery.trim())
-    setOffset(0)
+  const submitSearch = (event: FormEvent) => { event.preventDefault(); setQuery(draftQuery.trim()); setOffset(0) }
+  const filter = (value: string) => { setCatalogOpen(true); setDraftQuery(value); setQuery(value); setOffset(0) }
+  const expand = async () => {
+    try { if (fullscreen) await document.exitFullscreen(); else await stage.current?.requestFullscreen() }
+    catch { /* A browser may decline fullscreen; the inline viewer remains usable. */ }
   }
+  const isolated = !!selected && !!skeleton && !skeletonError && !focusing
 
-  return <section id="neurons" className="cells container" aria-labelledby="cells-title">
-    <div className="atlas-heading">
-      <div><div className="eyebrow"><span className="eyebrow-dash" /> FLYWIRE / CELL ATLAS</div>
-        <h2 id="cells-title">A brain of cells.<br /><em>Choose one. Look closer.</em></h2></div>
-      <p>Explore mapped neurons from the adult fruit fly. Select a cell to open its reconstructed branches, identity and scientific context.</p>
-    </div>
-    {!enabled ? <div className="cells-welcome">
-      <div><span className="atlas-overline">ORIGINAL POSITIONS · FAFB 783</span>
-        <h3>Start with the whole map.</h3>
-        <p>Load the published cell positions, then click a point or search by neuron ID and cell type. Detailed neuron shapes load when you select a cell.</p></div>
-      <button className="atlas-primary" onClick={() => setEnabled(true)}>Load mapped neurons →</button>
-    </div> : <>
-      <div className="cells-toolbar">
-        {selected ? <button className="cells-back" onClick={back}>← Back to neuron map</button> : <span>NEURON POSITION MAP</span>}
-        <span>{atlas ? `${atlas.points.length.toLocaleString()} mapped cells · FAFB 783` : 'Loading published cell positions…'}</span>
+  return <section id="explore" className="cells connectome container" aria-labelledby="connectome-title">
+    <span id="neurons" className="connectome-anchor" />
+    <div className="connectome-heading"><div>
+      <div className="eyebrow"><span className="eyebrow-dash" /> EXPLORE THE CONNECTOME</div>
+      <h2 id="connectome-title">Small brain.<br /><em>Extraordinary universe.</em></h2>
+    </div><p>Turn it. Explore it. Meet the neurons.<br />A whole fly brain, mapped one cell at a time.</p></div>
+    <div ref={stage} className={'connectome-shell' + (selected ? ' has-selection' : '')} data-render-state={rotating ? 'rotating' : 'paused'}>
+      <div className="connectome-topbar"><div className="connectome-dataset"><span className="connectome-live" /><strong>FAFB</strong><span>v783</span><span className="connectome-dataset-name">Female adult fly brain</span></div>
+        <div className="connectome-top-actions"><button onClick={() => setCatalogOpen(value => !value)} aria-expanded={catalogOpen}>⌕ Find a neuron</button>
+          <button onClick={() => { void expand() }} disabled={!document.fullscreenEnabled} aria-label={fullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}>⛶</button></div>
       </div>
       <div className="cells-workspace">
         <div className="cells-observatory">
           <div ref={viewport} tabIndex={-1} className="cells-viewport" data-map-ready={mapReady} data-transition={focusing ? 'focusing' : 'idle'} aria-label={selected ? 'Selected neuron viewer' : 'Neuron map viewer'}>
-            {!webgl ? <div className="atlas-loading" role="status">3D requires WebGL. You can still search every neuron and read its annotations below.</div> : (!selected || focusing) && atlas ?
-              <Suspense fallback={<div className="atlas-loading">Opening cell map…</div>}>
-                <NeuronAtlasScene points={atlas.points} view={view} resetKey={resetKey} onSelect={choose} onReady={markMapReady} focusId={focusing ? selected : null} />
-              </Suspense> : selected ?
-              skeleton && !skeletonError ? <Suspense fallback={<div className="atlas-loading">Opening neuron renderer…</div>}>
-                <RealBrainScene key={selected} mode="skeleton" skeleton={skeleton} view={view} resetKey={resetKey} tissueDisplay="surface" onStatus={updateScene} />
-              </Suspense> : <div className="atlas-loading" role="status">
-                {skeletonError ? <><strong>Neuron shape unavailable</strong><p>{skeletonError}</p><p>The cell annotations remain available.</p>
-                  <button className="atlas-secondary" onClick={() => setSelectionRetry(n => n + 1)}>Retry neuron details</button></> : 'Loading the original neuron reconstruction…'}
-              </div> : <div className="atlas-loading" role="status">{mapError || 'Loading the verified FlyWire atlas…'}</div>}
-            {webgl && !selected && atlas && <div className="cells-map-hint">Drag to rotate · scroll to zoom · click a cell</div>}
+            {!webgl ? <div className="connectome-empty" role="status"><strong>Explore the neurons, even without 3D.</strong><p>This browser cannot render WebGL. Search still opens each cell’s scientific details.</p><button onClick={() => setCatalogOpen(true)}>Browse neurons →</button></div> : isolated ?
+              <Suspense fallback={<div className="connectome-empty">Opening neuron…</div>}><RealBrainScene key={selected} mode="skeleton" skeleton={skeleton} view={view} resetKey={resetKey} tissueDisplay="surface" onStatus={updateScene} /></Suspense> : atlas ?
+              <Suspense fallback={<div className="connectome-empty">Preparing the brain…</div>}><NeuronAtlasScene points={atlas.points} traces={traces} view={view} resetKey={resetKey}
+                onSelect={choose} onReady={markMapReady} focusId={selected} hoveredId={hovered} onHover={setHovered}
+                playing={rotating} active={onScreen && tabVisible} reducedMotion={reducedMotion} onInteract={stopRotation} showTraces={showTraces} /></Suspense> :
+              <div className="connectome-empty" role="status"><span className="connectome-loader" /><strong>{mapError || 'Opening the FlyWire brain…'}</strong>
+                {mapError && <button onClick={() => setRetry(n => n + 1)}>Retry brain preview</button>}</div>}
+            {atlas && <div className="connectome-stage-label"><span>{selected ? 'ONE NEURON. A CLOSER LOOK.' : atlas.total_neurons.toLocaleString() + ' STORIES. ONE BRAIN.'}</span>
+              <strong>{selected ? profile?.label || selected : atlas.total_neurons.toLocaleString() + ' mapped cells'}</strong>
+              <small>{isolated ? 'Original branch reconstruction' : traces.length && showTraces ? traces.length + ' traced neurons · spatial overview' : 'Original cell positions · color identifies cells'}</small></div>}
+            {selected && <button className="connectome-return" onClick={back}>← Whole brain</button>}
+            {!selected && webgl && <div className="connectome-gesture">Drag to orbit <span>·</span> Scroll to zoom <span>·</span> Click to discover</div>}
+            {hovered && !selected && <div className="connectome-hover">Neuron <code>{hovered}</code><span>Click to explore ↗</span></div>}
+            {selected && skeletonError && <div className="connectome-source-notice" role="status">Original branches are temporarily unavailable. Showing the selected cell’s mapped location.<button onClick={() => setSelectionRetry(n => n + 1)}>Retry shape</button></div>}
           </div>
-          <div className="atlas-camera-row" role="group" aria-label="Cell atlas camera">
-            {(['front', 'side', 'top'] as const).map(direction => <button key={direction} disabled={!webgl}
-              aria-pressed={view === direction} className={view === direction ? 'selected' : ''} onClick={() => setView(direction)}>{direction[0]!.toUpperCase() + direction.slice(1)}</button>)}
-            <button disabled={!webgl} onClick={() => { setView('front'); setResetKey(n => n + 1) }}>Reset view</button>
-          </div>
-          <p className="atlas-figure-foot">{selected
-            ? 'Original neuron centerlines, centered and uniformly scaled for inspection. A reconstruction of branches, not a photograph or a full cell membrane.'
-            : 'Each point marks a published cell-body location or source anchor. Point sizes aid selection; they do not represent the size or shape of a neuron.'}</p>
-          {!selected && <div className="cells-legend"><span><i className="cells-soma-dot" /> Cell body (soma)</span><span><i className="cells-anchor-dot" /> Source anchor · soma not recorded</span></div>}
+          <div className="connectome-controls"><div role="group" aria-label="Brain motion and camera">
+            <button className="connectome-play" disabled={!webgl || !!selected || reducedMotion} aria-pressed={!paused && !reducedMotion} onClick={() => setPaused(value => !value)}>{paused || reducedMotion ? '▶ Rotate brain' : 'Ⅱ Pause rotation'}</button>
+            {(['front', 'side', 'top'] as const).map(direction => <button key={direction} disabled={!webgl} aria-pressed={view === direction}
+              onClick={() => { setView(direction); setPaused(true); setResetKey(n => n + 1) }}>{direction[0]!.toUpperCase() + direction.slice(1)}</button>)}
+            <button disabled={!webgl} onClick={() => { setView('front'); setResetKey(n => n + 1) }}>Reset</button>
+          </div><div className="connectome-layer-control"><button onClick={() => setShowTraces(value => !value)} aria-pressed={showTraces} disabled={!!selected || traces.length === 0}>Neuron branches</button><span className="connectome-spectrum" aria-label="Colors distinguish neurons">{CELL_PALETTE.map(color => <i key={color} style={{ background: color }} />)}</span></div></div>
+          {isolated && skeleton && <p className="connectome-shape-note">{skeleton.vertex_count.toLocaleString()} recorded vertices · {skeleton.edge_count.toLocaleString()} branch segments · colors are visual identifiers, not activity.</p>}
         </div>
-        <aside key={selected || 'map'} className={selected ? 'cells-inspector cells-inspector-open' : 'cells-inspector'} aria-label="Neuron details">
-          {selected ? <>
-            <div className="atlas-overline">SELECTED CELL / FAFB 783</div>
-            <h3 tabIndex={-1} ref={detailHeading}>{profile?.label || 'Neuron details'}</h3>
-            <code className="cells-root-id">{selected}</code>
-            {profileError ? <div role="alert"><p>{profileError}</p><button className="atlas-secondary" onClick={() => setSelectionRetry(n => n + 1)}>Retry annotation</button></div> : profile ? <>
-              <dl className="cells-facts">
-                <div><dt>Cell class</dt><dd>{profile.cell_class || 'Not annotated'}</dd></div>
-                <div><dt>Cell type</dt><dd>{profile.cell_type || 'Not annotated'}</dd></div>
-                <div><dt>Hemibrain type match</dt><dd>{profile.hemibrain_type || 'Not annotated'}</dd></div>
-                <div><dt>Side</dt><dd>{profile.side || 'Not annotated'}</dd></div>
-                <div><dt>Predicted transmitter</dt><dd>{profile.top_nt || 'Not available'}{profile.top_nt_conf && Number.isFinite(Number(profile.top_nt_conf)) ? ` · ${(Number(profile.top_nt_conf) * 100).toFixed(1)}% mean source confidence` : ''}</dd></div>
-                {profile.known_nt && <div><dt>Reported transmitter</dt><dd>{profile.known_nt}<small>{profile.known_nt_source}</small></dd></div>}
-              </dl>
-              <div className="cells-function">
-                <span className="atlas-overline">{profile.function.evidence === 'cell_class_context' ? 'CELL-CLASS CONTEXT' : 'FUNCTION NOT ESTABLISHED'}</span>
-                <h4>{profile.function.title}</h4><p>{profile.function.summary}</p>
-                <p className="cells-evidence-note">{profile.function.limitation}</p>
-                <a href={profile.function.source_reference} target="_blank" rel="noopener noreferrer">Annotation study & methods ↗</a>
-              </div>
-              {profile.position_nm && <p className="cells-position">{profile.position_kind === 'soma' ? 'Soma' : 'Source anchor'} coordinates (nm): <code>{profile.position_nm.map(n => n.toLocaleString('en-US')).join(' / ')}</code></p>}
-              {profile.status && <p className="atlas-caution">Source quality flag: {profile.status}</p>}
-              {skeleton && <p>{skeleton.vertex_count.toLocaleString()} recorded vertices · {skeleton.edge_count.toLocaleString()} branch segments</p>}
-              {skeletonError && !webgl && <p role="status">Neuron shape unavailable: {skeletonError}</p>}
-              <div className="cells-source-links"><a href={profile.codex_url} target="_blank" rel="noopener noreferrer">Open cell in FlyWire Codex ↗</a>
-                <a href={profile.source_url} target="_blank" rel="noopener noreferrer">Original annotation table ↗</a></div>
-            </> : <p role="status">Loading this cell’s annotations…</p>}
-          </> : <>
-            <div className="atlas-overline">ONE POINT, ONE NEURON</div><h3>Meet the cells.</h3>
-            <p>Select a point in the map, or choose a neuron from the searchable list below.</p>
-            {atlas && <dl className="cells-facts cells-counts">
-              <div><dt>Neurons in this release</dt><dd>{atlas.total_neurons.toLocaleString()}</dd></div>
-              <div><dt>Recorded soma positions</dt><dd>{atlas.soma_count.toLocaleString()}</dd></div>
-              <div><dt>Anchor positions</dt><dd>{(atlas.points.length - atlas.soma_count).toLocaleString()}</dd></div>
-              {atlas.unpositioned_count > 0 && <div><dt>Without a mapped position</dt><dd>{atlas.unpositioned_count.toLocaleString()}</dd></div>}
-            </dl>}
-            <p>Positions come from the published FlyWire annotations. Individual branches open on selection; connections between cells are explored separately.</p>
-            <a href="#explore">Explore brain surfaces & connections ↓</a>
-          </>}
-        </aside>
+        {selected && <NeuronProfilePanel key={selected} id={selected} profile={profile} error={profileError} headingRef={detailHeading} onClose={back} onRetry={() => setSelectionRetry(n => n + 1)} />}
       </div>
-      {mapError && <div className="cells-error" role="alert">{mapError}<button className="atlas-secondary" onClick={() => setRetry(n => n + 1)}>Retry atlas</button></div>}
-      <div className="cells-catalog">
-        <form className="cells-search" onSubmit={submitSearch}>
-          <label htmlFor="cells-query">Find a neuron</label>
-          <div><input id="cells-query" value={draftQuery} onChange={e => setDraftQuery(e.target.value)} maxLength={80} placeholder="Cell type, class or root ID" />
-            <button className="atlas-primary" type="submit">Search cells</button></div>
-        </form>
-        {searchError && <div role="alert"><p>{searchError}</p><button className="atlas-secondary" onClick={() => setRetry(n => n + 1)}>Retry search</button></div>}
-        <p className="cells-result-count" role="status">{searching ? 'Searching the annotation release…' : search ? `${search.total.toLocaleString()} matching neurons${query ? ` for “${query}”` : ''}` : ''}</p>
-        {!searching && !searchError && search?.results.length === 0 && <p>No neurons match this search. Try a root ID or class such as ALPN or Kenyon_Cell.</p>}
-        {!searching && !searchError && <ul className="cells-results" aria-label="Neuron search results">{search?.results.map(neuron => <li key={neuron.root_id}>
-          <button aria-pressed={selected === neuron.root_id} onClick={() => choose(neuron.root_id)} aria-label={`Inspect ${neuron.label}, neuron ${neuron.root_id}`}>
-            <span>{neuron.label}</span><small>{neuron.cell_class || 'Class not annotated'} · {neuron.side || 'Side unannotated'}</small>
-            <code>{neuron.root_id}</code><span aria-hidden="true" className="cells-card-arrow">↗</span>
-          </button></li>)}</ul>}
-        {search && <div className="cells-pagination">
-          <button disabled={searching || offset === 0} onClick={() => setOffset(n => Math.max(0, n - 12))}>← Previous</button>
-          <span>{search.total > 0 ? `${offset + 1}–${Math.min(offset + 12, search.total)} of ${search.total.toLocaleString()}` : '0 results'}</span>
-          <button disabled={searching || offset + 12 >= search.total} onClick={() => setOffset(n => n + 12)}>Next →</button>
-        </div>}
-      </div>
-      <p className="cells-provenance">FlyWire FAFB 783 · annotations v2.1.0 · Schlegel et al. (2024). <a href="https://doi.org/10.1038/s41586-024-07686-5" target="_blank" rel="noopener noreferrer">Source study ↗</a> · <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0</a>. Original positions share one uniform display scale; source anchors are not soma measurements.</p>
-    </>}
+      {!selected && <div className="connectome-bottom"><div><span className="connectome-source-dot" />{traceState === 'loading' && atlas && webgl ? 'Loading original neuron branches…' : traces.length ? traces.length + ' original reconstructions loaded' : 'Published cell positions'}
+        {traceState === 'unavailable' && <><span className="connectome-subtle"> · Branch source unavailable</span><button onClick={() => setTraceRetry(n => n + 1)}>Retry</button></>}</div>
+        <div className="connectome-quick"><span>DISCOVER</span><button onClick={() => filter('Kenyon_Cell')}>Memory & learning ↗</button><button onClick={() => filter('ALPN')}>Olfactory circuits ↗</button></div></div>}
+    </div>
+    {catalogOpen && <div className="cells-catalog" id="neuron-catalog">
+      <form className="cells-search" onSubmit={submitSearch}><label htmlFor="cells-query">Find a neuron</label><div><input id="cells-query" value={draftQuery} onChange={e => setDraftQuery(e.target.value)} maxLength={80} placeholder="Cell type, class or root ID" /><button className="atlas-primary" type="submit">Search cells</button></div></form>
+      {searchError && <div role="alert"><p>{searchError}</p><button className="atlas-secondary" onClick={() => setRetry(n => n + 1)}>Retry search</button></div>}
+      <p className="cells-result-count" role="status">{searching ? 'Searching the annotation release…' : search ? `${search.total.toLocaleString()} matching neurons${query ? ` for “${query}”` : ''}` : ''}</p>
+      {!searching && !searchError && search?.results.length === 0 && <p>No neurons match this search. Try a root ID or class such as ALPN or Kenyon_Cell.</p>}
+      {!searching && !searchError && <ul className="cells-results" aria-label="Neuron search results">{search?.results.map(neuron => <li key={neuron.root_id}><button aria-pressed={selected === neuron.root_id} onClick={() => choose(neuron.root_id)} aria-label={`Inspect ${neuron.label}, neuron ${neuron.root_id}`}>
+        <span>{neuron.label}</span><small>{neuron.cell_class || 'Class not annotated'} · {neuron.side || 'Side unannotated'}</small><code>{neuron.root_id}</code><span aria-hidden="true" className="cells-card-arrow">↗</span></button></li>)}</ul>}
+      {search && <div className="cells-pagination"><button disabled={searching || offset === 0} onClick={() => setOffset(n => Math.max(0, n - 12))}>← Previous</button><span>{search.total > 0 ? `${offset + 1}–${Math.min(offset + 12, search.total)} of ${search.total.toLocaleString()}` : '0 results'}</span><button disabled={searching || offset + 12 >= search.total} onClick={() => setOffset(n => n + 12)}>Next →</button></div>}
+    </div>}
+    <div className="connectome-footnote"><p>Real FlyWire data. Colors distinguish cells; motion is a viewing aid. The overview loads a bounded set of branches, not every neuron’s morphology.</p><span><a href="https://doi.org/10.1038/s41586-024-07686-5" target="_blank" rel="noopener noreferrer">Schlegel et al.</a> · <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0 ↗</a></span></div>
+    <details className="connectome-research" onToggle={e => setToolsOpen(e.currentTarget.open)}><summary>Data sources & advanced research tools <span>Surface meshes, connectivity and import guides</span></summary>{toolsOpen && <ScientificExplorer />}</details>
   </section>
 }

@@ -1143,3 +1143,94 @@ html[data-motion='quiet'] .academy-answer{transition:none}
 @media(prefers-reduced-motion:reduce){
   .journal-section *{scroll-behavior:auto}
 }
+
+/* The public explorer puts the reconstruction first; technical tools stay folded. */
+.connectome{position:relative;padding-block:90px}
+.connectome-anchor{position:absolute;top:0}
+.connectome-heading{display:flex;justify-content:space-between;align-items:end;gap:35px;margin-bottom:32px}
+.connectome-heading h2{font-size:clamp(40px,4.5vw,66px);line-height:1.08;margin-top:20px;letter-spacing:-.055em}
+.connectome-heading h2 em{color:#c7a7f5}
+.connectome-heading>p{font-size:14px;color:#a8b9ce;line-height:1.9;padding-bottom:5px;max-width:310px}
+.connectome-shell{border:1px solid #3c4760;border-radius:16px;background:#101a2c;overflow:hidden;box-shadow:0 26px 80px #0003}
+.connectome-shell:fullscreen{border-radius:0;overflow:auto;width:100%;height:100%;background:#101a2c}
+.connectome-shell:fullscreen .cells-viewport{height:calc(100vh - 150px)}
+.connectome-topbar{height:68px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 25px;border-bottom:1px solid #ffffff13;background:#182238}
+.connectome-dataset{display:flex;align-items:center;gap:11px;font-size:12px;color:#b9b3d3;white-space:nowrap}
+.connectome-dataset strong{font-size:15px;color:#f2defc;letter-spacing:.05em}
+.connectome-dataset>span:nth-of-type(2){border:1px solid #ac83c34d;background:#b88cd51a;border-radius:4px;padding:4px 7px;font-size:10px}
+.connectome-live{height:7px;width:7px;background:#d6a2ea;border-radius:50%;box-shadow:0 0 12px #dcacf354}
+.connectome-dataset-name{margin-left:9px;color:#9cacbf;font-size:11px}
+.connectome-top-actions{display:flex;gap:8px}
+.connectome-top-actions button{border:1px solid #6d7b983d;background:#26314a80;color:#d1d9ec;padding:9px 13px;border-radius:6px;font-size:12px;cursor:pointer}
+.connectome button:disabled{opacity:.4;cursor:default}
+.connectome .cells-workspace{display:block;border:0;background:#101a2c}
+.connectome .has-selection .cells-workspace{display:grid;grid-template-columns:minmax(0,1fr) 340px}
+.connectome .cells-viewport{height:610px;background:radial-gradient(ellipse at center,#1e2843,#101a2c 72%)}
+.connectome .cells-viewport canvas{cursor:grab}
+.connectome .cells-viewport canvas:active{cursor:grabbing}
+.connectome-stage-label{position:absolute;left:27px;top:27px;display:grid;gap:9px;pointer-events:none;max-width:calc(100% - 50px)}
+.connectome-stage-label>span{font-size:9px;letter-spacing:.18em;color:#a99dbf}
+.connectome-stage-label strong{font-size:20px;color:#dde4f4;letter-spacing:-.025em;overflow-wrap:anywhere}
+.connectome-stage-label small{font-size:10px;color:#93a5bc;line-height:1.4}
+.connectome-gesture{position:absolute;bottom:22px;left:0;right:0;text-align:center;pointer-events:none;color:#b0bacd;font-size:11px;letter-spacing:.02em}
+.connectome-gesture span{color:#756e97;margin-inline:12px}
+.connectome-hover{position:absolute;bottom:57px;left:50%;transform:translateX(-50%);background:#202c44ed;border:1px solid #bbc0e355;border-radius:7px;padding:11px 16px;color:#e6e5f7;font-size:11px;box-shadow:0 10px 30px #0005;pointer-events:none;white-space:nowrap}
+.connectome-hover span{display:block;text-align:center;font-size:10px;margin-top:6px;color:#b9a3d5}
+.connectome-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding:15px 23px;border-top:1px solid #ffffff12;background:#172135}
+.connectome-controls>div{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.connectome-controls button{background:transparent;border:1px solid transparent;border-radius:6px;color:#aab8cf;cursor:pointer;font-size:11px;padding:9px 12px;transition:background .2s,border-color .2s}
+.connectome-controls button:hover:enabled{background:#ffffff0d;color:white}
+.connectome-controls button[aria-pressed=true]{color:#e5d5ff;background:#ac7fcd15;border-color:#b48dd44a}
+.connectome-controls .connectome-play{border-color:#8b70a655;color:#dfcaef;margin-right:12px;background:#9975bb12}
+.connectome-spectrum{display:flex;gap:3px;margin-left:12px}
+.connectome-spectrum i{display:inline-block;width:6px;height:13px;border-radius:4px}
+.connectome-bottom{padding:16px 25px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;border-top:1px solid #ffffff12;font-size:10px;color:#a1afc3;background:#131e31}
+.connectome-bottom>div{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.connectome-source-dot{width:5px;height:5px;border-radius:50%;background:#9bd5c1;margin-right:4px}
+.connectome-bottom button{font:inherit;border:0;background:none;color:#d2b6f4;cursor:pointer;padding:4px 6px}
+.connectome-subtle{color:#8e9bb0}
+.connectome-quick>span{font-size:9px;letter-spacing:.14em;color:#677c98;margin-right:8px}
+.connectome-return{position:absolute;top:100px;left:27px;background:#23314bbd;color:#e4e1f8;border:1px solid #b5b1d545;border-radius:5px;padding:10px 13px;cursor:pointer;font-size:11px}
+.connectome-source-notice{position:absolute;bottom:20px;left:25px;right:25px;border:1px solid #b9a2ce38;background:#1c2941ec;padding:12px 16px;border-radius:7px;color:#b9c3d5;font-size:11px;line-height:1.7}
+.connectome-source-notice button{display:block;background:none;border:0;color:#d3b3f5;cursor:pointer;margin-top:5px;padding:0;font:inherit}
+.connectome .cells-inspector{background:#18243a;border-color:#53577666;padding:25px;max-height:740px;animation:connectome-panel-enter .4s cubic-bezier(.2,.7,.2,1) both}
+.connectome .cells-inspector h3{font-size:27px;color:#f0e8fa}
+.connectome-profile-top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:18px}
+.connectome-profile-top .atlas-overline{margin:0;font-size:9px;color:#b1a4c7;display:flex;align-items:center;gap:8px}
+.connectome-profile-top i{width:7px;height:7px;border-radius:50%}
+.connectome-profile-top button{background:#ffffff08;border:1px solid #ffffff1c;border-radius:50%;color:#b8c8dc;font-size:21px;width:28px;height:28px;cursor:pointer;line-height:1}
+.connectome-cell-tags{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0}
+.connectome-cell-tags span{font-size:10px;color:#cdb9e4;border:1px solid #a87dc53b;border-radius:4px;padding:5px 8px;background:#9e74b912}
+.connectome .cells-function{background:transparent;border:0;border-top:1px solid #ffffff19;border-radius:0;padding:20px 0 5px}
+.connectome .cells-function h4{font-size:18px;color:#e4d7f3}
+.connectome .cells-function p{font-size:12px;color:#b4c2d7;line-height:1.9}
+.connectome .cells-function .cells-evidence-note{font-size:10px;color:#8397b2}
+.connectome .cells-facts{gap:10px;margin:20px 0}
+.connectome .cells-facts>div{border-color:#ffffff13}
+.connectome-cell-source summary{font-size:11px;color:#a9c0d7;cursor:pointer}
+.connectome-cell-source code{display:block;font-size:10px;overflow-wrap:anywhere}
+.connectome-codex{display:block;padding:11px 12px;background:#9f83bd12;border:1px solid #ad8ac637;border-radius:5px;margin-top:23px;text-align:center;text-decoration:none!important}
+.connectome-empty{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:15px;text-align:center;padding:30px;color:#a9bbd2;font-size:13px;line-height:1.8}
+.connectome-empty strong{color:#d3ddef;font-size:17px;font-weight:500}
+.connectome-empty p{max-width:400px}
+.connectome-empty button{background:#b294ce1c;color:#dec9f4;border:1px solid #ad8ac661;border-radius:6px;padding:10px 17px;cursor:pointer}
+.connectome-loader{width:26px;height:26px;border:2px solid #a798c528;border-top-color:#c5a0e5;border-radius:50%;animation:connectome-loading .9s linear infinite}
+.connectome-shape-note{font-size:10px;color:#9aa9c2;line-height:1.7;padding:13px 25px;background:#172135;border-top:1px solid #ffffff0c}
+.connectome-footnote{display:flex;justify-content:space-between;gap:25px;padding:19px 3px;color:#7d91aa;font-size:10px;line-height:1.9}
+.connectome-footnote p{max-width:700px}
+.connectome-footnote a{color:#a693c1;white-space:nowrap;text-decoration:underline;text-underline-offset:3px}
+.connectome-research{margin-top:25px;border:1px solid #303e55;border-radius:9px;background:#0d1728}
+.connectome-research>summary{padding:20px 23px;cursor:pointer;color:#c6d2e5;font-size:13px}
+.connectome-research>summary>span{color:#7d92ad;font-size:11px;float:right}
+.connectome-research .atlas{padding:20px;margin:0}
+.connectome-research .atlas-heading h2{font-size:35px}
+.connectome .cells-catalog{margin-top:16px;border:1px solid #3b4761;border-radius:12px;background:#131e31}
+.connectome .cells-results button{background:#1a263c;border-color:#3d4763}
+.connectome .cells-results button:hover{border-color:#c3a1dd;background:#26304a}
+.connectome .cells-results button[aria-pressed=true]{border-color:#b98ad7;background:#2e2c47}
+@keyframes connectome-panel-enter{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
+@keyframes connectome-loading{to{transform:rotate(360deg)}}
+@media(max-width:900px){.connectome .has-selection .cells-workspace{grid-template-columns:1fr}.connectome .cells-viewport{height:510px}.connectome .cells-inspector{max-height:none;border-top:1px solid #53577666}.connectome-footnote{display:block}.connectome-dataset-name{display:none}.connectome-heading>p{max-width:250px;font-size:12px}}
+@media(max-width:540px){.connectome{padding-block:60px}.connectome-heading{display:block}.connectome-heading h2{font-size:43px}.connectome-heading>p{margin-top:20px;font-size:12px}.connectome-topbar{padding:0 15px;height:61px}.connectome-top-actions button{font-size:10px;padding:8px}.connectome-dataset{gap:7px}.connectome .cells-viewport{height:430px}.connectome-stage-label{left:18px;top:20px}.connectome-stage-label strong{font-size:17px}.connectome-controls{padding:10px 12px;gap:10px}.connectome-controls button{padding:9px 8px;font-size:10px}.connectome-controls .connectome-play{margin-right:0}.connectome-layer-control{width:100%;justify-content:space-between}.connectome-gesture{font-size:9px}.connectome-gesture span{margin-inline:6px}.connectome-bottom{padding:15px}.connectome-research>summary{font-size:12px;padding:18px}.connectome-research>summary>span{float:none;display:block;margin-top:7px}.connectome-research .atlas{padding:12px}.connectome-return{left:18px}.connectome-hover{font-size:10px;max-width:95%}.connectome-source-notice{left:15px;right:15px}.connectome .cells-inspector{padding:22px}}
+@media(prefers-reduced-motion:reduce){.connectome .cells-inspector,.connectome-loader{animation:none}.connectome-controls button{transition:none}}
+:root[data-motion=quiet] .connectome .cells-inspector,:root[data-motion=quiet] .connectome-loader{animation:none}

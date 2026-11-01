@@ -46,6 +46,12 @@ export interface Skeleton {
   vertices: number[][]
   edges: number[][]
   limitations: string[]
+  coordinate_space?: string
+}
+
+export class ResearchApiError extends Error {
+  readonly status: number
+  constructor(message: string, status: number) { super(message); this.status = status; this.name = 'ResearchApiError' }
 }
 
 export const EXAMPLE_PROOFREAD_ID = '720575940625431866'
@@ -84,7 +90,7 @@ export async function apiGet<T>(path: string, signal?: AbortSignal): Promise<T> 
       typeof result.detail === 'string'
         ? result.detail
         : 'Research API returned HTTP ' + response.status
-    throw new Error(message)
+    throw new ResearchApiError(message, response.status)
   }
   return result as T
 }

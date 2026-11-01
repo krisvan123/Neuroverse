@@ -3,7 +3,6 @@ import { ApiStatus } from './components/ApiStatus'
 import { FeatureCard } from './components/FeatureCard'
 import { BrainExperience } from './components/BrainExperience'
 import MissionBanner from './components/MissionBanner'
-import { ScientificExplorer } from './components/ScientificExplorer'
 import { NeuronAtlas } from './components/NeuronAtlas'
 import { LearningAcademy } from './components/LearningAcademy'
 import { ExperimentLab } from './components/ExperimentLab'
@@ -41,7 +40,7 @@ export default function App() {
         <div className="container navigation">
           <a href="#home" className="brand" aria-label="Neuroverse home"><span className="brand-mark" aria-hidden="true">✺</span>NEUROVERSE<span className="brand-period">.</span></a>
           <nav className="nav-links" aria-label="Primary navigation">
-            <a href="#academy">Learn</a><a href="#neurons">Explore</a><a href="#lab">The Lab</a><a href="#journal">Journal</a><a href="#sources">Research</a>
+            <a href="#academy">Learn</a><a href="#explore">Explore</a><a href="#lab">The Lab</a><a href="#journal">Journal</a><a href="#sources">Research</a>
           </nav>
           <div className="nav-actions"><ApiStatus /><a className="nav-cta" href="#learning">Enter the universe <span aria-hidden="true">↗</span></a></div>
         </div>
@@ -53,7 +52,7 @@ export default function App() {
             <div className="eyebrow"><span className="eyebrow-dash" /> THE FUTURE OF SCIENCE EXPLORATION</div>
             <h1 id="hero-title">The universe<br />inside <em>every</em><br />connection<span className="heading-period">.</span></h1>
             <p className="hero-subtitle">Journey into the architecture of intelligence. Discover how biological networks inspire new ways to understand science and computation.</p>
-            <div className="hero-actions"><a className="button-primary" href="#learning">Start your discovery <span aria-hidden="true">↗</span></a><a className="button-text" href="#neurons">Explore mapped neurons <span aria-hidden="true">→</span></a></div>
+            <div className="hero-actions"><a className="button-primary" href="#learning">Start your discovery <span aria-hidden="true">↗</span></a><a className="button-text" href="#explore">Explore mapped neurons <span aria-hidden="true">→</span></a></div>
             <div className="hero-meta"><span>01 / 03 — DISCOVER</span><span className="meta-line" /><span>AN INTERACTIVE SCIENCE EXPERIENCE</span></div>
           </div>
           <div className="hero-art"><BrainExperience paused={quietMode} onToggleMotion={() => setQuietMode((value) => !value)} /></div>
@@ -66,7 +65,7 @@ export default function App() {
           <div className="section-heading"><div><div className="eyebrow"><span className="eyebrow-dash" /> THREE WAYS TO SEE FURTHER</div><h2 id="pathways-title">Curiosity has<br /><em>no limits.</em></h2></div><p>One universe. Three journeys. Follow the pathways from introductory neuroscience to real connectome research and computational thinking.</p></div>
           <div className="feature-grid">
             <FeatureCard number="01" icon="✺" title="Understand the science" description="Uncover the fundamentals of neurons, synapses, and the incredible systems they form." state="ACADEMY · FIVE LIVE LESSONS" href="#academy" />
-            <FeatureCard number="02" icon="⌁" title="Explore the connections" description="Choose a mapped neuron, inspect its original branches, and discover its scientific context." state="FLYWIRE · INTERACTIVE CELL ATLAS" href="#neurons" />
+            <FeatureCard number="02" icon="⌁" title="Explore the connections" description="Choose a mapped neuron, inspect its original branches, and discover its scientific context." state="FLYWIRE · INTERACTIVE CELL ATLAS" href="#explore" />
             <FeatureCard number="03" icon="⟡" title="Experiment with ideas" description="Turn biological questions into graph algorithms, structured experiments, and reproducible results." state="EXPERIMENT LAB · LIVE ANALYSIS" href="#lab" />
           </div>
         </section>
@@ -75,7 +74,6 @@ export default function App() {
 
         <NeuronAtlas reducedMotion={quietMode} />
 
-        <ScientificExplorer />
 
         <ExperimentLab restoreRecord={reopened} />
 

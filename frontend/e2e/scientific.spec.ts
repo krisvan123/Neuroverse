@@ -12,9 +12,10 @@ test('real-data explorer keeps accuracy disclosures and handles missing imported
       message: 'No local connectome is configured.',
     } })
   })
-  await page.goto('/')
-  const explorer = page.locator('#explore')
-  await expect(explorer.getByRole('heading', { name: /the real anatomy/i })).toBeVisible()
+  await page.goto('/#explore')
+  await page.getByText('Data sources & advanced research tools', { exact: false }).click()
+  const explorer = page.locator('#scientific-tools')
+  await expect(explorer.getByRole('heading', { name: /Research tools/i })).toBeVisible()
   await expect(explorer.getByText(/3D anatomy is ready\. Directed connectivity needs one additional local dataset/i)).toBeVisible()
   await expect(explorer.getByText(/separate display coordinates until alignment/i)).toBeVisible()
   await explorer.getByRole('button', { name: 'Inspect directed connections' }).click()
@@ -39,8 +40,9 @@ test('valid root ID loads real-format centerline while invented values are rejec
       edges: [[0, 1], [1, 2]], limitations: ['Test fixture, not real evidence'],
     } })
   })
-  await page.goto('/')
-  const explorer = page.locator('#explore')
+  await page.goto('/#explore')
+  await page.getByText('Data sources & advanced research tools', { exact: false }).click()
+  const explorer = page.locator('#scientific-tools')
   await explorer.getByRole('button', { name: /load real neuron skeleton/i }).click()
   await expect(explorer.getByText(/3 recorded skeleton vertices/i)).toBeVisible()
   await expect(explorer.getByText(/2 skeletal segments/i)).toBeVisible()
@@ -66,8 +68,9 @@ test('bounded directed graph is explicitly algorithmic, never spatial', async ({
     nodes: [{ root_id: rid, cell_type: null }, { root_id: other, cell_type: null }],
     edges: [{ pre_root_id: rid, post_root_id: other, syn_count: 7 }],
   } }))
-  await page.goto('/')
-  const explorer = page.locator('#explore')
+  await page.goto('/#explore')
+  await page.getByText('Data sources & advanced research tools', { exact: false }).click()
+  const explorer = page.locator('#scientific-tools')
   await expect(explorer.getByText(/source identity not independently authenticated/i)).toBeVisible()
   await explorer.getByRole('button', { name: 'Inspect directed connections' }).click()
   await expect(explorer.getByRole('heading', { name: /directed structural network/i })).toBeVisible()
@@ -77,8 +80,9 @@ test('bounded directed graph is explicitly algorithmic, never spatial', async ({
 })
 
 test('mobile science workspace does not overflow the viewport', async ({ page }) => {
-  await page.goto('/')
-  await expect(page.locator('#explore')).toBeVisible()
+  await page.goto('/#explore')
+  await page.getByText('Data sources & advanced research tools', { exact: false }).click()
+  await expect(page.locator('#scientific-tools')).toBeVisible()
   const sizes = await page.evaluate(() => ({
     page: document.documentElement.scrollWidth,
     viewport: document.documentElement.clientWidth,
@@ -103,8 +107,9 @@ test('scientific 3D viewer renders a controlled PLY fixture and provides camera 
       'X-Neuroverse-Source-SHA256': 'a'.repeat(64),
     },
   }))
-  await page.goto('/')
-  const explorer = page.locator('#explore')
+  await page.goto('/#explore')
+  await page.getByText('Data sources & advanced research tools', { exact: false }).click()
+  const explorer = page.locator('#scientific-tools')
   await explorer.getByRole('button', { name: 'Whole-brain surface' }).click()
   const side = explorer.getByRole('button', { name: 'Side', exact: true })
   if (!(await side.isEnabled())) {
@@ -122,8 +127,9 @@ test('scientific 3D viewer renders a controlled PLY fixture and provides camera 
 
 
 test('FAFB scan-derived mesh display modes label depth honestly and preserve camera UX', async ({ page }) => {
-  await page.goto('/')
-  const explorer = page.locator('#explore')
+  await page.goto('/#explore')
+  await page.getByText('Data sources & advanced research tools', { exact: false }).click()
+  const explorer = page.locator('#scientific-tools')
   const shading = explorer.getByRole('button', { name: 'Tissue shading' })
   if (!(await shading.isEnabled())) {
     await expect(shading).toBeDisabled()
@@ -143,8 +149,9 @@ test('FAFB scan-derived mesh display modes label depth honestly and preserve cam
 
 
 test('scientific explorer compares two source-derived brain envelopes without fabricated labels', async ({ page }) => {
-  await page.goto('/')
-  const explorer = page.locator('#explore')
+  await page.goto('/#explore')
+  await page.getByText('Data sources & advanced research tools', { exact: false }).click()
+  const explorer = page.locator('#scientific-tools')
   const neuropil = explorer.getByRole('button', { name: 'FAFB neuropil' })
   await expect(neuropil).toHaveAttribute('aria-pressed', 'true')
   const tissue = explorer.getByRole('button', { name: 'Whole-brain surface' })
@@ -167,8 +174,9 @@ test('empty FAFB connections provide a real source-only import path and refresh 
       : { available: false, dataset: 'FlyWire FAFB', snapshot: '783',
         source_identity_verified: false } })
   })
-  await page.goto('/')
-  const explorer = page.locator('#explore')
+  await page.goto('/#explore')
+  await page.getByText('Data sources & advanced research tools', { exact: false }).click()
+  const explorer = page.locator('#scientific-tools')
   await expect(explorer.getByRole('button', { name: 'Recheck dataset availability' })).toBeVisible()
   await explorer.getByRole('button', { name: 'Inspect directed connections' }).click()
   const setup = explorer.locator('.atlas-import-steps')
@@ -196,8 +204,9 @@ test('connectivity status refresh never overrides a visitor-edited neuron ID', a
       source_identity_verified: false,
     } })
   })
-  await page.goto('/')
-  const explorer = page.locator('#explore')
+  await page.goto('/#explore')
+  await page.getByText('Data sources & advanced research tools', { exact: false }).click()
+  const explorer = page.locator('#scientific-tools')
   await expect(explorer.getByLabel('Neuron root ID')).toHaveValue(seed)
   const userChoice = '720575940625431866'
   await explorer.getByLabel('Neuron root ID').fill(userChoice)

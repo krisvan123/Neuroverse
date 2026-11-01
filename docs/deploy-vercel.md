@@ -30,7 +30,7 @@ The API rule appears before the catch-all web rule, and the original API path is
    - `/` shows the Neuroverse homepage and CSS/JS load.
    - `/api/v1/health` returns JSON with `status: "ok"`.
    - `/#academy`, `/#lab`, and `/#journal` work; save/export/import a SYNTHETIC experiment.
-   - `/#explore` reports the true source availability. Authentic PLY meshes are downloaded at runtime from public pinned upstream URLs; those requests may be unavailable or subject to function limits.
+   - `/#explore` automatically loads the colored, rotating FlyWire position map from static `/data/` assets. It does not send the full 139,255-cell JSON through a Python Function. Individual profiles and original branches still need the API and scientific sources; unavailable branches leave the position map visible. PLY and connectivity tools are under **Data sources & advanced research tools**.
    - `/api/v1/datasets/current` reports `available: false` until **you** supply a legitimate FAFB dataset through a separate, authorized persistent data workflow. This is expected, not a failed deployment.
 9. Save the actual live URL and the deployment result in the Phase 09 QA log. A successful git push or local Docker test is **not** proof of a live Vercel deployment.
 

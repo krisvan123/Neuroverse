@@ -17,7 +17,15 @@ These are **source and license notices**, not a statement that the Neuroverse co
 
 - **Interactive neuron atlas:** the annotation table from `flyconnectome/flywire_annotations`
   v2.1.0 is downloaded from its pinned source commit and verified before use. The
-  source table is not bundled. See [the neuron atlas source and coordinate notes](neuron-atlas.md)
+  source table is not bundled. The derived coordinate preview in `frontend/public/data/`
+  **is distributed** with the frontend under the source's **CC BY-NC 4.0** terms.
+  It retains original root IDs and soma/anchor coordinates converted to nanometers,
+  encoded without precision loss, with source and asset SHA-256 in its manifest.
+  Attribution: FlyWire Consortium; Schlegel et al., *Whole-brain annotation and
+  multi-connectome cell typing of Drosophila*, Nature (2024),
+  <https://doi.org/10.1038/s41586-024-07686-5>.
+  License: <https://creativecommons.org/licenses/by-nc/4.0/>.
+  See [the neuron atlas source and coordinate notes](neuron-atlas.md)
   for the checksum, Schlegel et al. (Nature, 2024) attribution, position meanings
   and limits of cell-class explanations. The interface links CC BY-NC 4.0 terms.
 

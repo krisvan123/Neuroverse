@@ -9,7 +9,7 @@ Neuroverse is an independent, research-inspired science learning platform that w
 ## Product direction
 
 - **Learn:** five complete cited lessons, ten knowledge checks and Mission 001's interactive synthetic graph.
-- **Explore:** investigate a clearly attributed subset of the FlyWire adult fruit fly connectome (planned).
+- **Explore:** rotate the published FlyWire cell map and inspect individual neurons and their source annotations.
 - **Experiment:** Phase 07 Lab ships BFS/DFS, graph metrics, model node-removal comparison and JSON/CSV export. The Academy retains its separate teaching demo.
 - **Experience:** an accessible Cosmic Neuroscience interface with a source-validated FAFB-aligned neuropil and tissue-surfaces in 3D, controllable camera, optional decorative DNA and site-wide gently drifting stars (Phase 05.2).
 
@@ -75,10 +75,13 @@ Read [the full scientific data guide](docs/scientific-data-pipeline.md) before i
 
 ## Interactive neuron atlas
 
-Choose **Explore → Load mapped neurons** to browse the 139,255 annotated neurons
-in the pinned FlyWire FAFB v783 release. Click a mapped cell to focus the camera
-and open its original branch reconstruction, identity, source annotations and
-cell-class context. Search by root ID, type or class. Unknown individual functions
+Open **Explore** (`/#explore`) to see the colored, rotating map of 139,255 annotated
+neurons in the pinned FlyWire FAFB v783 release. The verified position preview
+ships with the frontend and loads automatically; original branches load progressively
+from their scientific source. Drag, zoom, change views, or select a cell to focus
+the camera and open its reconstruction, identity and cell-class context. **Find a
+neuron** searches by root ID, type or class. Advanced surface/connectivity tools
+are under **Data sources & advanced research tools**. Unknown individual functions
 remain explicitly unknown. See [sources, coordinate units and limitations](docs/neuron-atlas.md).
 
 ## Quality checks

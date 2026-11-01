@@ -1,0 +1,23 @@
+{
+  "dataset": "FlyWire FAFB",
+  "snapshot": "783",
+  "annotation_release": "2.1.0",
+  "source_url": "https://raw.githubusercontent.com/flyconnectome/flywire_annotations/ebd66db2596fcc39c6950fb54ea3efa00f7fe8a0/supplemental_files/Supplemental_file1_neuron_annotations.tsv",
+  "source_sha256": "30be6c73975a70c56d930e27911f36455d3886e15abf383b78edd2a5d679e0b6",
+  "source_reference": "https://doi.org/10.1038/s41586-024-07686-5",
+  "coordinate_reference": "https://github.com/flyconnectome/flywire_annotations/blob/a83b2776d60d5764cef36b927f5f9679c16c47a2/supplemental_files/README.md",
+  "license": "CC BY-NC 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "format": "NVAP",
+  "format_version": 1,
+  "file": "fafb-v783-6735333bc9714abf.bin",
+  "asset_sha256": "6735333bc9714abf8151cbea0078123cf6c7e2e07a65726ffb57f71c5ecb316a",
+  "asset_bytes": 2924367,
+  "total_neurons": 139255,
+  "point_count": 139255,
+  "soma_count": 118107,
+  "unpositioned_count": 0,
+  "units": "nanometer",
+  "description": "Original soma or anchor positions; markers are not complete neuron morphology.",
+  "attribution": "FlyWire Consortium; Schlegel et al., Nature (2024). CC BY-NC 4.0."
+}

@@ -66,9 +66,36 @@ export function isAtlasData(value: unknown): value is NeuronAtlasData {
 }
 
 export async function fetchAtlas(signal?: AbortSignal): Promise<NeuronAtlasData> {
-  const data = await apiGet<unknown>('/api/v1/atlas/points', signal)
-  if (!isAtlasData(data)) throw new Error('The source returned invalid atlas coordinates.')
+  const response = await fetch('/data/fafb-v783-atlas.json', { signal })
+  if (!response.ok) throw new Error('The published brain preview could not be loaded. Please retry.')
+  const manifest = await response.json() as NeuronAtlasData & {
+    file: string; asset_sha256: string; asset_bytes: number; point_count: number; format_version: number
+  }
+  if (!/^fafb-v783-[a-f0-9]{16}\.bin$/.test(manifest.file) || !/^[a-f0-9]{64}$/.test(manifest.asset_sha256) || manifest.format_version !== 1) {
+    throw new Error('Invalid published atlas manifest.')
+  }
+  const asset = await fetch('/data/' + manifest.file, { signal })
+  if (!asset.ok) throw new Error('The published cell positions are unavailable. Please retry.')
+  const buffer = await asset.arrayBuffer()
+  if (buffer.byteLength !== manifest.asset_bytes || buffer.byteLength > 4_500_000) throw new Error('Unexpected atlas asset size.')
+  const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', buffer)), v => v.toString(16).padStart(2, '0')).join('')
+  if (hash !== manifest.asset_sha256) throw new Error('Atlas source checksum verification failed.')
+  const data = { ...manifest, points: decodeAtlasPositions(buffer) }
+  if (data.points.length !== manifest.point_count || !isAtlasData(data)) throw new Error('The source returned invalid atlas coordinates.')
   return data
+}
+
+export function decodeAtlasPositions(buffer: ArrayBuffer): AtlasPoint[] {
+  if (buffer.byteLength < 12) throw new Error('Truncated atlas positions.')
+  const view = new DataView(buffer)
+  if (view.getUint32(0, false) !== 0x4e564150 || view.getUint32(4, true) !== 1) throw new Error('Unsupported atlas position format.')
+  const count = view.getUint32(8, true)
+  if (count > 200000 || buffer.byteLength !== 12 + count * 21) throw new Error('Invalid atlas position count.')
+  return Array.from({ length: count }, (_, i) => {
+    const offset = 12 + i * 21
+    return [view.getBigUint64(offset, true).toString(), view.getFloat32(offset + 8, true),
+      view.getFloat32(offset + 12, true), view.getFloat32(offset + 16, true), view.getUint8(offset + 20)] as AtlasPoint
+  })
 }
 
 export function searchAtlas(query: string, offset: number, signal?: AbortSignal): Promise<AtlasSearch> {
